@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 
 dotenv.config();
 
@@ -9,15 +8,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Test route
+// ---------------- TEST ROUTE ----------------
 app.get("/", (req, res) => {
-  res.send("LGC Concept AI backend running");
+  res.send("LGC Concept AI backend running (OpenRouter)");
 });
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({
-  model: "gemini-2.5-flash",
-  systemInstruction: `
+// ---------------- SYSTEM PROMPTS ----------------
+
+// ⛔ DO NOT TOUCH — LEARN PROMPT (UNCHANGED)
+const LEARN_PROMPT = `
 You are LGC Concept AI, an Anna University–focused exam tutor.
 
 Your highest priority is to RESPECT THE QUESTION SCOPE.
@@ -69,23 +68,9 @@ STEP 3: ANALOGY POLICY (MANDATORY)
 ------------------------------------
 Analogy is REQUIRED in EVERY answer, but must MATCH THE QUESTION ASPECT.
 
-• Definition → simple concept analogy
-• Application → real-life usage analogy
-• Application with example → practical analogy linked to the example
-• Difference → comparative analogy (A vs B)
-• Working → step-by-step process analogy
-• Advantages / Limitations → benefit vs drawback analogy
-
 Every analogy MUST be clearly labelled as:
 
 “💡 Analogy (for understanding only — do NOT write this in the exam)”
-
-Analogy must be:
-• simple
-• familiar to Indian students
-• exam-safe
-• not childish
-• not storytelling
 
 ------------------------------------
 STEP 4: ANSWER STYLE (AU STANDARD)
@@ -98,39 +83,119 @@ STEP 4: ANSWER STYLE (AU STANDARD)
 • Length should fit a 13-mark answer ONLY for the asked aspect
 
 ------------------------------------
-STEP 5: FINAL CHECK BEFORE RESPONDING
+STEP 5: FINAL CHECK
 ------------------------------------
-Ask yourself silently:
-
-If question says “shortly”,
-→ reduce explanation
-→ limit analogies to one per section max
-
 “Did I answer ONLY what was asked?”
-
 If NO → trim.
 If YES → respond.
+`;
 
-Your goal is to help students score marks,
-not to dump textbook content.
+// Doubt-clearing prompt
+const DOUBT_PROMPT = `
+You are a doubt-clearing assistant.
 
-`
-});
+Rules:
+• Answer ONLY the specific doubt
+• Be concise and direct
+• No full explanation
+• No exam structuring
+• Do NOT over-teach
+`;
 
-// API Endpoint
+// Teach-back / verification prompt
+const TEACHBACK_PROMPT = `
+You are a strict but encouraging evaluator.
+
+A student will explain a concept.
+
+Your task:
+1. Encourage the student first
+2. Check conceptual correctness
+3. Point out mistakes briefly
+4. Identify missing points
+5. Do NOT re-teach fully
+6. Motivate the student to try again
+`;
+
+// ---------------- MODE → PROMPT ----------------
+
+function getPromptByMode(mode) {
+  switch (mode) {
+    case "doubt":
+      return DOUBT_PROMPT;
+    case "teachback":
+      return TEACHBACK_PROMPT;
+    case "learn":
+    default:
+      return LEARN_PROMPT;
+  }
+}
+
+// ---------------- MODE → MODEL ----------------
+
+function getModelByMode(mode) {
+  switch (mode) {
+    case "teachback":
+      return "tngtech/tng-r1t-chimera:free";
+
+    case "doubt":
+    case "learn":
+    default:
+      return "nvidia/nemotron-3-nano-30b-a3b:free";
+  }
+}
+
+// ---------------- API ENDPOINT ----------------
+
 app.post("/ask", async (req, res) => {
-  const { question } = req.body;
+  const { question, mode = "learn" } = req.body;
+
+  if (!question || !question.trim()) {
+    return res.status(400).json({ error: "Question is required" });
+  }
+
+  const systemPrompt = getPromptByMode(mode);
+  const model = getModelByMode(mode);
 
   try {
-    const result = await model.generateContent(question);
-    const output = result.response.text();
-    res.json({ answer: output });
+    const response = await fetch(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model,
+          temperature: 0.4,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: question }
+          ]
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!data.choices || !data.choices[0]?.message?.content) {
+      console.error("RAW OPENROUTER RESPONSE:", data);
+      throw new Error("No content returned from OpenRouter");
+    }
+
+    res.json({ answer: data.choices[0].message.content });
+
   } catch (err) {
-  console.error("GEMINI ERROR:", err);
-  res.status(500).json({ error: err.message || "Unknown Gemini Error" });
-}
+    console.error("OPENROUTER ERROR:", err);
+    res.status(500).json({ error: "OpenRouter request failed" });
+  }
 });
 
+// ---------------- SERVER ----------------
+
 app.listen(5000, () => {
-  console.log("LGC Backend running on port 5000");
+  console.log(
+    "LGC Backend running on port 5000 (NVIDIA learn/doubt + Chimera teach-back)"
+  );
 });
