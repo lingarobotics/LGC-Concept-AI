@@ -1,7 +1,7 @@
 import { useState } from "react";
-import LearnMode from "./pages/LearnMode";
-import DoubtMode from "./pages/DoubtMode";
-import TeachBackMode from "./pages/TeachBackMode";
+import LearnMode from "./Pages/LearnMode";
+import DoubtMode from "./Pages/DoubtMode";
+import TeachBackMode from "./Pages/TeachBackMode";
 
 function App() {
   const [mode, setMode] = useState("learn");
