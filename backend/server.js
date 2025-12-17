@@ -4,12 +4,16 @@ import dotenv from "dotenv";
 
 import { getOrCreateSession } from "./sessions/sessionManager.js";
 import { createConceptState } from "./sessions/conceptState.js";
+import { sessions } from "./sessions/sessionStore.js";
 
 dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// ---------------- SESSION TTL CONFIG ----------------
+const SESSION_TTL_MS = 30 * 60 * 1000; // 30 minutes
 
 // ---------------- TEST ROUTE ----------------
 app.get("/", (req, res) => {
@@ -193,6 +197,19 @@ function getModelByMode(mode) {
   }
 }
 
+// ---------------- TOPIC AUTO-DETECTION ----------------
+function detectTopic(question) {
+  return question
+    .replace(
+      /define|explain|describe|discuss|compare|differentiate|list|state|write|what is|give|with example/gi,
+      ""
+    )
+    .trim()
+    .split(/\s+/)
+    .slice(0, 4)
+    .join(" ");
+}
+
 // ---------------- CONCEPT CONTEXT BUILDER ----------------
 function buildConceptContext(session, mode) {
   if (!session.conceptState) return null;
@@ -232,7 +249,6 @@ app.post("/ask", async (req, res) => {
     return res.status(400).json({ error: "Question is required" });
   }
 
-  // ✅ Session handling
   const { sessionId: activeSessionId, session } =
     getOrCreateSession(sessionId);
 
@@ -273,18 +289,16 @@ app.post("/ask", async (req, res) => {
     const data = await response.json();
 
     if (!data.choices || !data.choices[0]?.message?.content) {
-      console.error("RAW OPENROUTER RESPONSE:", data);
       throw new Error("No content returned from OpenRouter");
     }
 
     const answer = data.choices[0].message.content;
 
-    // ✅ Learn Mode writes ConceptState
     if (mode === "learn") {
       session.learnCount += 1;
 
       session.conceptState = createConceptState({
-        topic: "AUTO-DETECTED",
+        topic: detectTopic(question),
         aspectsCovered: ["auto"],
         markLevel: 13,
         coreExplanation: answer.slice(0, 500),
@@ -293,19 +307,25 @@ app.post("/ask", async (req, res) => {
       });
     }
 
-    res.json({
-      answer,
-      sessionId: activeSessionId,
-    });
+    res.json({ answer, sessionId: activeSessionId });
   } catch (err) {
-    console.error("OPENROUTER ERROR:", err);
     res.status(500).json({ error: "OpenRouter request failed" });
   }
 });
 
+// ---------------- SESSION CLEANUP ----------------
+setInterval(() => {
+  const now = Date.now();
+  for (const [id, session] of sessions.entries()) {
+    if (now - session.lastActiveAt > SESSION_TTL_MS) {
+      sessions.delete(id);
+    }
+  }
+}, 5 * 60 * 1000);
+
 // ---------------- SERVER ----------------
 app.listen(5000, () => {
   console.log(
-    "LGC Backend running on port 5000 (sessions + ConceptState + contextual continuity active)"
+    "LGC Backend running on port 5000 (sessions + TTL + topic detection active)"
   );
 });
