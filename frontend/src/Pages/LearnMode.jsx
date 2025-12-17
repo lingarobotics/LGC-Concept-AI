@@ -6,6 +6,9 @@ function LearnMode() {
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // ✅ NEW: sessionId state
+  const [sessionId, setSessionId] = useState(null);
+
   /* Typing Placeholder */
   const placeholderTexts = [
     "Explain the construction and working of a transformer",
@@ -48,11 +51,22 @@ function LearnMode() {
     const res = await fetch("http://localhost:5000/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question, mode: "learn" })
+      body: JSON.stringify({
+        question,
+        mode: "learn",
+        sessionId // ✅ NEW: send sessionId if exists
+      })
     });
 
     const data = await res.json();
+
     setAnswer(data.answer);
+
+    // ✅ NEW: store sessionId returned by backend
+    if (data.sessionId) {
+      setSessionId(data.sessionId);
+    }
+
     setLoading(false);
   };
 

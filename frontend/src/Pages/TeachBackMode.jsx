@@ -5,6 +5,9 @@ function TeachBackMode() {
   const [feedback, setFeedback] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // ✅ NEW: sessionId state
+  const [sessionId, setSessionId] = useState(null);
+
   const submit = async () => {
     if (!explanation.trim()) return;
 
@@ -13,11 +16,22 @@ function TeachBackMode() {
     const res = await fetch("http://localhost:5000/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question: explanation, mode: "teachback" })
+      body: JSON.stringify({
+        question: explanation,
+        mode: "teachback",
+        sessionId // ✅ NEW: send sessionId if exists
+      })
     });
 
     const data = await res.json();
+
     setFeedback((prev) => [...prev, data.answer]);
+
+    // ✅ NEW: store sessionId returned by backend
+    if (data.sessionId) {
+      setSessionId(data.sessionId);
+    }
+
     setExplanation("");
     setLoading(false);
   };

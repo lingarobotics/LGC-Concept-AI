@@ -5,6 +5,9 @@ function DoubtMode() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // ✅ NEW: sessionId state
+  const [sessionId, setSessionId] = useState(null);
+
   const askAI = async () => {
     if (!input.trim()) return;
 
@@ -16,11 +19,25 @@ function DoubtMode() {
     const res = await fetch("http://localhost:5000/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question: input, mode: "doubt" })
+      body: JSON.stringify({
+        question: input,
+        mode: "doubt",
+        sessionId // ✅ NEW: send sessionId if exists
+      })
     });
 
     const data = await res.json();
-    setMessages((prev) => [...prev, { role: "ai", text: data.answer }]);
+
+    setMessages((prev) => [
+      ...prev,
+      { role: "ai", text: data.answer }
+    ]);
+
+    // ✅ NEW: store sessionId returned by backend
+    if (data.sessionId) {
+      setSessionId(data.sessionId);
+    }
+
     setLoading(false);
   };
 
