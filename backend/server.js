@@ -193,6 +193,37 @@ function getModelByMode(mode) {
   }
 }
 
+// ---------------- CONCEPT CONTEXT BUILDER ----------------
+function buildConceptContext(session, mode) {
+  if (!session.conceptState) return null;
+
+  if (mode === "doubt") {
+    return `
+Context (do not explain unless needed):
+The student has already learned the topic "${session.conceptState.topic}".
+
+Covered aspects:
+${session.conceptState.aspectsCovered.join(", ")}
+
+Answer ONLY within this scope.
+`;
+  }
+
+  if (mode === "teachback") {
+    return `
+Evaluation reference (do NOT teach again):
+
+Topic: ${session.conceptState.topic}
+Expected aspects: ${session.conceptState.aspectsCovered.join(", ")}
+
+Core explanation summary:
+${session.conceptState.coreExplanation}
+`;
+  }
+
+  return null;
+}
+
 // ---------------- API ENDPOINT ----------------
 app.post("/ask", async (req, res) => {
   const { question, mode = "learn", sessionId } = req.body;
@@ -207,8 +238,20 @@ app.post("/ask", async (req, res) => {
 
   session.lastActiveAt = Date.now();
 
+  if (mode === "doubt") session.doubtCount += 1;
+  if (mode === "teachback") session.teachBackCount += 1;
+
   const systemPrompt = getPromptByMode(mode);
   const model = getModelByMode(mode);
+  const conceptContext = buildConceptContext(session, mode);
+
+  const messages = [{ role: "system", content: systemPrompt }];
+
+  if (conceptContext) {
+    messages.push({ role: "system", content: conceptContext });
+  }
+
+  messages.push({ role: "user", content: question });
 
   try {
     const response = await fetch(
@@ -222,10 +265,7 @@ app.post("/ask", async (req, res) => {
         body: JSON.stringify({
           model,
           temperature: 0.4,
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: question },
-          ],
+          messages,
         }),
       }
     );
@@ -244,7 +284,7 @@ app.post("/ask", async (req, res) => {
       session.learnCount += 1;
 
       session.conceptState = createConceptState({
-        topic: "AUTO-DETECTED", // refined later
+        topic: "AUTO-DETECTED",
         aspectsCovered: ["auto"],
         markLevel: 13,
         coreExplanation: answer.slice(0, 500),
@@ -266,6 +306,6 @@ app.post("/ask", async (req, res) => {
 // ---------------- SERVER ----------------
 app.listen(5000, () => {
   console.log(
-    "LGC Backend running on port 5000 (sessions + ConceptState active)"
+    "LGC Backend running on port 5000 (sessions + ConceptState + contextual continuity active)"
   );
 });
