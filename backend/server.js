@@ -2,6 +2,9 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 
+import { getOrCreateSession } from "./sessions/sessionManager.js";
+import { createConceptState } from "./sessions/conceptState.js";
+
 dotenv.config();
 
 const app = express();
@@ -192,11 +195,17 @@ function getModelByMode(mode) {
 
 // ---------------- API ENDPOINT ----------------
 app.post("/ask", async (req, res) => {
-  const { question, mode = "learn" } = req.body;
+  const { question, mode = "learn", sessionId } = req.body;
 
   if (!question || !question.trim()) {
     return res.status(400).json({ error: "Question is required" });
   }
+
+  // ✅ Session handling
+  const { sessionId: activeSessionId, session } =
+    getOrCreateSession(sessionId);
+
+  session.lastActiveAt = Date.now();
 
   const systemPrompt = getPromptByMode(mode);
   const model = getModelByMode(mode);
@@ -228,7 +237,26 @@ app.post("/ask", async (req, res) => {
       throw new Error("No content returned from OpenRouter");
     }
 
-    res.json({ answer: data.choices[0].message.content });
+    const answer = data.choices[0].message.content;
+
+    // ✅ Learn Mode writes ConceptState
+    if (mode === "learn") {
+      session.learnCount += 1;
+
+      session.conceptState = createConceptState({
+        topic: "AUTO-DETECTED", // refined later
+        aspectsCovered: ["auto"],
+        markLevel: 13,
+        coreExplanation: answer.slice(0, 500),
+        keyPoints: [],
+        scopeConstraints: [],
+      });
+    }
+
+    res.json({
+      answer,
+      sessionId: activeSessionId,
+    });
   } catch (err) {
     console.error("OPENROUTER ERROR:", err);
     res.status(500).json({ error: "OpenRouter request failed" });
@@ -238,6 +266,6 @@ app.post("/ask", async (req, res) => {
 // ---------------- SERVER ----------------
 app.listen(5000, () => {
   console.log(
-    "LGC Backend running on port 5000 (AU aspect-weighted Learn Mode active)"
+    "LGC Backend running on port 5000 (sessions + ConceptState active)"
   );
 });
