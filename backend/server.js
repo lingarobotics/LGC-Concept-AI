@@ -217,12 +217,19 @@ function buildConceptContext(session, mode) {
   if (mode === "doubt") {
     return `
 Context (do not explain unless needed):
-The student has already learned the topic "${session.conceptState.topic}".
+The student has already learned the engineering concept "${session.conceptState.topic}".
 
-Covered aspects:
-${session.conceptState.aspectsCovered.join(", ")}
+This doubt MUST be answered using:
+• concept-specific reasoning related to this machine or system
+• relevant relations, formulas, or operating principles implied by the topic
+• exam-oriented, technical explanation
 
-Answer ONLY within this scope.
+STRICTLY AVOID:
+• generic physics statements
+• abstract boundary-condition explanations
+• unrelated concepts or systems
+
+Answer ONLY within this learned scope.
 `;
   }
 
@@ -294,6 +301,7 @@ app.post("/ask", async (req, res) => {
 
     const answer = data.choices[0].message.content;
 
+    // 🔒 ONLY Learn Mode updates context
     if (mode === "learn") {
       session.learnCount += 1;
 
