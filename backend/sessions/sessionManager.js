@@ -10,7 +10,7 @@ function generateSessionId() {
 }
 
 export function getOrCreateSession(sessionIdFromClient) {
-  // If client sent a valid sessionId and we have it → reuse
+  // Reuse existing session if valid
   if (sessionIdFromClient && hasSession(sessionIdFromClient)) {
     return {
       sessionId: sessionIdFromClient,
@@ -19,7 +19,7 @@ export function getOrCreateSession(sessionIdFromClient) {
     };
   }
 
-  // Otherwise create a new session
+  // Create new session
   const newSessionId = generateSessionId();
 
   const newSession = {
@@ -27,15 +27,18 @@ export function getOrCreateSession(sessionIdFromClient) {
     createdAt: Date.now(),
     lastActiveAt: Date.now(),
 
-    // Analytics counters (future use)
+    // Analytics counters
     learnCount: 0,
     doubtCount: 0,
     teachBackCount: 0,
 
-    // Placeholder for ConceptState (added later)
+    // Active learning context (C1, C2, ...)
     conceptState: null,
 
-    // Placeholder for Q&A history (email feature later)
+    // Archived previous learning contexts
+    conceptHistory: [],
+
+    // Placeholder for future session summary / email feature
     interactions: []
   };
 
