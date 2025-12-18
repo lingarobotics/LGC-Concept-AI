@@ -1,4 +1,6 @@
-const sessions = new Map();
+// backend/sessions/sessionStore.js
+
+export const sessions = new Map();
 
 export function createSession(sessionId, sessionData) {
   sessions.set(sessionId, sessionData);
