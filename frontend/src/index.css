@@ -1,68 +1,170 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+/* =========================
+   LGC Concept AI – V1 CSS
+   Philosophy: clarity > decoration
+   ========================= */
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ---------- Reset & Base ---------- */
+* {
+  box-sizing: border-box;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
+html,
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+  padding: 0;
+  background: #0f1115;
+  color: #e6e6e6;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.6;
+}
+
+/* ---------- Root ----------
+   Root should NOT constrain width
+   (splash overlay needs full screen)
+---------------------------------- */
+#root {
   min-height: 100vh;
+  padding: 1.25rem;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* ---------- App Shell (Desktop Centering) ----------
+   This is where centering happens
+---------------------------------- */
+.app-shell {
+  max-width: 760px;
+  margin: 0 auto;
 }
 
+/* ---------- Mode Switch ---------- */
+.mode-switch {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+/* ---------- Common Mode Container ---------- */
+.mode-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ---------- Mode Explanation Text ---------- */
+.mode-explanation {
+  font-size: 0.85rem;
+  color: #a0a0a0;
+}
+
+.mode-explanation b {
+  color: #ffffff;
+}
+
+/* ---------- Textareas ---------- */
+textarea {
+  width: 100%;
+  background: #151822;
+  color: #ffffff;
+  border: 1px solid #2a2f45;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 0.95rem;
+  resize: none;
+}
+
+textarea::placeholder {
+  color: #7a7a7a;
+}
+
+/* ---------- Buttons ---------- */
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+  background: #3b82f6;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 0.95rem;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---------- Output / Answer Area ---------- */
+.output-box {
+  background: #12141c;
+  border: 1px solid #2a2f45;
+  border-radius: 6px;
+  padding: 14px;
+  max-height: 60vh;
+  overflow-y: auto;
+  font-size: 0.95rem;
+}
+
+/* ---------- Chat Messages (Doubt Mode) ---------- */
+.chat-message {
+  margin-bottom: 10px;
+}
+
+.chat-message.user {
+  text-align: right;
+  color: #d1e4ff;
+}
+
+.chat-message.ai {
+  text-align: left;
+  color: #e6e6e6;
+}
+
+/* ---------- Small Helper Text ---------- */
+.helper-text {
+  font-size: 0.75rem;
+  color: #8a8a8a;
+}
+
+/* ---------- Splash / Flash Card Overlay ---------- */
+.splash-overlay {
+  position: fixed;
+  inset: 0;
+  background: #0f1115;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.splash-card {
+  text-align: center;
+}
+
+.splash-card h2 {
+  margin: 0;
+}
+
+.splash-card p {
+  margin: 6px 0;
+  color: #a0a0a0;
+}
+
+.splash-card span {
+  font-size: 0.75rem;
+  color: #7a7a7a;
+}
+
+/* ---------- Mobile Optimisation ---------- */
+@media (max-width: 600px) {
+  #root {
+    padding: 1rem;
   }
-  a:hover {
-    color: #747bff;
+
+  textarea {
+    font-size: 0.9rem;
   }
+
   button {
-    background-color: #f9f9f9;
+    width: 100%;
   }
 }

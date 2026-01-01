@@ -58,6 +58,24 @@ function LearnMode() {
 
   return (
     <>
+      {/* V1 Detailed Explanation */}
+      <div style={{ fontSize: "0.85rem", color: "#aaa", marginBottom: "12px" }}>
+        <b>Learn Mode (V1)</b>
+        <br />
+        <br />
+        This mode provides <b>structured explanations</b> focused on clarity,
+        exam relevance, and <b>mark separation</b>.
+        <br />
+        <br />
+        Each question is handled independently. If you want continuity,
+        restate the concept or topic explicitly in your question.
+        <br />
+        <br />
+        Future versions will introduce guided learning paths and
+        context-aware progression across topics.
+      </div>
+
+      {/* Input */}
       <textarea
         rows="4"
         value={question}
@@ -70,6 +88,7 @@ function LearnMode() {
         {loading ? "Structuring your answer…" : "Ask"}
       </button>
 
+      {/* Answer */}
       {answer && (
         <div
           style={{

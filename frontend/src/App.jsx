@@ -1,42 +1,63 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LearnMode from "./Pages/LearnMode";
 import DoubtMode from "./Pages/DoubtMode";
 import TeachBackMode from "./Pages/TeachBackMode";
+import lgcLogo from "./assets/lgc-logo.png";
 
 function App() {
   const [mode, setMode] = useState("learn");
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <div style={{ minHeight: "100vh", background: "#1f1f1f", padding: "16px" }}>
-      <div
-        style={{
-          maxWidth: "900px",
-          margin: "auto",
-          fontFamily: "Arial, sans-serif",
-          color: "#eaeaea"
-        }}
-      >
-        <h2 style={{ color: "#ffffff", marginBottom: "6px" }}>
-          LGC Concept AI
-        </h2>
+    <>
+      {/* Splash / Flash Card Overlay */}
+      {showSplash && (
+        <div className="splash-overlay">
+          <div className="splash-card">
+            <img
+              src={lgcLogo}
+              alt="LGC Concept AI Logo"
+              width="72"
+              style={{ marginBottom: "12px" }}
+            />
+            <h2>LGC Concept AI</h2>
+            <p>Learning at No Cost</p>
+            <span>Version 1.0</span>
+          </div>
+        </div>
+      )}
 
-        <p style={{ color: "#b5b5b5", marginBottom: "16px" }}>
+      {/* Main Application */}
+      <div className="app-shell">
+        <h2>LGC Concept AI</h2>
+
+        <p className="helper-text">
           Exam-focused learning • Doubt clearing • Teach-back verification
         </p>
-
+  
         {/* MODE SWITCH */}
-        <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
+        <div className="mode-switch">
           <button onClick={() => setMode("learn")}>Learn</button>
           <button onClick={() => setMode("doubt")}>Doubt</button>
           <button onClick={() => setMode("teachback")}>Teach-Back</button>
         </div>
 
-        {/* MODE SCREENS */}
-        {mode === "learn" && <LearnMode />}
-        {mode === "doubt" && <DoubtMode />}
-        {mode === "teachback" && <TeachBackMode />}
+        {/* MODE CONTENT */}
+        <div className="mode-container">
+          {mode === "learn" && <LearnMode />}
+          {mode === "doubt" && <DoubtMode />}
+          {mode === "teachback" && <TeachBackMode />}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
