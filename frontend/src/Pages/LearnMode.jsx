@@ -45,7 +45,7 @@ function LearnMode() {
     setLoading(true);
     setAnswer("");
 
-    const res = await fetch("http://localhost:5000/ask", {
+    const res = await fetch("https://lgc-concept-ai.up.railway.app/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ question, mode: "learn" })
