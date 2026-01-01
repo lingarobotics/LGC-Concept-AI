@@ -9,6 +9,19 @@ function generateSessionId() {
   return crypto.randomUUID();
 }
 
+/**
+ * Archives the current concept before replacing it.
+ * This preserves C1, C2, ... history safely.
+ */
+export function archiveConceptIfExists(session) {
+  if (session.conceptState) {
+    session.conceptHistory.push({
+      ...session.conceptState,
+      archivedAt: Date.now()
+    });
+  }
+}
+
 export function getOrCreateSession(sessionIdFromClient) {
   // Reuse existing session if valid
   if (sessionIdFromClient && hasSession(sessionIdFromClient)) {
@@ -37,6 +50,12 @@ export function getOrCreateSession(sessionIdFromClient) {
 
     // Archived previous learning contexts
     conceptHistory: [],
+
+    // Short-term conversational memory for Doubt Mode
+    doubtContext: {
+      lastEntity: null,
+      lastComponent: null
+    },
 
     // Placeholder for future session summary / email feature
     interactions: []

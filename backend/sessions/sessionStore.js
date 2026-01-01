@@ -7,7 +7,7 @@ export function createSession(sessionId, sessionData) {
 }
 
 export function getSession(sessionId) {
-  return sessions.get(sessionId);
+  return sessions.get(sessionId) || null;
 }
 
 export function updateSession(sessionId, sessionData) {

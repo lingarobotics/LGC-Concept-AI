@@ -6,7 +6,10 @@ function LearnMode() {
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ✅ NEW: sessionId state
+  // ✅ NEW: subject state (MANDATORY for Learn mode)
+  const [subject, setSubject] = useState("");
+
+  // ✅ sessionId state
   const [sessionId, setSessionId] = useState(null);
 
   /* Typing Placeholder */
@@ -44,7 +47,9 @@ function LearnMode() {
   }, [cIndex, pIndex, question]);
 
   const askAI = async () => {
-    if (!question.trim()) return;
+    // 🔒 Subject is mandatory for Learn mode
+    if (!subject.trim() || !question.trim()) return;
+
     setLoading(true);
     setAnswer("");
 
@@ -52,9 +57,10 @@ function LearnMode() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        subject,        // ✅ send subject
         question,
         mode: "learn",
-        sessionId // ✅ NEW: send sessionId if exists
+        sessionId
       })
     });
 
@@ -62,7 +68,6 @@ function LearnMode() {
 
     setAnswer(data.answer);
 
-    // ✅ NEW: store sessionId returned by backend
     if (data.sessionId) {
       setSessionId(data.sessionId);
     }
@@ -72,6 +77,19 @@ function LearnMode() {
 
   return (
     <>
+      {/* ✅ SUBJECT INPUT */}
+      <input
+        type="text"
+        value={subject}
+        onChange={(e) => setSubject(e.target.value)}
+        placeholder="Enter subject (e.g., Electrical Machines, Data Structures)"
+        style={{
+          width: "100%",
+          padding: "10px",
+          marginBottom: "10px"
+        }}
+      />
+
       <textarea
         rows="4"
         value={question}
@@ -80,7 +98,11 @@ function LearnMode() {
         style={{ width: "100%", padding: "12px", resize: "none" }}
       />
 
-      <button onClick={askAI} disabled={loading} style={{ marginTop: "12px" }}>
+      <button
+        onClick={askAI}
+        disabled={loading || !subject.trim()}
+        style={{ marginTop: "12px" }}
+      >
         {loading ? "Structuring your answer…" : "Ask"}
       </button>
 

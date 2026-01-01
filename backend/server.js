@@ -6,6 +6,11 @@ import { getOrCreateSession } from "./sessions/sessionManager.js";
 import { createConceptState } from "./sessions/conceptState.js";
 import { sessions } from "./sessions/sessionStore.js";
 
+import {
+  bindDoubtQuestion,
+  bindTeachBackEvaluation,
+} from "./sessions/contextBinder.js";
+
 dotenv.config();
 
 const app = express();
@@ -191,66 +196,23 @@ function getModelByMode(mode) {
     case "teachback":
       return "tngtech/tng-r1t-chimera:free";
     case "doubt":
+      return "allenai/olmo-3.1-32b-think:free";
     case "learn":
     default:
       return "nvidia/nemotron-3-nano-30b-a3b:free";
   }
 }
 
-// ---------------- TOPIC AUTO-DETECTION ----------------
-function detectTopic(question) {
-  return question
-    .replace(
-      /define|explain|describe|discuss|compare|differentiate|list|state|write|what is|give|with example/gi,
-      ""
-    )
-    .trim()
-    .split(/\s+/)
-    .slice(0, 4)
-    .join(" ");
-}
-
-// ---------------- CONCEPT CONTEXT BUILDER ----------------
-function buildConceptContext(session, mode) {
-  if (!session.conceptState) return null;
-
-  if (mode === "doubt") {
-    return `
-Context (do not explain unless needed):
-The student has already learned the engineering concept "${session.conceptState.topic}".
-
-This doubt MUST be answered using:
-• concept-specific reasoning related to this machine or system
-• relevant relations, formulas, or operating principles implied by the topic
-• exam-oriented, technical explanation
-
-STRICTLY AVOID:
-• generic physics statements
-• abstract boundary-condition explanations
-• unrelated concepts or systems
-
-Answer ONLY within this learned scope.
-`;
-  }
-
-  if (mode === "teachback") {
-    return `
-Evaluation reference (do NOT teach again):
-
-Topic: ${session.conceptState.topic}
-Expected aspects: ${session.conceptState.aspectsCovered.join(", ")}
-
-Core explanation summary:
-${session.conceptState.coreExplanation}
-`;
-  }
-
-  return null;
+// ---------------- ASPECT DETECTION ----------------
+function hasExplicitAspect(question) {
+  return /(define|explain|describe|discuss|compare|differentiate|application|advantage|disadvantage|construction|working|example)/i.test(
+    question
+  );
 }
 
 // ---------------- API ENDPOINT ----------------
 app.post("/ask", async (req, res) => {
-  const { question, mode = "learn", sessionId } = req.body;
+  let { question, mode = "learn", sessionId } = req.body;
 
   if (!question || !question.trim()) {
     return res.status(400).json({ error: "Question is required" });
@@ -261,20 +223,42 @@ app.post("/ask", async (req, res) => {
 
   session.lastActiveAt = Date.now();
 
-  if (mode === "doubt") session.doubtCount += 1;
-  if (mode === "teachback") session.teachBackCount += 1;
+  session.doubtContext ??= { lastEntity: null, lastComponent: null };
 
   const systemPrompt = getPromptByMode(mode);
   const model = getModelByMode(mode);
-  const conceptContext = buildConceptContext(session, mode);
 
   const messages = [{ role: "system", content: systemPrompt }];
 
-  if (conceptContext) {
-    messages.push({ role: "system", content: conceptContext });
+  if (mode === "learn" && !hasExplicitAspect(question)) {
+    question = `Explain ${question} with construction, working, applications, advantages and limitations.`;
   }
 
-  messages.push({ role: "user", content: question });
+  if (mode === "doubt" && session.conceptState) {
+    const dc = session.doubtContext;
+
+    if (/^(it|this|that)\b/i.test(question) && dc.lastEntity) {
+      question = question.replace(/^(it|this|that)/i, dc.lastEntity);
+    }
+
+    if (/^(count\??|how many\??)$/i.test(question) && dc.lastComponent) {
+      question = `How many ${dc.lastComponent}s are used in the ${dc.lastEntity}?`;
+    }
+
+    const boundQuestion = bindDoubtQuestion({
+      question,
+      conceptState: session.conceptState,
+    });
+    messages.push({ role: "user", content: boundQuestion });
+  } else if (mode === "teachback" && session.conceptState) {
+    const boundEvaluation = bindTeachBackEvaluation({
+      explanation: question,
+      conceptState: session.conceptState,
+    });
+    messages.push({ role: "user", content: boundEvaluation });
+  } else {
+    messages.push({ role: "user", content: question });
+  }
 
   try {
     const response = await fetch(
@@ -294,29 +278,28 @@ app.post("/ask", async (req, res) => {
     );
 
     const data = await response.json();
+    const answer = data?.choices?.[0]?.message?.content;
 
-    if (!data.choices || !data.choices[0]?.message?.content) {
-      throw new Error("No content returned from OpenRouter");
-    }
+    if (!answer) throw new Error("No content returned");
 
-    const answer = data.choices[0].message.content;
-
-    // 🔒 ONLY Learn Mode updates context
     if (mode === "learn") {
-      session.learnCount += 1;
-
       session.conceptState = createConceptState({
-        topic: detectTopic(question),
+        topic: question,
         aspectsCovered: ["auto"],
         markLevel: 13,
         coreExplanation: answer.slice(0, 500),
-        keyPoints: [],
-        scopeConstraints: [],
       });
+    }
+
+    if (mode === "doubt") {
+      const dc = session.doubtContext;
+      if (/alternator/i.test(answer)) dc.lastEntity = "alternator";
+      if (/rectifier/i.test(answer)) dc.lastComponent = "rectifier";
     }
 
     res.json({ answer, sessionId: activeSessionId });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "OpenRouter request failed" });
   }
 });
@@ -333,7 +316,5 @@ setInterval(() => {
 
 // ---------------- SERVER ----------------
 app.listen(5000, () => {
-  console.log(
-    "LGC Backend running on port 5000 (sessions + TTL + topic detection active)"
-  );
+  console.log("LGC Backend running on port 5000 (AU prompt intact)");
 });
