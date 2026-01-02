@@ -36,7 +36,7 @@ function DoubtMode() {
     <>
       {/* V1 Detailed Explanation */}
       <div style={{ fontSize: "0.85rem", color: "#aaa", marginBottom: "12px" }}>
-        <b>Doubt Mode (V1)</b>
+        <b>Doubt Mode (Version 1.0)</b>
         <br />
         <br />
         This mode is designed to answer <b>one clear and explicit doubt</b> at a time.
