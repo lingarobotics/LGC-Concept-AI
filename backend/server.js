@@ -1,8 +1,22 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import mongoose from "mongoose"; // NEW
+import authRoutes from "./routes/auth.js";
+
+
 
 dotenv.config();
+
+// ---------------- MONGOOSE CONNECTION ----------------
+mongoose
+  .connect("mongodb://localhost:27017/lgc-concept-ai")
+  .then(() => {
+    console.log("MongoDB connected");
+  })
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
+  });
 
 const app = express();
 app.use(cors());
@@ -250,6 +264,8 @@ app.post("/ask", async (req, res) => {
     res.status(500).json({ error: "OpenRouter request failed" });
   }
 });
+
+app.use("/auth", authRoutes);
 
 // ---------------- SERVER ----------------
 app.listen(5000, () => {
