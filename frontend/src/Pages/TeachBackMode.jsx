@@ -1,4 +1,6 @@
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 function TeachBackMode() {
   const [explanation, setExplanation] = useState("");
@@ -57,10 +59,12 @@ function TeachBackMode() {
       </button>
 
       {/* Feedback */}
-      <div style={{ maxHeight: "60vh", overflowY: "auto", marginTop: "12px" }}>
+      <div style={{ marginTop: "12px" }}>
         {feedback.map((f, i) => (
-          <div key={i} style={{ marginBottom: "10px" }}>
-            {f}
+          <div key={i} className="output-box" style={{ marginBottom: "12px" }}>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {f}
+            </ReactMarkdown>
           </div>
         ))}
       </div>

@@ -112,6 +112,15 @@ Once aspects are identified, STRICTLY follow:
 
 DO NOT include anything not explicitly asked.
 
+- Explain clearly
+- Use structured formatting
+
+When presenting comparisons or differences in tabular form,
+you MUST use valid Markdown table syntax with:
+- pipe characters (|)
+- a header separator row using dashes
+Do NOT use tab-separated or aligned text.
+
 ------------------------------------
 STEP 3: ANALOGY POLICY (CONDITIONAL)
 ------------------------------------

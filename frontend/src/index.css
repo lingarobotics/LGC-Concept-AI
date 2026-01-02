@@ -168,3 +168,33 @@ button:disabled {
     width: 100%;
   }
 }
+
+/* ---------- Markdown Tables (Exam-friendly) ---------- */
+.output-box table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0;
+  font-size: 0.9rem;
+}
+
+.output-box th,
+.output-box td {
+  border: 1px solid #2a2f45;
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.output-box th {
+  background-color: #1a1d2b;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.output-box tr:nth-child(even) {
+  background-color: #141826;
+}
+
+.output-box tr:hover {
+  background-color: #1f2335;
+}
