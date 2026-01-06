@@ -3,8 +3,9 @@ import LearnMode from "./Pages/LearnMode";
 import DoubtMode from "./Pages/DoubtMode";
 import TeachBackMode from "./Pages/TeachBackMode";
 import lgcLogo from "./assets/lgc-logo.png";
+import { AuthProvider } from "./context/AuthContext";
 
-function App() {
+function AppContent() {
   const [mode, setMode] = useState("learn");
   const [showSplash, setShowSplash] = useState(true);
 
@@ -30,7 +31,7 @@ function App() {
             />
             <h2>LGC Concept AI</h2>
             <p>Learning at No Cost</p>
-            <span>Version 1.0</span>
+            <span>Version 1.1</span>
           </div>
         </div>
       )}
@@ -42,7 +43,7 @@ function App() {
         <p className="helper-text">
           Exam-focused learning • Doubt clearing • Teach-back verification
         </p>
-  
+
         {/* MODE SWITCH */}
         <div className="mode-switch">
           <button onClick={() => setMode("learn")}>Learn</button>
@@ -61,4 +62,10 @@ function App() {
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
+}

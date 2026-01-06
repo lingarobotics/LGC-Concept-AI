@@ -1,10 +1,9 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import mongoose from "mongoose"; // NEW
+import mongoose from "mongoose";
 import authRoutes from "./routes/auth.js";
-
-
+import questionRoutes from "./routes/question.js";
 
 dotenv.config();
 
@@ -21,6 +20,7 @@ mongoose
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use("/question", questionRoutes);
 
 // ---------------- TEST ROUTE ----------------
 app.get("/", (req, res) => {
@@ -149,7 +149,6 @@ However, DO NOT include an analogy when:
 When included, label clearly as:
 “💡 Analogy (for understanding only — do NOT write this in the exam)”
 
-
 ------------------------------------
 STEP 4: ANSWER STYLE (AU STANDARD)
 ------------------------------------
@@ -158,12 +157,14 @@ STEP 4: ANSWER STYLE (AU STANDARD)
 • Exam-oriented language
 • Bullet points allowed but not compressive
 • NO short-note style answers for LONG questions
+• Give answers for 13 marks depth everytime question been asked
 
 ------------------------------------
 STEP 5: FINAL CHECK
 ------------------------------------
 “Did I answer ONLY what was asked?”
 “Is this sufficient for full marks in AU?”
+"Does the answer fit for 13 marks?"
 If NO → revise silently.
 If YES → respond.
 `;
@@ -211,10 +212,9 @@ function getPromptByMode(mode) {
 // ---------------- MODE → MODEL ----------------
 function getModelByMode(mode) {
   switch (mode) {
-    case "teachback":
-      return "tngtech/tng-r1t-chimera:free";
-    case "doubt":
     case "learn":
+    case "doubt":
+    case "teachback":
     default:
       return "nvidia/nemotron-3-nano-30b-a3b:free";
   }
@@ -253,12 +253,10 @@ app.post("/ask", async (req, res) => {
 
     const data = await response.json();
 
-    if (!data.choices || !data.choices[0]?.message?.content) {
-      console.error("RAW OPENROUTER RESPONSE:", data);
-      throw new Error("No content returned from OpenRouter");
-    }
+    // ✅ SAFE, NON-DESTRUCTIVE HANDLING (v1.1)
+    const answer = data?.choices?.[0]?.message?.content || "";
 
-    res.json({ answer: data.choices[0].message.content });
+    res.json({ answer });
   } catch (err) {
     console.error("OPENROUTER ERROR:", err);
     res.status(500).json({ error: "OpenRouter request failed" });

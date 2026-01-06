@@ -1,11 +1,20 @@
 import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import AuthGate from "../components/AuthGate";
+import { useAuth } from "../context/AuthContext";
 
 function LearnMode() {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState("");
+  const [questionCount, setQuestionCount] = useState(0);
+  const [showAuthGate, setShowAuthGate] = useState(false);
+  
+  /* -------- GLOBAL AUTH (v1.1) -------- */
+  const { isAuthenticated, userEmail, login, logout } = useAuth();
+  /* ----------------------------------- */
 
   /* Typing Placeholder */
   const placeholderTexts = [
@@ -23,6 +32,7 @@ function LearnMode() {
 
   useEffect(() => {
     if (question) return;
+
     const current = placeholderTexts[pIndex];
 
     if (cIndex < current.length) {
@@ -43,25 +53,65 @@ function LearnMode() {
 
   const askAI = async () => {
     if (!question.trim()) return;
+
+    /* ----------- SOFT AUTH GATE ----------- */
+    if (!isAuthenticated && questionCount >= 3) {
+      setShowAuthGate(true);
+      return;
+    }
+    /* ------------------------------------- */
+
     setLoading(true);
+    setLoadingText("Getting your answer…");
     setAnswer("");
 
-    const res = await fetch("https://lgc-concept-ai.up.railway.app/ask", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question, mode: "learn" })
-    });
+    // readable pause for first message
+    await new Promise((resolve) => setTimeout(resolve, 700));
+    setLoadingText("Structuring it…");
 
-    const data = await res.json();
-    setAnswer(data.answer);
-    setLoading(false);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/ask`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question,
+          mode: "learn"
+        })
+      });
+
+      const data = await res.json();
+      setAnswer(data.answer);
+      setQuestionCount((prev) => prev + 1);
+
+      if (isAuthenticated && userEmail) {
+        try {
+          const logRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/question/log`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: userEmail,
+              question,
+              mode: "learn"
+            })
+          });
+
+          const logData = await logRes.json();
+          console.log("Question log result:", logData);
+        } catch (err) {
+          console.error("Question logging failed:", err);
+        }
+      }
+    } finally {
+      setLoading(false);
+      setLoadingText("");
+    }
   };
 
   return (
     <>
-      {/* V1 Detailed Explanation */}
+      {/* V1.1 Detailed Explanation */}
       <div style={{ fontSize: "0.85rem", color: "#aaa", marginBottom: "12px" }}>
-        <b>Learn Mode (Version 1.0)</b>
+        <b>Learn Mode (Version 1.1)</b>
         <br />
         <br />
         This mode provides <b>structured explanations</b> focused on clarity,
@@ -76,6 +126,42 @@ function LearnMode() {
         context-aware progression across topics.
       </div>
 
+      {/* Auth entry */}
+      {!isAuthenticated && (
+        <div
+          style={{
+            fontSize: "0.8rem",
+            color: "#bbb",
+            marginBottom: "12px",
+            textAlign: "center"
+          }}
+        >
+          You may{" "}
+          <button
+            style={{ fontSize: "0.8rem" }}
+            onClick={() => setShowAuthGate(true)}
+          >
+            Login / Register
+          </button>{" "}
+          to save your learning progress.
+        </div>
+      )}
+
+      {/* Logout */}
+      {isAuthenticated && (
+        <div style={{ textAlign: "right", marginBottom: "8px" }}>
+          <button
+            style={{ fontSize: "0.8rem", opacity: 0.7 }}
+            onClick={() => {
+              logout();
+              setQuestionCount(0);
+            }}
+          >
+            Logout
+          </button>
+        </div>
+      )}
+
       {/* Input */}
       <textarea
         rows="4"
@@ -86,7 +172,7 @@ function LearnMode() {
       />
 
       <button onClick={askAI} disabled={loading} style={{ marginTop: "12px" }}>
-        {loading ? "Structuring your answer…" : "Ask"}
+        {loading ? loadingText : "Ask"}
       </button>
 
       {/* Answer */}
@@ -96,6 +182,17 @@ function LearnMode() {
             {answer}
           </ReactMarkdown>
         </div>
+      )}
+
+      {/* Auth Gate */}
+      {showAuthGate && (
+        <AuthGate
+          onSuccess={(email) => {
+            login(email);
+            setShowAuthGate(false);
+          }}
+          onClose={() => setShowAuthGate(false)}
+        />
       )}
     </>
   );
