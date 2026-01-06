@@ -9,7 +9,7 @@ dotenv.config();
 
 // ---------------- MONGOOSE CONNECTION ----------------
 mongoose
-  .connect("mongodb://localhost:27017/lgc-concept-ai")
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("MongoDB connected");
   })
