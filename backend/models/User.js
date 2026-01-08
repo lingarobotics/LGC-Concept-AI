@@ -18,6 +18,20 @@ const userSchema = new mongoose.Schema(
       required: true
     },
 
+    // Email verification (v1.2)
+    isEmailVerified: {
+      type: Boolean,
+      default: false
+    },
+
+    emailVerificationToken: {
+      type: String
+    },
+
+    emailVerificationTokenExpiresAt: {
+      type: Date
+    },
+
     // Academic context
     name: {
       type: String,

@@ -6,7 +6,15 @@ export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userEmail, setUserEmail] = useState(null);
 
-  const login = (email) => {
+  /**
+   * Login only after backend confirms success
+   * Caller must pass fetch response status
+   */
+  const login = ({ email, success }) => {
+    if (!success) {
+      return;
+    }
+
     setIsAuthenticated(true);
     setUserEmail(email);
   };
