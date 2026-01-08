@@ -35,7 +35,7 @@ function AppContent() {
             />
             <h2>LGC Concept AI</h2>
             <p>Learning at No Cost</p>
-            <span>Version 1.1</span>
+            <span>Version 1.2</span>
           </div>
         </div>
       )}

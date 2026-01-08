@@ -77,7 +77,7 @@ function TeachBackMode() {
     <>
       {/* V1 Detailed Explanation */}
       <div style={{ fontSize: "0.85rem", color: "#aaa", marginBottom: "12px" }}>
-        <b>Teach-Back Mode (Version 1.1)</b>
+        <b>Teach-Back Mode (Version 1.2)</b>
         <br />
         <br />
         This mode evaluates your understanding by asking you to

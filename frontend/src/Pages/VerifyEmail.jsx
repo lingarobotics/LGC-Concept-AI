@@ -54,6 +54,7 @@ function VerifyEmail() {
 
       {status === "success" && (
         <div>
+            <b>Verify Email Status - LGC Concept AI - Version 1.2</b>
           <h3>Email verified successfully ✅</h3>
           <p>You can now return and log in to your account.</p>
         </div>
@@ -61,6 +62,7 @@ function VerifyEmail() {
 
       {status === "failed" && (
         <div>
+            <b>Verify Email Status - LGC Concept AI - Version 1.2</b>
           <h3>Verification failed ❌</h3>
           <p>The verification link is invalid or expired.</p>
         </div>

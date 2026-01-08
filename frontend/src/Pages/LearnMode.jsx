@@ -12,7 +12,7 @@ function LearnMode() {
   const [questionCount, setQuestionCount] = useState(0);
   const [showAuthGate, setShowAuthGate] = useState(false);
   
-  /* -------- GLOBAL AUTH (v1.1) -------- */
+  /* -------- GLOBAL AUTH (v1.2) -------- */
   const { isAuthenticated, userEmail, login, logout } = useAuth();
   /* ----------------------------------- */
 
@@ -111,7 +111,7 @@ function LearnMode() {
     <>
       {/* V1.1 Detailed Explanation */}
       <div style={{ fontSize: "0.85rem", color: "#aaa", marginBottom: "12px" }}>
-        <b>Learn Mode (Version 1.1)</b>
+        <b>Learn Mode (Version 1.2)</b>
         <br />
         <br />
         This mode provides <b>structured explanations</b> focused on clarity,
