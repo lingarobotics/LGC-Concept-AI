@@ -13,10 +13,26 @@ const router = express.Router();
 // Name: letters, spaces, dot, hyphen (2–50 chars)
 const NAME_REGEX = /^[A-Za-z.\-\s]{2,50}$/;
 
-// Minimal profanity deny-list (lowercase check)
-const PROFANITY_WORDS = ["fuck", "fucker", "shit", "bitch", "asshole", "pussy", "ass", "cock", "thevidiyapaiyan", "thevdiya", "otha", "oththa", "punda", "lusukoodhi", "koodhi"];
+// Minimal profanity deny-list (substring match)
+const PROFANITY_WORDS = [
+  "fuck",
+  "fucker",
+  "shit",
+  "bitch",
+  "asshole",
+  "pussy",
+  "ass",
+  "cock",
+  "thevidiyapaiyan",
+  "thevdiya",
+  "otha",
+  "oththa",
+  "punda",
+  "lusukoodhi",
+  "koodhi"
+];
 
-// Allowed departments
+// Allowed departments (Other allowed, no custom input)
 const ALLOWED_DEPARTMENTS = [
   "Robotics Engineering",
   "CSE",
@@ -48,7 +64,6 @@ router.post("/register", async (req, res) => {
     return res.status(400).json({ error: "All fields are required" });
   }
 
-  // 🔒 Name validation
   if (!isNameValid(name)) {
     return res.status(400).json({
       error:
@@ -56,14 +71,13 @@ router.post("/register", async (req, res) => {
     });
   }
 
-  // 🔒 Department validation
   if (!ALLOWED_DEPARTMENTS.includes(department)) {
     return res.status(400).json({ error: "Invalid department selection" });
   }
 
-  try {
-    const normalizedEmail = email.toLowerCase();
+  const normalizedEmail = email.toLowerCase();
 
+  try {
     const existingUser = await User.findOne({ userId: normalizedEmail });
     if (existingUser) {
       return res.status(409).json({ error: "User already exists" });
@@ -78,7 +92,7 @@ router.post("/register", async (req, res) => {
       userId: normalizedEmail,
       passwordHash,
       name: name.trim(),
-      department, // "Other" stored literally
+      department,
       passOutYear,
       emailVerificationToken: verificationToken,
       emailVerificationTokenExpiresAt: tokenExpiry,
@@ -89,16 +103,27 @@ router.post("/register", async (req, res) => {
 
     const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
 
-    await sendEmail({
-      to: normalizedEmail,
-      subject: "Verify your email - LGC Concept AI",
-      html: `
-        <p>Welcome to LGC Concept AI,</p>
-        <p>Please verify your email by clicking the link below:</p>
-        <p><a href="${verificationLink}">${verificationLink}</a></p>
-        <p>This link will expire in 24 hours.</p>
-      `
-    });
+    try {
+      await sendEmail({
+        to: normalizedEmail,
+        subject: "Verify your email - LGC Concept AI",
+        html: `
+          <p>Welcome to LGC Concept AI,</p>
+          <p>Please verify your email by clicking the link below:</p>
+          <p><a href="${verificationLink}">${verificationLink}</a></p>
+          <p>This link will expire in 24 hours.</p>
+        `
+      });
+    } catch (mailError) {
+      console.error("EMAIL SEND FAILED:", mailError);
+
+      // 🔥 rollback to avoid dead accounts
+      await User.deleteOne({ userId: normalizedEmail });
+
+      return res.status(500).json({
+        error: "Could not send verification email. Please try again."
+      });
+    }
 
     return res.status(201).json({
       message: "User registered successfully"
@@ -150,9 +175,7 @@ router.post("/resend-verification", async (req, res) => {
       `
     });
 
-    return res.json({
-      message: "Verification email resent"
-    });
+    return res.json({ message: "Verification email resent" });
   } catch (err) {
     console.error("RESEND VERIFY ERROR:", err);
     return res
@@ -189,9 +212,7 @@ router.get("/verify-email", async (req, res) => {
 
     await user.save();
 
-    return res.json({
-      message: "Email verified successfully"
-    });
+    return res.json({ message: "Email verified successfully" });
   } catch (err) {
     console.error("EMAIL VERIFY ERROR:", err);
     return res.status(500).json({ error: "Email verification failed" });
@@ -223,9 +244,7 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    return res.json({
-      message: "Login successful"
-    });
+    return res.json({ message: "Login successful" });
   } catch (err) {
     console.error("LOGIN ERROR:", err);
     return res.status(500).json({ error: "Login failed" });

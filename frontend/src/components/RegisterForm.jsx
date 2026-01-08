@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function RegisterForm({ onSuccess }) {
+function RegisterForm() {
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -61,11 +61,10 @@ function RegisterForm({ onSuccess }) {
         return;
       }
 
+      // ✅ Registration successful — DO NOT log in automatically
       setInfo(
         "Account created successfully. Please verify your email using the link sent to your inbox."
       );
-
-      onSuccess({ email: form.email, success: false });
     } catch {
       setError("Server error");
     }
