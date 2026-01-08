@@ -64,14 +64,17 @@ function AuthGate({ onSuccess, onClose }) {
         {/* Auth Forms */}
         {mode === "register" ? (
           <RegisterForm
-            onSuccess={(email) => {
-              onSuccess(email);   // 🔑 pass identity upward
+            onSuccess={() => {
+              // ✅ DO NOTHING on register success
+              // Keep modal open so user sees verification guidance
             }}
           />
         ) : (
           <LoginForm
-            onSuccess={(email) => {
-              onSuccess(email);   // 🔑 pass identity upward
+            onSuccess={({ email, success }) => {
+              if (success) {
+                onSuccess({ email, success });
+              }
             }}
           />
         )}
@@ -80,7 +83,7 @@ function AuthGate({ onSuccess, onClose }) {
           onClick={onClose}
           style={{ fontSize: "0.8rem", opacity: 0.7, marginTop: "12px" }}
         >
-          Cancel
+          Close
         </button>
       </div>
     </div>

@@ -5,6 +5,8 @@ function LoginForm({ onSuccess }) {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [info, setInfo] = useState("");
+  const [resending, setResending] = useState(false);
 
   const allFieldsFilled = email && password;
 
@@ -15,26 +17,65 @@ function LoginForm({ onSuccess }) {
     }
 
     setError("");
+    setInfo("");
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/auth/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        }
+      );
 
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Login failed");
+        if (data.error === "Email not verified") {
+          setError("Your email is not verified.");
+          setInfo("Please verify your email using the link sent to your inbox.");
+        } else {
+          setError(data.error || "Login failed");
+        }
         return;
       }
 
-      // 🔑 PASS IDENTITY UPWARD
-      onSuccess(email);
+      onSuccess({ email, success: true });
     } catch {
       setError("Server error");
     }
+  };
+
+  const resendVerification = async () => {
+    setResending(true);
+    setError("");
+    setInfo("");
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/auth/resend-verification`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email })
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Could not resend verification email");
+        setResending(false);
+        return;
+      }
+
+      setInfo("Verification email has been resent. Please check your inbox.");
+    } catch {
+      setError("Server error");
+    }
+
+    setResending(false);
   };
 
   return (
@@ -60,9 +101,29 @@ function LoginForm({ onSuccess }) {
       </div>
 
       {error && (
-        <div style={{ color: "#f88", fontSize: "0.8rem", marginBottom: "8px" }}>
+        <div style={{ color: "#f88", fontSize: "0.8rem", marginBottom: "6px" }}>
           {error}
         </div>
+      )}
+
+      {info && (
+        <div style={{ color: "#8f8", fontSize: "0.8rem", marginBottom: "6px" }}>
+          {info}
+        </div>
+      )}
+
+      {error === "Your email is not verified." && (
+        <button
+          onClick={resendVerification}
+          disabled={resending}
+          style={{
+            width: "100%",
+            marginBottom: "8px",
+            fontSize: "0.85rem"
+          }}
+        >
+          {resending ? "Resending…" : "Resend verification email"}
+        </button>
       )}
 
       <button

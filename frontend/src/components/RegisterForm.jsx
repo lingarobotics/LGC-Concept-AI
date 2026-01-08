@@ -6,27 +6,24 @@ function RegisterForm({ onSuccess }) {
     password: "",
     name: "",
     department: "",
-    customDepartment: "",
     passOutYear: ""
   });
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [info, setInfo] = useState("");
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-
-  const isOtherDepartment = form.department === "Other";
 
   const allFieldsFilled =
     form.email &&
     form.password &&
     form.name &&
     form.department &&
-    form.passOutYear &&
-    (!isOtherDepartment || form.customDepartment);
+    form.passOutYear;
 
   const handleSubmit = async () => {
     if (!allFieldsFilled) {
@@ -35,24 +32,26 @@ function RegisterForm({ onSuccess }) {
     }
 
     setError("");
+    setInfo("");
     setLoading(true);
 
     const payload = {
       email: form.email,
       password: form.password,
       name: form.name,
-      department: isOtherDepartment
-        ? form.customDepartment.trim()
-        : form.department,
+      department: form.department, // "Other" is stored as-is
       passOutYear: form.passOutYear
     };
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/auth/register`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        }
+      );
 
       const data = await res.json();
 
@@ -62,8 +61,11 @@ function RegisterForm({ onSuccess }) {
         return;
       }
 
-      // Registration = authentication
-      onSuccess(form.email);
+      setInfo(
+        "Account created successfully. Please verify your email using the link sent to your inbox."
+      );
+
+      onSuccess({ email: form.email, success: false });
     } catch {
       setError("Server error");
     }
@@ -126,17 +128,6 @@ function RegisterForm({ onSuccess }) {
         <option value="Other">Other</option>
       </select>
 
-      {/* Custom Department (only if Other) */}
-      {isOtherDepartment && (
-        <input
-          name="customDepartment"
-          placeholder="Enter your department *"
-          value={form.customDepartment}
-          onChange={handleChange}
-          style={{ width: "100%", marginBottom: "8px" }}
-        />
-      )}
-
       {/* Pass-out Year */}
       <select
         name="passOutYear"
@@ -160,6 +151,12 @@ function RegisterForm({ onSuccess }) {
       {error && (
         <div style={{ color: "#f88", fontSize: "0.8rem", marginBottom: "8px" }}>
           {error}
+        </div>
+      )}
+
+      {info && (
+        <div style={{ color: "#8f8", fontSize: "0.8rem", marginBottom: "8px" }}>
+          {info}
         </div>
       )}
 

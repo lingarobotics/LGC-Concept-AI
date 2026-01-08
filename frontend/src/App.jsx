@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import LearnMode from "./Pages/LearnMode";
 import DoubtMode from "./Pages/DoubtMode";
 import TeachBackMode from "./Pages/TeachBackMode";
+import VerifyEmail from "./Pages/VerifyEmail";
+
 import lgcLogo from "./assets/lgc-logo.png";
 import { AuthProvider } from "./context/AuthContext";
 
@@ -65,7 +69,12 @@ function AppContent() {
 export default function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<AppContent />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+        </Routes>
+      </BrowserRouter>
     </AuthProvider>
   );
 }
