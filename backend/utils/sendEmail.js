@@ -1,27 +1,30 @@
-import nodemailer from "nodemailer";
+import fetch from "node-fetch";
 
 /**
- * Send email using free SMTP 
- * Caller controls subject & html
+ * Send email using Resend (HTTP-based)
+ * Works on Railway (SMTP is blocked)
  */
 const sendEmail = async ({ to, subject, html }) => {
   try {
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT),
-      secure: false,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-      }
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        from: "LGC Concept AI <onboarding@resend.dev>",
+        to,
+        subject,
+        html
+      })
     });
 
-    await transporter.sendMail({
-      from: process.env.SMTP_FROM,
-      to,
-      subject,
-      html
-    });
+    if (!res.ok) {
+      const error = await res.text();
+      console.error("EMAIL SEND ERROR:", error);
+      throw new Error("Email sending failed");
+    }
   } catch (err) {
     console.error("EMAIL SEND ERROR:", err);
     throw err;
