@@ -1,8 +1,6 @@
-import fetch from "node-fetch";
-
 /**
  * Send email using Resend (HTTP-based)
- * Works on Railway (SMTP is blocked)
+ * Uses native fetch (Node.js 18+)
  */
 const sendEmail = async ({ to, subject, html }) => {
   try {
