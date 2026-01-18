@@ -1,29 +1,33 @@
-import nodemailer from "nodemailer";
-
+/**
+ * Send email using Brevo HTTP API
+ */
 const sendEmail = async ({ to, subject, html }) => {
   try {
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP__HOST,
-      port: Number(process.env.SMTP__PORT),
-      secure: false,          // MUST be false for 587 port
-      requireTLS: true,
-      auth: {
-        user: process.env.SMTP__USER,
-        pass: process.env.SMTP__PASS
+    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        "accept": "application/json",
+        "content-type": "application/json",
+        "api-key": process.env.BREVO_API_KEY
       },
-      connectionTimeout: 10000,
-      greetingTimeout: 10000,
-      socketTimeout: 10000
+      body: JSON.stringify({
+        sender: {
+          name: "LGC Concept AI",
+          email: process.env.BREVO_SENDER_EMAIL
+        },
+        to: [{ email: to }],
+        subject,
+        htmlContent: html
+      })
     });
 
-    await transporter.sendMail({
-      from: process.env.SMTP__FROM,
-      to,
-      subject,
-      html
-    });
+    if (!res.ok) {
+      const error = await res.text();
+      console.error("EMAIL SEND ERROR:", error);
+      throw new Error("Email sending failed");
+    }
   } catch (err) {
-    console.error("EMAIL SEND ERROR:", err);
+    console.error("EMAIL SEND FAILED:", err);
     throw err;
   }
 };
