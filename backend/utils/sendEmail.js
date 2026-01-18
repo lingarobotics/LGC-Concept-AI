@@ -1,28 +1,27 @@
-/**
- * Send email using Resend (HTTP-based)
- * Uses native fetch (Node.js 18+)
- */
+import nodemailer from "nodemailer";
+
 const sendEmail = async ({ to, subject, html }) => {
   try {
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-        "Content-Type": "application/json"
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT),
+      secure: false,          // MUST be false for 587 port
+      requireTLS: true,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
       },
-      body: JSON.stringify({
-        from: "LGC Concept AI <onboarding@resend.dev>",
-        to,
-        subject,
-        html
-      })
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 10000
     });
 
-    if (!res.ok) {
-      const error = await res.text();
-      console.error("EMAIL SEND ERROR:", error);
-      throw new Error("Email sending failed");
-    }
+    await transporter.sendMail({
+      from: process.env.SMTP_FROM,
+      to,
+      subject,
+      html
+    });
   } catch (err) {
     console.error("EMAIL SEND ERROR:", err);
     throw err;
