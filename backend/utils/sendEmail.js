@@ -3,13 +3,13 @@ import nodemailer from "nodemailer";
 const sendEmail = async ({ to, subject, html }) => {
   try {
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT),
+      host: process.env.SMTP__HOST,
+      port: Number(process.env.SMTP__PORT),
       secure: false,          // MUST be false for 587 port
       requireTLS: true,
       auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
+        user: process.env.SMTP__USER,
+        pass: process.env.SMTP__PASS
       },
       connectionTimeout: 10000,
       greetingTimeout: 10000,
@@ -17,7 +17,7 @@ const sendEmail = async ({ to, subject, html }) => {
     });
 
     await transporter.sendMail({
-      from: process.env.SMTP_FROM,
+      from: process.env.SMTP__FROM,
       to,
       subject,
       html
