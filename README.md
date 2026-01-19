@@ -176,3 +176,4 @@ Acknowledgements
 => Anna University exam pattern & evaluation style
 => Open learning communities
 => OpenRouter API (for accessing NVIDIA and other open models)
+=> Brevo API (for transactional Email delivery)
