@@ -123,16 +123,11 @@ function AppContent() {
               <p>
                 <strong>Fast Learn</strong> — Choose this when you
                 <b> don’t have much time</b> and need quick clarity.
-                This mode gives you key takeaways directly,
+                This mode provides key takeaways directly,
                 without long explanations.
-              </p>
-
-              <p>
-                <strong>Doubt Mode</strong> — Use this when you already
-                studied a concept but have
-                <b> one specific confusion</b>.
-                Ideal for clearing precise doubts without revisiting
-                the entire topic.
+                Suitable for last-minute learning or revision.
+                For deep understanding and coding-related questions,
+                use Learn Mode.
               </p>
 
               <p>
@@ -168,3 +163,6 @@ export default function App() {
     </AuthProvider>
   );
 }
+
+
+// this App.jsx file is for version 2.0.0

@@ -60,6 +60,7 @@ function FastLearnMode() {
         <br />
         Ask a question and receive <b>key takeaways only</b>.
         This mode focuses on remembering the core idea, not deep learning.
+        Use Learn Mode for <strong>comprehensive understanding and coding-related questions</strong>.
       </div>
 
       {/* Input */}
