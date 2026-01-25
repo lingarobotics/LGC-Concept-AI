@@ -131,6 +131,15 @@ function AppContent() {
               </p>
 
               <p>
+                <strong>Doubt Mode</strong> — Use this when you already
+                understand most of a topic but have
+                <b> one specific confusion</b>.
+                This mode clears precise doubts quickly,
+                without re-explaining the entire concept
+                or switching to exam-style answers.
+              </p>
+
+              <p>
                 <strong>Teach-Back Mode</strong> — This is the
                 <b> most powerful way to learn</b>.
                 If you want to be sure you truly understand a concept,
@@ -164,5 +173,4 @@ export default function App() {
   );
 }
 
-
-// this App.jsx file is for version 2.0.0
+//this file is for version 2.0.0
