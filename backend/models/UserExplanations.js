@@ -16,13 +16,13 @@ const userExplanationsSchema = new mongoose.Schema(
           required: true
         },
 
-        mode: {
+        type: {
           type: String,
-          enum: ["teachback"],
-          default: "teachback"
+          enum: ["teachback", "core_points"],
+          required: true
         },
 
-        explainedAt: {
+        createdAt: {
           type: Date,
           default: Date.now
         }

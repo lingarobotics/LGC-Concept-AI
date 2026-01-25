@@ -1,32 +1,34 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import AuthGate from "../components/AuthGate";
 import { useAuth } from "../context/AuthContext";
 
 function TeachBackMode() {
   const [explanation, setExplanation] = useState("");
   const [feedback, setFeedback] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [showAuthGate, setShowAuthGate] = useState(false);
 
-  /* -------- GLOBAL AUTH (v1.1) -------- */
-  const { isAuthenticated, userEmail, login } = useAuth();
-  /* ----------------------------------- */
+  const { isAuthenticated, userEmail } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const submit = async () => {
     if (!explanation.trim()) return;
 
+    /* -------- AUTH REQUIRED (STRICT) -------- */
     if (!isAuthenticated) {
-      setShowAuthGate(true);
+      navigate("/auth", {
+        state: { from: location.pathname }
+      });
       return;
     }
+    /* --------------------------------------- */
 
     setLoading(true);
     const currentExplanation = explanation;
 
     try {
-      /* -------- AI CALL (Railway) -------- */
       const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/ask`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -38,7 +40,6 @@ function TeachBackMode() {
 
       const data = await res.json();
 
-      /* -------- SAFE FEEDBACK HANDLING -------- */
       if (data?.answer && data.answer.trim()) {
         setFeedback((prev) => [...prev, data.answer]);
       } else {
@@ -50,9 +51,8 @@ function TeachBackMode() {
 
       setExplanation("");
 
-      /* -------- LOG EXPLANATION (Local Backend) -------- */
       try {
-        const logRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/question/log`, {
+        await fetch(`${import.meta.env.VITE_BACKEND_URL}/question/log`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -61,13 +61,7 @@ function TeachBackMode() {
             mode: "teachback"
           })
         });
-
-        const logData = await logRes.json();
-        console.log("Teachback logged:", logData);
-      } catch (err) {
-        console.error("Teachback logging failed:", err);
-      }
-      /* ----------------------------------------------- */
+      } catch {}
     } finally {
       setLoading(false);
     }
@@ -75,9 +69,9 @@ function TeachBackMode() {
 
   return (
     <>
-      {/* V1 Detailed Explanation */}
+      {/* V2 Detailed Explanation */}
       <div style={{ fontSize: "0.85rem", color: "#aaa", marginBottom: "12px" }}>
-        <b>Teach-Back Mode (Version 1.2)</b>
+        <b>Teach-Back Mode (Version 2.0)</b>
         <br />
         <br />
         This mode evaluates your understanding by asking you to
@@ -93,27 +87,6 @@ function TeachBackMode() {
         Progress tracking and cross-session learning analysis
         will be introduced in a future version.
       </div>
-
-      {/* Auth Info */}
-      {!isAuthenticated && (
-        <div
-          style={{
-            fontSize: "0.8rem",
-            color: "#bbb",
-            marginBottom: "12px",
-            textAlign: "center"
-          }}
-        >
-          Please{" "}
-          <button
-            style={{ fontSize: "0.8rem" }}
-            onClick={() => setShowAuthGate(true)}
-          >
-            Login
-          </button>{" "}
-          to save your explanations.
-        </div>
-      )}
 
       {/* Input */}
       <textarea
@@ -142,17 +115,6 @@ function TeachBackMode() {
           </div>
         ))}
       </div>
-
-      {/* Auth Gate */}
-      {showAuthGate && (
-        <AuthGate
-          onSuccess={(email) => {
-            login(email);
-            setShowAuthGate(false);
-          }}
-          onClose={() => setShowAuthGate(false)}
-        />
-      )}
     </>
   );
 }
