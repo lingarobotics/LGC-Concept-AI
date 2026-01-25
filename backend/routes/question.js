@@ -6,12 +6,12 @@ import UserExplanations from "../models/UserExplanations.js";
 const router = express.Router();
 
 /* =========================
-   LOG USER ACTIVITY (v1.1)
+   LOG USER ACTIVITY (v2.0)
    ========================= */
 router.post("/log", async (req, res) => {
-  const { email, question, mode } = req.body;
+  const { email, question, mode, action } = req.body;
 
-  if (!email || !question || !mode) {
+  if (!email || (!question && !action) || !mode) {
     return res.status(400).json({ error: "Missing fields" });
   }
 
@@ -31,7 +31,9 @@ router.post("/log", async (req, res) => {
         {
           $push: {
             explanations: {
-              text: question
+              text: question,
+              type: "teachback",
+              createdAt: new Date()
             }
           }
         },
@@ -45,7 +47,31 @@ router.post("/log", async (req, res) => {
     }
 
     /* =====================================
-       LEARN / DOUBT → QUESTION LOG + COUNT
+       LEARN → CORE POINTS ACTION (NEW)
+       ===================================== */
+    if (mode === "learn" && action === "core_points") {
+      await UserExplanations.findOneAndUpdate(
+        { userId: user._id },
+        {
+          $push: {
+            explanations: {
+              text: question,
+              type: "core_points",
+              createdAt: new Date()
+            }
+          }
+        },
+        {
+          upsert: true,
+          new: true
+        }
+      );
+
+      return res.json({ message: "Core points action logged" });
+    }
+
+    /* =====================================
+       LEARN / DOUBT / FASTLEARN → QUESTION LOG
        ===================================== */
     await UserQuestions.findOneAndUpdate(
       { userId: user._id },
@@ -53,7 +79,8 @@ router.post("/log", async (req, res) => {
         $push: {
           questions: {
             question,
-            mode
+            mode,
+            createdAt: new Date()
           }
         }
       },

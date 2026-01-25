@@ -2,22 +2,18 @@ import { useState } from "react";
 import RegisterForm from "./RegisterForm";
 import LoginForm from "./LoginForm";
 
-function AuthGate({ onSuccess, onClose }) {
+function AuthGate({ onSuccess }) {
   const [mode, setMode] = useState("register"); // register | login
 
   return (
     <div
       style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        background: "rgba(0,0,0,0.6)",
+        minHeight: "100vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        zIndex: 9999
+        background: "#0f1115",
+        padding: "24px"
       }}
     >
       <div
@@ -28,7 +24,8 @@ function AuthGate({ onSuccess, onClose }) {
           borderRadius: "8px",
           width: "100%",
           maxWidth: "420px",
-          textAlign: "center"
+          textAlign: "center",
+          border: "1px solid #2a2f45"
         }}
       >
         <h3 style={{ marginBottom: "12px" }}>
@@ -65,8 +62,7 @@ function AuthGate({ onSuccess, onClose }) {
         {mode === "register" ? (
           <RegisterForm
             onSuccess={() => {
-              // ✅ DO NOTHING on register success
-              // Keep modal open so user sees verification guidance
+              // Registration success flow stays unchanged
             }}
           />
         ) : (
@@ -78,13 +74,6 @@ function AuthGate({ onSuccess, onClose }) {
             }}
           />
         )}
-
-        <button
-          onClick={onClose}
-          style={{ fontSize: "0.8rem", opacity: 0.7, marginTop: "12px" }}
-        >
-          Close
-        </button>
       </div>
     </div>
   );

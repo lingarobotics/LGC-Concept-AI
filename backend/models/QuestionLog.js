@@ -15,7 +15,7 @@ const questionLogSchema = new mongoose.Schema(
 
     mode: {
       type: String,
-      enum: ["learn", "doubt", "teachback"],
+      enum: ["learn", "doubt", "teachback", "fast-learn"],
       required: true
     }
   },

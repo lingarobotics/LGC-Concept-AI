@@ -1,45 +1,57 @@
-Verify Understanding — Teach-Back Evaluation Mode
-1. Purpose
+# Teach-Back Mode — Verify Understanding
 
-Verify Understanding Mode is designed to check what the student has actually understood, not to teach new content.
+## 1. Purpose
 
-2. How This Mode Works
+Teach-Back Mode is designed to **verify what the student has actually understood**, not to teach new content.  
+It focuses on checking clarity, correctness, and completeness of the student’s own explanation.
 
-a) The student explains a concept in their own words.
+---
 
-b) The AI responds by:
+## 2. How This Mode Works
 
-a) Encouraging the student first.
+Teach-Back Mode follows a simple evaluation loop:
 
-b) Checking conceptual correctness.
+- The student explains a concept **in their own words**.
 
-c) Pointing out mistakes briefly.
+- The system responds by:
+  - Encouraging the student first.
+  - Checking **conceptual correctness**.
+  - Pointing out mistakes **briefly and clearly**.
+  - Identifying **missing or weak points**.
+  - Providing **simple corrective guidance**, without re-teaching.
 
-d) Identifying missing points.
+- The student is then motivated to **retry and refine** their explanation.
 
-e) Giving simple corrections.
+---
 
-c) The student is motivated to retry and refine their explanation.
+## 3. What This Mode Does Not Do
 
-3. What This Mode Does NOT Do
+Teach-Back Mode deliberately does not:
 
-a) Does not generate full explanations.
+- Generate full explanations or detailed theory.
 
-b) Does not introduce new concepts.
+- Introduce new concepts that were not mentioned by the student.
 
-c) Does not behave like Learn Mode.
+- Behave like Learn Mode or provide exam-structured answers.
 
-d) Does not over-teach.
+- Over-teach or replace active learning.
 
-4. When to Use Verify Understanding
+---
 
-=> After completing a topic.
+## 4. When to Use Teach-Back Mode
 
-=> Before exams to test clarity.
+Use Teach-Back Mode:
 
-=> To convert passive reading into active understanding.
+- After completing a topic.
 
-5. Core Principle
+- Before examinations to test conceptual clarity.
 
-=> If you can explain it clearly, you understand it.
-=> If not, this mode shows where your understanding is weak.
+- To convert **passive reading into active understanding**.
+
+---
+
+## 5. Core Principle
+
+> If you can explain it clearly, you understand it.
+
+Teach-Back Mode exists to **expose gaps in understanding**, so they can be corrected before they affect learning or exam performance.

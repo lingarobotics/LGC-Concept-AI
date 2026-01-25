@@ -152,7 +152,7 @@ When included, label clearly as:
 ------------------------------------
 STEP 4: ANSWER STYLE (AU STANDARD)
 ------------------------------------
-• Clear headings
+• Clear outreach
 • Structured flow
 • Exam-oriented language
 • Bullet points allowed but not compressive
@@ -196,6 +196,38 @@ Your task:
 6. Motivate the student to try again
 `;
 
+// ---------------- FAST LEARN PROMPT ----------------
+const FAST_LEARN_PROMPT = `
+You are LGC Concept AI operating in Fast Learn mode.
+
+Your task:
+• Read the question carefully
+• Extract ONLY the most important ideas
+• Respond with clear key takeaways
+• Use short bullet points
+• Do NOT give full explanations
+• Do NOT expand beyond core understanding
+• No exam structuring
+• No analogies
+`;
+
+// ---------------- LEARN CORE PROMPT ----------------
+const LEARN_CORE_PROMPT = `
+You are LGC Concept AI extracting a mental model.
+
+Input will be a FULL explanation generated earlier.
+
+Your task:
+• Reduce the explanation into 5–7 core points
+• Focus on structure, flow, and reasoning
+• Capture what must be remembered
+• Avoid repetition
+• Do NOT re-explain fully
+• Do NOT introduce new information
+• Use clear bullet points only
+• Output must be derived strictly from the given text only
+`;
+
 // ---------------- MODE → PROMPT ----------------
 function getPromptByMode(mode) {
   switch (mode) {
@@ -203,6 +235,10 @@ function getPromptByMode(mode) {
       return DOUBT_PROMPT;
     case "teachback":
       return TEACHBACK_PROMPT;
+    case "fast-learn":
+      return FAST_LEARN_PROMPT;
+    case "learn-core":
+      return LEARN_CORE_PROMPT;
     case "learn":
     default:
       return LEARN_PROMPT;
@@ -215,6 +251,8 @@ function getModelByMode(mode) {
     case "learn":
     case "doubt":
     case "teachback":
+    case "fast-learn":
+    case "learn-core":
     default:
       return "nvidia/nemotron-3-nano-30b-a3b:free";
   }
@@ -222,10 +260,13 @@ function getModelByMode(mode) {
 
 // ---------------- API ENDPOINT ----------------
 app.post("/ask", async (req, res) => {
-  const { question, mode = "learn" } = req.body;
+  const { question, explanation, mode = "learn" } = req.body;
 
-  if (!question || !question.trim()) {
-    return res.status(400).json({ error: "Question is required" });
+  const userInput =
+    mode === "learn-core" ? explanation : question;
+
+  if (!userInput || !userInput.trim()) {
+    return res.status(400).json({ error: "Input is required" });
   }
 
   const systemPrompt = getPromptByMode(mode);
@@ -245,7 +286,7 @@ app.post("/ask", async (req, res) => {
           temperature: 0.4,
           messages: [
             { role: "system", content: systemPrompt },
-            { role: "user", content: question },
+            { role: "user", content: userInput },
           ],
         }),
       }
@@ -253,9 +294,7 @@ app.post("/ask", async (req, res) => {
 
     const data = await response.json();
 
-    // ✅ SAFE, NON-DESTRUCTIVE HANDLING (v1.1)
     const answer = data?.choices?.[0]?.message?.content || "";
-
     res.json({ answer });
   } catch (err) {
     console.error("OPENROUTER ERROR:", err);

@@ -1,24 +1,27 @@
 import { useState } from "react";
-import AuthGate from "../components/AuthGate";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function DoubtMode() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [showAuthGate, setShowAuthGate] = useState(false);
 
-  /* -------- GLOBAL AUTH (v1.1) -------- */
-  const { isAuthenticated, userEmail, login } = useAuth();
-  /* ----------------------------------- */
+  const { isAuthenticated, userEmail } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const askAI = async () => {
     if (!input.trim()) return;
 
+    /* -------- AUTH REQUIRED (STRICT) -------- */
     if (!isAuthenticated) {
-      setShowAuthGate(true);
+      navigate("/auth", {
+        state: { from: location.pathname }
+      });
       return;
     }
+    /* --------------------------------------- */
 
     const userMsg = { role: "user", text: input };
     setMessages((prev) => [...prev, userMsg]);
@@ -27,7 +30,6 @@ function DoubtMode() {
     setLoading(true);
 
     try {
-      /* -------- AI CALL (Railway) -------- */
       const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/ask`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -40,9 +42,8 @@ function DoubtMode() {
       const data = await res.json();
       setMessages((prev) => [...prev, { role: "ai", text: data.answer }]);
 
-      /* -------- LOG QUESTION (Local Backend) -------- */
       try {
-        const logRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/question/log`, {
+        await fetch(`${import.meta.env.VITE_BACKEND_URL}/question/log`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -51,14 +52,8 @@ function DoubtMode() {
             mode: "doubt"
           })
         });
-
-        const logData = await logRes.json();
-        console.log("Doubt logged:", logData);
-      } catch (err) {
-        console.error("Doubt logging failed:", err);
-      }
-      /* --------------------------------------------- */
-    } catch (err) {
+      } catch {}
+    } catch {
       setMessages((prev) => [
         ...prev,
         {
@@ -73,9 +68,9 @@ function DoubtMode() {
 
   return (
     <>
-      {/* V1.1 Detailed Explanation */}
+      {/* V2 Detailed Explanation */}
       <div style={{ fontSize: "0.85rem", color: "#aaa", marginBottom: "12px" }}>
-        <b>Doubt Mode (Version 1.2)</b>
+        <b>Doubt Mode (Version 2.0)</b>
         <br />
         <br />
         This mode is designed to answer <b>one clear and explicit doubt</b> at a time.
@@ -90,27 +85,6 @@ function DoubtMode() {
         Conversation memory and multi-turn context understanding are
         actively being designed and will be introduced in a future version.
       </div>
-
-      {/* Auth Info */}
-      {!isAuthenticated && (
-        <div
-          style={{
-            fontSize: "0.8rem",
-            color: "#bbb",
-            marginBottom: "12px",
-            textAlign: "center"
-          }}
-        >
-          Please{" "}
-          <button
-            style={{ fontSize: "0.8rem" }}
-            onClick={() => setShowAuthGate(true)}
-          >
-            Login
-          </button>{" "}
-          to save your doubts.
-        </div>
-      )}
 
       {/* Messages */}
       <div style={{ maxHeight: "60vh", overflowY: "auto", marginBottom: "10px" }}>
@@ -139,17 +113,6 @@ function DoubtMode() {
       <button onClick={askAI} disabled={loading || !input.trim()}>
         {loading ? "Clearing…" : "Clear Doubt"}
       </button>
-
-      {/* Auth Gate */}
-      {showAuthGate && (
-        <AuthGate
-          onSuccess={(email) => {
-            login(email);
-            setShowAuthGate(false);
-          }}
-          onClose={() => setShowAuthGate(false)}
-        />
-      )}
     </>
   );
 }

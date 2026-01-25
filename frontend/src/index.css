@@ -1,5 +1,5 @@
 /* =========================
-   LGC Concept AI – V1 CSS
+   LGC Concept AI – V2 CSS
    Philosophy: clarity > decoration
    ========================= */
 
@@ -28,12 +28,41 @@ body {
   padding: 1.25rem;
 }
 
-/* ---------- App Shell (Desktop Centering) ----------
-   This is where centering happens
----------------------------------- */
+/* ---------- App Shell (Desktop Centering) ---------- */
 .app-shell {
   max-width: 760px;
   margin: 0 auto;
+  position: relative;
+}
+
+/* ---------- Auth Corner (Optional Login/Register) ---------- */
+.auth-corner {
+  position: absolute;
+  bottom: -28px;
+  right: 0;
+}
+
+.auth-corner button {
+  background: transparent;
+  color: #8a8a8a;
+  border: none;
+  padding: 0;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.auth-corner button:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+/* ---------- Auth Panel ---------- */
+.auth-panel {
+  margin-top: 16px;
+  border: 1px solid #2a2f45;
+  border-radius: 6px;
+  padding: 14px;
+  background: #12141c;
 }
 
 /* ---------- Mode Switch ---------- */
@@ -166,6 +195,12 @@ button:disabled {
 
   button {
     width: 100%;
+  }
+
+  .auth-corner {
+    position: static;
+    margin-top: 8px;
+    text-align: right;
   }
 }
 

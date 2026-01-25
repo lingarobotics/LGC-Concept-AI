@@ -1,179 +1,217 @@
-LGC Concept AI 🎓🤖
+# LGC Concept AI 🎓🤖  
+**Learning Concepts. Writing Exams. Building Confidence.**
 
-Learning Concepts. Writing Exams. Building Confidence.
+LGC Concept AI is an **Anna University–oriented AI learning assistant** built to help engineering students **understand theory deeply**, **structure answers correctly**, and **write confident 13-mark responses** in the expected university exam format.
 
-LGC Concept AI is an Anna University–oriented AI learning assistant designed to help engineering students deeply understand theory-heavy subjects and confidently write 13-mark answers in the expected Anna University exam pattern.
+The system prioritizes **concept clarity, exam relevance, and mental confidence**, making it especially effective for **slow learners, first-generation engineers, and theory-heavy subjects**.
 
-This project focuses on concept clarity, real-world analogies, and exam-oriented structuring, making it suitable even for slow learners and first-generation engineers.
+---
 
-🚀 Project Vision
+## 🚀 Project Vision
 
-Many engineering students fail not because concepts are impossible, but because explanations are:
+Many engineering students struggle not because concepts are impossible, but because explanations are:
 
-=> too abstract
-=> not exam-oriented
-=> not structured the way Anna University evaluators expect
+- Too abstract  
+- Not exam-oriented  
+- Poorly structured for Anna University evaluation  
 
-LGC Concept AI solves this problem by acting like a patient senior student or tutor, who explains concepts:
+**LGC Concept AI solves this gap** by behaving like a patient senior or tutor who explains concepts:
 
-=> clearly
-=> step-by-step
-=> in a marks-aware format
+- Clearly  
+- Step-by-step  
+- In a **marks-aware, exam-ready structure**
 
-The goal is not just answer generation, but learning that survives exam pressure.
+The goal is **not just answer generation**, but learning that **survives exam pressure**.
 
-✨ Key Features
-📘 Exam-Focused Learning (Learn Mode)
+---
 
-=> Strict Anna University exam pattern
-=> Optimized for 13-mark theory questions
-=> Structured answers (definition → working → applications → pros/cons)
-=> Aspect-focused answering (definition / working / comparison / advantages, etc.)
-=> Answers strictly what is asked in the question — nothing extra, nothing missing
-=> Designed for engineering streams:
-EEE, ECE, MECH, CIVIL, AUTO, CSE
+## ✨ What’s New in Version 2.0
 
-🧠 Concept Clarity First
+Version **2.0** introduces a **mode-driven learning system**, separating learning behaviors clearly and intentionally.
 
-=> Uses real-world analogies for abstract topics
-=> Beginner & slow-learner friendly explanations
-=> Avoids unnecessary textbook dumping
-=> Respects exact question scope
+### 🔹 Fast Learn Mode (New)
 
-🔁 Continuous Learning Flow (Scroll-Based)
+- Designed for **quick clarity and last-minute revision**
+- Provides **key takeaways only**
+- No long explanations or exam structuring
+- Ideal when time is limited
 
-=> Long answers remain scrollable and readable
-=> Previous responses stay visible
-=> Learning feels continuous, not form-based
-=> Reduces cognitive load and anxiety
+> ⚠️ Not suitable for deep learning or coding questions  
+> 👉 Users are guided to **Learn Mode** when depth is required
 
-🧠 Verify Understanding (Teach-Back Mode — Core Philosophy)
+---
 
-One of the core philosophies of LGC Concept AI is learning by explaining.
+### 🔹 Learn Mode (Enhanced)
 
-In Verify Understanding mode:
+- Fully **exam-oriented**
+- Strict **Anna University question scope enforcement**
+- Structured answers suitable for **13-mark questions**
+- Aspect-aware answering:
+  - Definition
+  - Construction
+  - Working
+  - Comparison
+  - Applications
+  - Advantages / Limitations
 
-The student explains the concept in their own words
+**New in v2.0:**  
+➡️ **Core Points / Mental Model Extraction**  
+After a full explanation, students can extract **5–7 memory-friendly core points** to reinforce understanding and revision.
 
-The explanation is evaluated by the AI
+---
 
-Feedback is given in a structured manner
+### 🔹 Clear Doubt Mode (Standardized)
 
-The AI behaves as a patient evaluator who:
+- Designed for **micro-clarifications**
+- Answers **only the specific doubt**
+- Short, direct, and focused
+- Avoids re-teaching the entire topic
 
-=> encourages first
-=> checks conceptual correctness
-=> identifies missing points
-=> gently corrects misunderstandings
-=> motivates the student to retry
+Perfect when:
+- You mostly understand the concept
+- You’re stuck at one small point
+- You need clarity without overload
 
-This verifies true understanding, not memorization.
+---
 
-“If you can explain it simply, you understand it.”
+### 🔹 Verify Understanding (Teach-Back Mode — Core Philosophy)
 
-❓ Clear Doubt (Micro-Clarification Mode)
+One of the strongest pillars of LGC Concept AI is **learning by explaining**.
 
-Learning is not linear.
+In Teach-Back Mode:
 
-Often students understand most of the answer, but get stuck at one small point.
+1. The student explains a concept in their own words  
+2. The AI:
+   - Encourages first
+   - Checks conceptual correctness
+   - Identifies missing logic
+   - Points out mistakes briefly
+   - Motivates the student to retry  
 
-Clear Doubt mode supports this by allowing:
+> “If you can explain it clearly, you understand it.”
 
-=> quick clarification of local doubts
-=> focused correction without over-teaching
-=> context-aware follow-up questions
+This mode verifies **real understanding**, not memorization.
 
-Without forcing the student to:
+---
 
-=> jump to a new question
-=> explain the entire concept again
+## 🧠 Answer Structure (Anna University Preferred)
 
-This respects real student thinking patterns.
+In Learn Mode, responses follow a **marks-aware structure**:
 
-🧠 Answer Structure (Anna University Preferred)
+- Definition (≈2 marks)
+- Construction / Components (≈3 marks)
+- Working Principle (≈4–5 marks)
+- Applications
+- Advantages & Limitations
+- One clearly marked **analogy (not for exam writing)**
 
-Every response generated in Learn Mode follows a marks-aware structure:
+Answers strictly match what is asked — **nothing extra, nothing missing**.
 
-Definition (≈2 marks)
+---
 
-Construction / Components (≈3 marks)
+## 🔁 Learning Experience Design
 
-Working Principle / Operation (≈4–5 marks)
+- Scroll-based long answers
+- Previous responses remain visible
+- Continuous learning flow (not form-based)
+- Reduced cognitive load and exam anxiety
 
-Real-World Analogy (clearly marked – not for exam)
+---
 
-Applications
+## 🏗️ Tech Stack
 
-Advantages & Limitations
+### Frontend
+- React + Vite
+- Clean, distraction-free UI
+- Mobile-friendly layout
 
-13-mark long answers are generated only when explicitly requested.
+### Backend
+- Node.js + Express
+- Mode-based routing
+- Prompt isolation per learning mode
 
-🏗️ Tech Stack
-Frontend
+---
 
-=> React + Vite
-=> Clean, distraction-free UI
-=> Mobile-friendly layout
+## 🤖 AI Strategy (Mode-Wise)
 
-Backend
+LGC Concept AI uses **mode-isolated prompts and behaviors** to prevent
+learning intent from being mixed.
 
-=> Node.js + Express
-=> Mode-based request routing
-=> Prompt isolation per learning mode
+Each mode is deliberately constrained.
 
-🤖 AI Strategy (Mode-Wise)
+### Learn Mode
+- Model: NVIDIA Nemotron
+- Behavior:
+  - Full exam-oriented explanations
+  - Aspect-aware (definition, working, applications, etc.)
+  - Strict Anna University scope control
+  - Supports Core Points / Mental Model extraction
 
-LGC Concept AI uses different AI models for different learning behaviors.
+### Fast Learn Mode
+- Model: NVIDIA Nemotron
+- Behavior:
+  - Key takeaways only
+  - No long explanations
+  - No exam structuring
+  - No analogies
+- Purpose:
+  - Quick clarity
+  - Last-minute revision
+  - Time-constrained learning
 
-Learn Mode & Clear Doubt Mode
+> Fast Learn is intentionally **not designed for coding or deep theory**.
+> Users are guided to Learn Mode when depth is required.
 
-=> Model: NVIDIA Nemotron
-=> Purpose: structured exam explanations and precise doubt correction
+### Clear Doubt Mode
+- Model: NVIDIA Nemotron
+- Behavior:
+  - Answers only the specific doubt
+  - Short, direct, and focused
+  - No re-teaching
 
-Verify Understanding Mode
+### Verify Understanding (Teach-Back Mode)
+- Reasoning-focused evaluation
+- Encourages first, then evaluates
+- Identifies mistakes and missing logic
+- Does not re-teach the concept
 
-=> Model: Chimera (reasoning-focused)
-=> Purpose: evaluating student explanations without re-teaching
+This separation prevents **mode-bleeding** and preserves learning intent.
 
-Each mode is behavior-locked by prompt design and model selection.
+---
 
-🔐 Privacy & Cost Philosophy
+## 🔐 Privacy & Cost Philosophy
 
-=> No forced paid subscriptions
-=> No unnecessary data storage
-=> No hidden monetization
+- No forced subscriptions
+- No hidden monetization
+- Minimal data storage
+- Lightweight and sustainable architecture
 
-=> Lightweight and sustainable architecture
-=> Focus on learning value, not platform dependency
+> Learning needs investment in **time and consistency**, not money.
 
-🎯 Target Audience
+---
 
-=> Anna University engineering students
-=> Slow learners struggling with theory
-=> Students who know concepts but panic in exams or write unstructured answers
+## 🎯 Target Audience
 
-📌 Core Philosophy
+- Anna University engineering students
+- Slow learners struggling with theory
+- Students who understand concepts but panic in exams
+- Learners who want **clarity over shortcuts**
 
-=> Learning needs investment in time and consistency, not money.
+---
 
-LGC Concept AI is built to:
+## 📖 Future Enhancements (Planned)
 
-=> reduce fear
-=> increase clarity
-=> help students trust their understanding
+- Reflection prompts (“What did I correct?”)
+- Non-gamified learning streaks
+- Subject-wise structuring
+- Offline revision mode
+- Conversational chat-like UI
 
-📖 Future Enhancements (Planned)
+---
 
-=> Reflection prompts (“What did I correct?”)
-=> Learning streaks (non-gamified)
-=> Subject-wise structuring
-=> Offline revision mode
-=> Chat-like conversational UI
+## 🙏 Acknowledgements
 
-
-Acknowledgements
-
-=> Anna University exam pattern & evaluation style
-=> Open learning communities
-=> OpenRouter API (for accessing NVIDIA and other open models)
-=> Brevo API (for transactional Email delivery)
+- Anna University exam pattern & evaluation style  
+- Open learning communities  
+- OpenRouter API (NVIDIA and open models)  
+- Brevo API (transactional email delivery)

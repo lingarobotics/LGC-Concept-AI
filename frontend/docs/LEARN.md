@@ -1,40 +1,54 @@
-Learn Mode — Exam-Oriented Explanation
+# Learn Mode — Exam-Oriented Explanation
 
-1. Purpose
+## 1. Purpose
 
-Learn Mode is designed to help students write correct, structured answers for Anna University examinations.
+Learn Mode exists to help students produce **correct, structured, and exam-ready answers** aligned with **Anna University examination standards**.  
+It focuses on answering questions in the exact way marks are awarded, not just explaining concepts.
 
-2. What This Mode Does
+## 2. What This Mode Does
 
-a) Identifies the exact aspect of the question (definition, working, comparison, etc.).
+Learn Mode:
 
-b) Answers only what is asked — no extra or missing content.
+- Identifies the **exact aspect(s)** of the question  
+  (definition, construction, working, comparison, application, etc.).
 
-c) Uses headings and bullet points suitable for exam evaluation.
+- Answers **only what is explicitly asked**, ensuring no extra or missing content.
 
-d) Keeps the answer length appropriate for 13-mark questions.
+- Uses **clear headings and structured bullet points** suitable for exam evaluation.
 
-e) Adds one labelled analogy strictly for understanding (not for exam writing).
+- Maintains **appropriate depth and length**, especially for standard **13-mark questions**.
 
-3. What This Mode Avoids
+- Includes **one clearly labelled analogy**  
+  *(for understanding only — not to be written in the exam)*.
 
-a) Over-answering beyond the question scope.
+## 3. What This Mode Avoids
 
-b) Mixing construction, working, advantages, etc., when not asked.
+Learn Mode deliberately avoids:
 
-c) Chat-style or conversational replies.
+- Over-answering beyond the scope of the question.
 
-d) Evaluating the student’s understanding.
+- Mixing unrelated aspects  
+  (for example, adding advantages when only working is asked).
 
-4. When to Use Learn Mode
+- Chat-style, conversational, or informal explanations.
 
-=> Before exams.
+- Evaluating or judging the student’s understanding  
+  *(this is handled by Teach-Back Mode)*.
 
-=> When learning a topic for the first time.
+## 4. When to Use Learn Mode
 
-=> When converting concepts into exam-ready answers.
+Use Learn Mode:
 
-5. Core Principle
+- Before examinations.
 
-=> Marks are lost when answers don’t match the question.
-=> Learn Mode exists to prevent that.
+- When learning a topic **for the first time**.
+
+- When converting conceptual understanding into **exam-ready answers**.
+
+- When accuracy, structure, and depth directly affect marks.
+
+## 5. Core Principle
+
+> Marks are lost when answers do not match the question.
+
+Learn Mode exists to **prevent scope mismatch and structural errors**, ensuring answers align precisely with **exam expectations and marking schemes**.

@@ -1,38 +1,56 @@
-Clear Doubt Mode — Quick Concept Correction
-1. Purpose
+# Doubt Mode — Quick Concept Correction
 
-Clear Doubt Mode is designed to remove specific confusion when a student already has partial understanding of a topic.
+## 1. Purpose
 
-2. What This Mode Does
+Doubt Mode is designed to help students **eliminate a specific confusion** when they already have partial understanding of a topic.  
+Its goal is fast correction, not full coverage.
 
-a) Answers only the exact doubt asked by the student.
+---
 
-b) Keeps responses short, direct, and focused.
+## 2. What This Mode Does
 
-c) Corrects wrong assumptions immediately.
+Doubt Mode:
 
-d) Maintains context across follow-up questions.
+- Answers **only the exact doubt** asked by the student.
 
-e) Uses a friendly and supportive tone, not exam-oriented language.
+- Keeps responses **short, direct, and focused**.
 
-3. What This Mode Avoids
+- Identifies and corrects **wrong assumptions immediately**.
 
-a) Full explanations or long theory.
+- Processes each question independently, without relying on prior context.
 
-b) Exam-style structuring or formatting.
+- Uses a **clear and supportive tone**, not exam-oriented language.
 
-c) Re-teaching the entire topic.
+---
 
-d) Introducing unrelated information.
+## 3. What This Mode Avoids
 
-4. When to Use Clear Doubt Mode
+Doubt Mode deliberately avoids:
 
-=> When you already know the topic but feel confused.
+- Full explanations or long theoretical discussions.
 
-=> When the question is short, incomplete, or fragmented.
+- Exam-style structuring, headings, or mark-oriented formatting.
 
-=> During quick revision or last-minute clarification.
+- Re-teaching the entire topic from scratch.
 
-5. Core Principle
+- Introducing unrelated or additional information.
 
-=> Clear Doubt Mode focuses on doubt elimination, not completeness.
+---
+
+## 4. When to Use Doubt Mode
+
+Use Doubt Mode:
+
+- When you already know the topic but feel **confused about one point**.
+
+- When the question is **short, narrow, or very specific**.
+
+- During **quick revision** or last-minute clarification.
+
+---
+
+## 5. Core Principle
+
+> Doubt Mode focuses on **eliminating confusion**, not achieving completeness.
+
+Its purpose is to resolve uncertainty quickly so learning can continue smoothly.
