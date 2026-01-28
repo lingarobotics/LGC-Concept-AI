@@ -4,10 +4,14 @@
 
 The following versions of LGC Concept AI are currently supported with security updates:
 
+## Supported Versions
+
+<!-- SECURITY_VERSION_START -->
 | Version | Supported |
 |--------|-----------|
 | 2.0.0 (latest) | ✅ Yes |
 | < 2.0.0 | ❌ No |
+<!-- SECURITY_VERSION_END -->
 
 > Note: The current latest stable release is **v2.0.0**.
 > Only the latest version receives security updates.
