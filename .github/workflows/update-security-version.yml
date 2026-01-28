@@ -1,0 +1,40 @@
+name: Update SECURITY.md on version tag
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  update-security-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Update SECURITY.md
+        run: |
+          sed -i "/<!-- SECURITY_VERSION_START -->/,/<!-- SECURITY_VERSION_END -->/c\
+<!-- SECURITY_VERSION_START -->\n\
+| Version | Supported |\n\
+|--------|-----------|\n\
+| ${VERSION} (latest) | ✅ Yes |\n\
+| < ${VERSION} | ❌ No |\n\
+<!-- SECURITY_VERSION_END -->" SECURITY.md
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add SECURITY.md
+          git commit -m "DOCS: update supported version to v${VERSION}"
+          git push
