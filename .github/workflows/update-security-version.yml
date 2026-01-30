@@ -17,24 +17,32 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Extract version from tag
-        run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
 
-      - name: Update SECURITY.md
+      - name: Update SECURITY.md version block
         run: |
-          sed -i "/<!-- SECURITY_VERSION_START -->/,/<!-- SECURITY_VERSION_END -->/c\
-<!-- SECURITY_VERSION_START -->\n\
-| Version | Supported |\n\
-|--------|-----------|\n\
-| ${VERSION} (latest) | ✅ Yes |\n\
-| < ${VERSION} | ❌ No |\n\
-<!-- SECURITY_VERSION_END -->" SECURITY.md
+          VERSION="${VERSION}"
+          awk -v ver="$VERSION" '
+          /<!-- SECURITY_VERSION_START -->/ {
+              print "<!-- SECURITY_VERSION_START -->"
+              print "| Version | Supported |"
+              print "|--------|-----------|"
+              print "| " ver " (latest) | ✅ Yes |"
+              print "| < " ver " | ❌ No |"
+              print "<!-- SECURITY_VERSION_END -->"
+              skip=1
+              next
+          }
+          /<!-- SECURITY_VERSION_END -->/ { skip=0; next }
+          !skip { print }
+          ' SECURITY.md > temp.md
 
-      - name: Commit and push changes
+          mv temp.md SECURITY.md
+
+      - name: Commit and push changes (if modified)
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add SECURITY.md
-          git commit -m "DOCS: update supported version to v${VERSION}"
+          git diff --cached --quiet || git commit -m "DOCS: update supported version to v${VERSION}"
           git push
