@@ -2,6 +2,9 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import { globalLimiter } from "./middleware/rateLimiter.js";
+import { aiLimiter } from "./middleware/rateLimiter.js";
+
 import authRoutes from "./routes/auth.js";
 import questionRoutes from "./routes/question.js";
 
@@ -18,8 +21,13 @@ mongoose
   });
 
 const app = express();
-app.use(cors());
-app.use(express.json());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+  })
+);
+app.use(express.json({ limit: "10kb" }));
+app.use(globalLimiter);
 app.use("/question", questionRoutes);
 
 // ---------------- TEST ROUTE ----------------
@@ -259,7 +267,7 @@ function getModelByMode(mode) {
 }
 
 // ---------------- API ENDPOINT ----------------
-app.post("/ask", async (req, res) => {
+app.post("/ask", aiLimiter, async (req, res) => {
   const { question, explanation, mode = "learn" } = req.body;
 
   const userInput =
