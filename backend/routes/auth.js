@@ -1,68 +1,78 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import rateLimit from "express-rate-limit";
 import User from "../models/User.js";
 import sendEmail from "../utils/sendEmail.js";
 
 const router = express.Router();
 
 /* =========================
-   BASIC VALIDATORS (v1.2)
+   RATE LIMITERS
    ========================= */
 
-// Name: letters, spaces, dot, hyphen (2–50 chars)
+// Strict limiter for login (brute-force protection)
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 mins
+  max: 5,
+  message: { error: "Too many login attempts. Try again later." },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+// Moderate limiter for registration
+const registerLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5,
+  message: { error: "Too many registrations. Try again later." }
+});
+
+// Resend verification limiter
+const resendLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 3,
+  message: { error: "Too many requests. Try again later." }
+});
+
+/* =========================
+   BASIC VALIDATORS (v1.3)
+   ========================= */
+
 const NAME_REGEX = /^[A-Za-z.\-\s]{2,50}$/;
 
-// Minimal profanity deny-list (substring match)
 const PROFANITY_WORDS = [
-  "fuck",
-  "fucker",
-  "shit",
-  "bitch",
-  "asshole",
-  "pussy",
-  "ass",
-  "cock",
-  "thevidiyapaiyan",
-  "thevdiya",
-  "otha",
-  "oththa",
-  "punda",
-  "lusukoodhi",
-  "koodhi"
+  "fuck","fucker","shit","bitch","asshole","pussy","ass","cock",
+  "thevidiyapaiyan","thevdiya","otha","oththa","punda","lusukoodhi","koodhi" //Tamil profanity
 ];
 
-// Allowed departments (Other allowed, no custom input)
 const ALLOWED_DEPARTMENTS = [
-  "Robotics Engineering",
-  "CSE",
-  "ECE",
-  "EEE",
-  "Mechanical Engineering",
-  "Civil Engineering",
-  "Automobile Engineering",
-  "Biotechnology",
-  "BME",
-  "AI & DS",
-  "Other"
+  "Robotics Engineering","CSE","ECE","EEE","Mechanical Engineering",
+  "Civil Engineering","Automobile Engineering","Biotechnology",
+  "BME","AI & DS","Other"
 ];
 
 function isNameValid(name) {
   if (!NAME_REGEX.test(name)) return false;
-
   const lower = name.toLowerCase();
   return !PROFANITY_WORDS.some((word) => lower.includes(word));
 }
 
 /* =========================
-   REGISTER (v1.2)
+   REGISTER
    ========================= */
-router.post("/register", async (req, res) => {
-  const { email, password, name, department, passOutYear } = req.body;
+
+router.post("/register", registerLimiter, async (req, res) => {
+  let { email, password, name, department, passOutYear } = req.body;
 
   if (!email || !password || !name || !department || !passOutYear) {
     return res.status(400).json({ error: "All fields are required" });
   }
+
+  if (typeof email !== "string") {
+    return res.status(400).json({ error: "Invalid email format" });
+  }
+
+  const normalizedEmail = email.trim().toLowerCase();
 
   if (!isNameValid(name)) {
     return res.status(400).json({
@@ -74,8 +84,6 @@ router.post("/register", async (req, res) => {
   if (!ALLOWED_DEPARTMENTS.includes(department)) {
     return res.status(400).json({ error: "Invalid department selection" });
   }
-
-  const normalizedEmail = email.toLowerCase();
 
   try {
     const existingUser = await User.findOne({ userId: normalizedEmail });
@@ -101,7 +109,8 @@ router.post("/register", async (req, res) => {
 
     await user.save();
 
-    const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
+    const verificationLink =
+      `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
 
     try {
       await sendEmail({
@@ -116,8 +125,6 @@ router.post("/register", async (req, res) => {
       });
     } catch (mailError) {
       console.error("EMAIL SEND FAILED:", mailError);
-
-      // 🔥 rollback to avoid dead accounts
       await User.deleteOne({ userId: normalizedEmail });
 
       return res.status(500).json({
@@ -128,6 +135,7 @@ router.post("/register", async (req, res) => {
     return res.status(201).json({
       message: "User registered successfully"
     });
+
   } catch (err) {
     console.error("REGISTER ERROR:", err);
     return res.status(500).json({ error: "Registration failed" });
@@ -135,17 +143,19 @@ router.post("/register", async (req, res) => {
 });
 
 /* =========================
-   RESEND VERIFICATION (v1.2)
+   RESEND VERIFICATION
    ========================= */
-router.post("/resend-verification", async (req, res) => {
-  const { email } = req.body;
 
-  if (!email) {
-    return res.status(400).json({ error: "Email is required" });
+router.post("/resend-verification", resendLimiter, async (req, res) => {
+  let { email } = req.body;
+
+  if (!email || typeof email !== "string") {
+    return res.status(400).json({ error: "Valid email is required" });
   }
 
+  const normalizedEmail = email.trim().toLowerCase();
+
   try {
-    const normalizedEmail = email.toLowerCase();
     const user = await User.findOne({ userId: normalizedEmail });
 
     if (!user) {
@@ -163,7 +173,8 @@ router.post("/resend-verification", async (req, res) => {
     user.emailVerificationTokenExpiresAt = tokenExpiry;
     await user.save();
 
-    const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
+    const verificationLink =
+      `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
 
     await sendEmail({
       to: normalizedEmail,
@@ -176,6 +187,7 @@ router.post("/resend-verification", async (req, res) => {
     });
 
     return res.json({ message: "Verification email resent" });
+
   } catch (err) {
     console.error("RESEND VERIFY ERROR:", err);
     return res
@@ -185,12 +197,13 @@ router.post("/resend-verification", async (req, res) => {
 });
 
 /* =========================
-   VERIFY EMAIL (v1.2)
+   VERIFY EMAIL
    ========================= */
+
 router.get("/verify-email", async (req, res) => {
   const { token } = req.query;
 
-  if (!token) {
+  if (!token || typeof token !== "string") {
     return res.status(400).json({ error: "Invalid verification request" });
   }
 
@@ -213,6 +226,7 @@ router.get("/verify-email", async (req, res) => {
     await user.save();
 
     return res.json({ message: "Email verified successfully" });
+
   } catch (err) {
     console.error("EMAIL VERIFY ERROR:", err);
     return res.status(500).json({ error: "Email verification failed" });
@@ -220,17 +234,21 @@ router.get("/verify-email", async (req, res) => {
 });
 
 /* =========================
-   LOGIN (v1.2)
+   LOGIN
    ========================= */
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
 
-  if (!email || !password) {
+router.post("/login", loginLimiter, async (req, res) => {
+  let { email, password } = req.body;
+
+  if (!email || !password || typeof email !== "string") {
     return res.status(400).json({ error: "Email and password are required" });
   }
 
+  const normalizedEmail = email.trim().toLowerCase();
+
   try {
-    const user = await User.findOne({ userId: email.toLowerCase() });
+    const user = await User.findOne({ userId: normalizedEmail });
+
     if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
@@ -240,11 +258,13 @@ router.post("/login", async (req, res) => {
     }
 
     const isMatch = await bcrypt.compare(password, user.passwordHash);
+
     if (!isMatch) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
     return res.json({ message: "Login successful" });
+
   } catch (err) {
     console.error("LOGIN ERROR:", err);
     return res.status(500).json({ error: "Login failed" });
@@ -252,5 +272,3 @@ router.post("/login", async (req, res) => {
 });
 
 export default router;
-
-//this file is untouched in v2.0.0, so no version tag is added
