@@ -1,54 +1,83 @@
-# Learn Mode — Exam-Oriented Explanation
+## Learn Mode — Exam-Oriented Explanation
 
-## 1. Purpose
+---
 
-Learn Mode exists to help students produce **correct, structured, and exam-ready answers** aligned with **Anna University examination standards**.  
-It focuses on answering questions in the exact way marks are awarded, not just explaining concepts.
+### 1. Purpose
 
-## 2. What This Mode Does
+Learn Mode is designed to help students produce **accurate, structured, and examination-ready answers** aligned with **Anna University examination standards**.
 
-Learn Mode:
+Its objective is not merely conceptual explanation, but precise alignment with how marks are awarded in written examinations.
+
+In addition to structured explanations, Learn Mode includes a **Core Point Extraction mechanism** to identify distinct scoring units within each answer.
+
+---
+
+### 2. Functional Capabilities
+
+Learn Mode performs the following:
 
 - Identifies the **exact aspect(s)** of the question  
-  (definition, construction, working, comparison, application, etc.).
+  (e.g., definition, construction, working, comparison, application).
 
-- Answers **only what is explicitly asked**, ensuring no extra or missing content.
+- Responds strictly within the **explicit scope of the question**, avoiding omissions or unnecessary additions.
 
-- Uses **clear headings and structured bullet points** suitable for exam evaluation.
+- Structures answers using **clear headings and logically ordered bullet points** suitable for exam evaluation.
 
-- Maintains **appropriate depth and length**, especially for standard **13-mark questions**.
+- Maintains appropriate **depth, clarity, and length**, particularly for standard **13-mark questions**.
 
 - Includes **one clearly labelled analogy**  
-  *(for understanding only — not to be written in the exam)*.
+  *(for conceptual understanding only — not intended for direct exam writing).*
 
-## 3. What This Mode Avoids
+- Executes **Core Point Extraction**:
+  - After the structured explanation, the system extracts  
+    **6–8 distinct core scoring points** (based on question weight).
+  - Each core point represents an independent marking unit.
+  - This enables:
+    - Efficient revision  
+    - Completeness verification  
+    - Clear understanding of mark distribution  
 
-Learn Mode deliberately avoids:
+---
 
-- Over-answering beyond the scope of the question.
+### 3. Deliberate Constraints
+
+Learn Mode intentionally avoids:
+
+- Over-answering beyond the defined scope of the question.
 
 - Mixing unrelated aspects  
-  (for example, adding advantages when only working is asked).
+  (e.g., including advantages when only working is requested).
 
-- Chat-style, conversational, or informal explanations.
+- Conversational, informal, or chat-style explanations.
 
-- Evaluating or judging the student’s understanding  
-  *(this is handled by Teach-Back Mode)*.
+- Evaluation of student understanding  
+  *(this function is handled by Teach-Back Mode).*
 
-## 4. When to Use Learn Mode
+---
 
-Use Learn Mode:
+### 4. Recommended Usage
 
-- Before examinations.
+Learn Mode should be used:
 
-- When learning a topic **for the first time**.
+- During examination preparation.
 
-- When converting conceptual understanding into **exam-ready answers**.
+- When studying a topic for the first time.
 
-- When accuracy, structure, and depth directly affect marks.
+- When converting conceptual knowledge into exam-ready structure.
 
-## 5. Core Principle
+- When precision, alignment, and structure directly impact marks.
 
-> Marks are lost when answers do not match the question.
+---
 
-Learn Mode exists to **prevent scope mismatch and structural errors**, ensuring answers align precisely with **exam expectations and marking schemes**.
+### 5. Core Principle
+
+> Marks are lost when answers do not align precisely with the question.
+
+Learn Mode exists to:
+
+- Eliminate scope mismatch  
+- Ensure structural accuracy  
+- Align responses with marking schemes  
+- Decompose explanations into measurable scoring units  
+
+It ensures that students not only understand a concept, but can present it in a format that maximizes scoring potential.
