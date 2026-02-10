@@ -8,7 +8,7 @@ import TeachBackMode from "./Pages/TeachBackMode";
 import VerifyEmail from "./Pages/VerifyEmail";
 import AuthPage from "./Pages/AuthPage";
 
-import lgcLogo from "./assets/lgc-logo.png";
+import lgcLogo from "./assets/icon.png";
 import { AuthProvider } from "./context/AuthContext";
 import { useAuth } from "./context/AuthContext";
 
@@ -35,12 +35,14 @@ function AppContent() {
             <img
               src={lgcLogo}
               alt="LGC Concept AI Logo"
-              width="72"
+              width="100"
+              className = "splash-logo"
               style={{ marginBottom: "12px" }}
             />
-            <h2>LGC Concept AI</h2>
-            <p>Learning at No Cost</p>
-            <span>Version 2.0</span>
+            <h2 className = "splash-title">LGC Concept AI</h2>
+            <h3 className = "splash-subtitle">Learn. Govern. Construct</h3>
+            <p className = "splash-tagline">Learning at No Cost</p>
+            <span className = "splash-version">Version 2.0</span>
           </div>
         </div>
       )}

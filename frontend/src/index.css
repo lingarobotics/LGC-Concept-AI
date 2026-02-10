@@ -233,3 +233,38 @@ button:disabled {
 .output-box tr:hover {
   background-color: #1f2335;
 }
+
+/* ---------- Splash Screen ---------- */
+
+.splash-logo {
+  width: 120px;
+  margin-bottom: 24px;
+}
+
+.splash-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.splash-subtitle {
+  margin-top: 12px;
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.splash-tagline {
+  margin: 0;
+  font-size: 16px;
+  opacity: 0.8;
+  color: rgba(255, 255, 255, 0.85);
+
+}
+
+.splash-version {
+  display: block;
+  margin-top: 12px;
+  font-size: 14px;
+  opacity: 0.5;
+}
