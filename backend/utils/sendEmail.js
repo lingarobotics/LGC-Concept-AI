@@ -12,7 +12,7 @@ const sendEmail = async ({ to, subject, html }) => {
       },
       body: JSON.stringify({
         sender: {
-          name: "LGC Concept AI",
+          name: "LGC Concept AI - Learn. Govern. Construct",
           email: process.env.BREVO_SENDER_EMAIL
         },
         to: [{ email: to }],
