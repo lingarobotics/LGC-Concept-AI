@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useAuth } from "../context/AuthContext";
+import ModeSwitchCTA from "../components/ModeSwitchCTA";
 
 function TeachBackMode() {
   const [explanation, setExplanation] = useState("");
@@ -16,14 +17,13 @@ function TeachBackMode() {
   const submit = async () => {
     if (!explanation.trim()) return;
 
-    /* -------- AUTH REQUIRED (STRICT) -------- */
+    /* Strict Auth Required */
     if (!isAuthenticated) {
       navigate("/auth", {
         state: { from: location.pathname }
       });
       return;
     }
-    /* --------------------------------------- */
 
     setLoading(true);
     const currentExplanation = explanation;
@@ -45,7 +45,7 @@ function TeachBackMode() {
       } else {
         setFeedback((prev) => [
           ...prev,
-          "✅ Your explanation appears conceptually correct. No major issues were detected. You may add more depth or examples if required."
+          "✅ Your explanation appears conceptually correct. You may refine it further with clearer logic or examples."
         ]);
       }
 
@@ -69,23 +69,18 @@ function TeachBackMode() {
 
   return (
     <>
-      {/* V2 Detailed Explanation */}
-      <div style={{ fontSize: "0.85rem", color: "#aaa", marginBottom: "12px" }}>
-        <b>Teach-Back Mode (Version 2.0)</b>
+      {/* Mode Description - Cleaned */}
+      <div
+        style={{
+          fontSize: "0.9rem",
+          color: "#bbb",
+          marginBottom: "16px",
+          lineHeight: "1.6"
+        }}
+      >
+        <b>Teach-Back Mode</b> verifies your understanding.
         <br />
-        <br />
-        This mode evaluates your understanding by asking you to
-        <b> explain the concept in your own words</b>.
-        <br />
-        <br />
-        Your explanation is checked for correctness, missing logic,
-        and misconceptions. The goal is to verify understanding,
-        not to judge writing style.
-        <br />
-        <br />
-        Each submission is evaluated independently.
-        Progress tracking and cross-session learning analysis
-        will be introduced in a future version.
+        Explain the concept in your own words and receive structured feedback.
       </div>
 
       {/* Input */}
@@ -115,6 +110,9 @@ function TeachBackMode() {
           </div>
         ))}
       </div>
+
+      {/* Switch Section */}
+      <ModeSwitchCTA currentMode="teach-back" />
     </>
   );
 }

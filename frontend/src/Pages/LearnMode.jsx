@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useAuth } from "../context/AuthContext";
+import ModeSwitchCTA from "../components/ModeSwitchCTA";
 
 function LearnMode() {
   const [question, setQuestion] = useState("");
@@ -55,14 +56,13 @@ function LearnMode() {
   const askAI = async () => {
     if (!question.trim()) return;
 
-    /* ----------- SOFT AUTH GATE (v1.2 parity) ----------- */
+    /* Soft Auth Gate */
     if (!isAuthenticated && questionCount >= 3) {
       navigate("/auth", {
         state: { from: location.pathname }
       });
       return;
     }
-    /* --------------------------------------------------- */
 
     setLoading(true);
     setLoadingText("Getting your answer…");
@@ -124,7 +124,6 @@ function LearnMode() {
       const data = await res.json();
       setCoreAnswer(data.answer);
 
-      /* -------- LOG CORE POINTS ACTION (v2.0) -------- */
       if (isAuthenticated && userEmail) {
         try {
           await fetch(`${import.meta.env.VITE_BACKEND_URL}/question/log`, {
@@ -139,7 +138,6 @@ function LearnMode() {
           });
         } catch {}
       }
-      /* ---------------------------------------------- */
     } finally {
       setCoreLoading(false);
     }
@@ -147,21 +145,18 @@ function LearnMode() {
 
   return (
     <>
-      {/* V2.0 Detailed Explanation */}
-      <div style={{ fontSize: "0.85rem", color: "#aaa", marginBottom: "12px" }}>
-        <b>Learn Mode (Version 2.0)</b>
+      {/* Mode Description - Cleaned */}
+      <div
+        style={{
+          fontSize: "0.9rem",
+          color: "#bbb",
+          marginBottom: "16px",
+          lineHeight: "1.6"
+        }}
+      >
+        <b>Learn Mode</b> is for structured, exam-relevant understanding.
         <br />
-        <br />
-        This mode provides <b>structured explanations</b> focused on clarity,
-        exam relevance, and <b>mark separation</b>.
-        <br />
-        <br />
-        Each question is handled independently. If you want continuity,
-        restate the concept or topic explicitly in your question.
-        <br />
-        <br />
-        Future versions will introduce guided learning paths and
-        context-aware progression across topics.
+        Ask for full explanations when you want clarity with proper depth.
       </div>
 
       {/* Input */}
@@ -177,7 +172,7 @@ function LearnMode() {
         {loading ? loadingText : "Ask"}
       </button>
 
-      {/* Answer (mandatory) */}
+      {/* Answer */}
       {answer && (
         <div className="output-box" style={{ marginTop: "16px" }}>
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -186,7 +181,7 @@ function LearnMode() {
         </div>
       )}
 
-      {/* Core / Mental Model Button */}
+      {/* Core Points */}
       {answer && (
         <div style={{ marginTop: "12px" }}>
           <button
@@ -196,12 +191,11 @@ function LearnMode() {
           >
             {coreLoading
               ? "Extracting core points…"
-              : "Get core points / mental model"}
+              : "Extract core points / mental model"}
           </button>
         </div>
       )}
 
-      {/* Core Answer (separate space) */}
       {coreAnswer && (
         <div
           className="output-box"
@@ -216,6 +210,9 @@ function LearnMode() {
           </ReactMarkdown>
         </div>
       )}
+
+      {/* Switch Mode Section */}
+      <ModeSwitchCTA currentMode="learn" />
     </>
   );
 }

@@ -1,22 +1,28 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useNavigate
+} from "react-router-dom";
 
+import Home from "./Pages/Home";
+import ExploreModes from "./Pages/ExploreModes";
 import LearnMode from "./Pages/LearnMode";
 import FastLearnMode from "./Pages/FastLearnMode";
 import DoubtMode from "./Pages/DoubtMode";
 import TeachBackMode from "./Pages/TeachBackMode";
 import VerifyEmail from "./Pages/VerifyEmail";
 import AuthPage from "./Pages/AuthPage";
+import Why from "./Pages/Why";
 
 import lgcLogo from "./assets/icon.png";
 import { AuthProvider } from "./context/AuthContext";
 import { useAuth } from "./context/AuthContext";
 
-function AppContent() {
-  const [mode, setMode] = useState("home");
+function AppShell({ children }) {
   const [showSplash, setShowSplash] = useState(true);
   const navigate = useNavigate();
-
   const { isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
@@ -28,7 +34,6 @@ function AppContent() {
 
   return (
     <>
-      {/* Splash */}
       {showSplash && (
         <div className="splash-overlay">
           <div className="splash-card">
@@ -36,20 +41,19 @@ function AppContent() {
               src={lgcLogo}
               alt="LGC Concept AI Logo"
               width="100"
-              className = "splash-logo"
+              className="splash-logo"
               style={{ marginBottom: "12px" }}
             />
-            <h2 className = "splash-title">LGC Concept AI</h2>
-            <h3 className = "splash-subtitle">Learn. Govern. Construct</h3>
-            <p className = "splash-tagline">Learning at No Cost</p>
-            <span className = "splash-version">Version 2.0</span>
+            <h2 className="splash-title">LGC Concept AI</h2>
+            <h3 className="splash-subtitle">Learn. Govern. Construct</h3>
+            <p className="splash-tagline">Learning at No Cost</p>
+            <span className="splash-version">Version 2.0</span>
           </div>
         </div>
       )}
 
-      {/* App Shell */}
       <div className="app-shell">
-        {/* Header Row */}
+        {/* Header */}
         <div
           style={{
             display: "flex",
@@ -64,7 +68,6 @@ function AppContent() {
             </p>
           </div>
 
-          {/* TOP-RIGHT AUTH ACTION */}
           {!isAuthenticated ? (
             <button
               style={{
@@ -74,8 +77,7 @@ function AppContent() {
                 borderRadius: "6px",
                 padding: "6px 12px",
                 cursor: "pointer",
-                fontSize: "0.85rem",
-                whiteSpace: "nowrap"
+                fontSize: "0.85rem"
               }}
               onClick={() => navigate("/auth")}
             >
@@ -90,8 +92,7 @@ function AppContent() {
                 borderRadius: "6px",
                 padding: "6px 12px",
                 cursor: "pointer",
-                fontSize: "0.85rem",
-                whiteSpace: "nowrap"
+                fontSize: "0.85rem"
               }}
               onClick={logout}
             >
@@ -100,61 +101,9 @@ function AppContent() {
           )}
         </div>
 
-        {/* MODE SWITCH */}
-        <div className="mode-switch" style={{ marginTop: "16px" }}>
-          <button onClick={() => setMode("home")}>Home</button>
-          <button onClick={() => setMode("learn")}>Learn</button>
-          <button onClick={() => setMode("fastlearn")}>Fast Learn</button>
-          <button onClick={() => setMode("doubt")}>Doubt</button>
-          <button onClick={() => setMode("teachback")}>Teach-Back</button>
-        </div>
-
-        {/* MODE CONTENT */}
-        <div className="mode-container">
-          {mode === "home" && (
-            <div className="home-mode">
-              <h3>Choose the Right Mode for Your Situation</h3>
-
-              <p>
-                <strong>Learn Mode</strong> — Use this when you want
-                <b> deep and structured understanding</b>.
-                Best suited for first-time learning, exam preparation,
-                and building strong conceptual foundations.
-              </p>
-
-              <p>
-                <strong>Fast Learn</strong> — Choose this when you
-                <b> don’t have much time</b> and need quick clarity.
-                This mode provides key takeaways directly,
-                without long explanations.
-                Suitable for last-minute learning or revision.
-                For deep understanding and coding-related questions,
-                use Learn Mode.
-              </p>
-
-              <p>
-                <strong>Doubt Mode</strong> — Use this when you already
-                understand most of a topic but have
-                <b> one specific confusion</b>.
-                This mode clears precise doubts quickly,
-                without re-explaining the entire concept
-                or switching to exam-style answers.
-              </p>
-
-              <p>
-                <strong>Teach-Back Mode</strong> — This is the
-                <b> most powerful way to learn</b>.
-                If you want to be sure you truly understand a concept,
-                explain it in your own words and let the system
-                verify your understanding.
-              </p>
-            </div>
-          )}
-
-          {mode === "learn" && <LearnMode />}
-          {mode === "fastlearn" && <FastLearnMode />}
-          {mode === "doubt" && <DoubtMode />}
-          {mode === "teachback" && <TeachBackMode />}
+        {/* Page Content */}
+        <div className="mode-container" style={{ marginTop: "24px" }}>
+          {children}
         </div>
       </div>
     </>
@@ -166,7 +115,69 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<AppContent />} />
+          <Route
+            path="/"
+            element={
+              <AppShell>
+                <Home />
+              </AppShell>
+            }
+          />
+
+          <Route
+            path="/explore"
+            element={
+              <AppShell>
+                <ExploreModes />
+              </AppShell>
+            }
+          />
+
+          <Route
+            path="/why"
+            element={
+              <AppShell>
+                <Why />
+              </AppShell>
+            }
+          />
+
+          <Route
+            path="/learn"
+            element={
+              <AppShell>
+                <LearnMode />
+              </AppShell>
+            }
+          />
+
+          <Route
+            path="/fast-learn"
+            element={
+              <AppShell>
+                <FastLearnMode />
+              </AppShell>
+            }
+          />
+
+          <Route
+            path="/doubt"
+            element={
+              <AppShell>
+                <DoubtMode />
+              </AppShell>
+            }
+          />
+
+          <Route
+            path="/teach-back"
+            element={
+              <AppShell>
+                <TeachBackMode />
+              </AppShell>
+            }
+          />
+
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
         </Routes>
@@ -174,5 +185,3 @@ export default function App() {
     </AuthProvider>
   );
 }
-
-//this file is for version 2.0.0

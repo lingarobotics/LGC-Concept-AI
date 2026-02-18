@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useAuth } from "../context/AuthContext";
+import ModeSwitchCTA from "../components/ModeSwitchCTA";
 
 function FastLearnMode() {
   const [question, setQuestion] = useState("");
@@ -17,14 +18,13 @@ function FastLearnMode() {
   const askFastLearn = async () => {
     if (!question.trim()) return;
 
-    /* ----------- SOFT AUTH GATE (v1.2 parity) ----------- */
+    /* Soft Auth Gate */
     if (!isAuthenticated && questionCount >= 3) {
       navigate("/auth", {
         state: { from: location.pathname }
       });
       return;
     }
-    /* --------------------------------------------------- */
 
     setLoading(true);
     setAnswer("");
@@ -49,18 +49,18 @@ function FastLearnMode() {
 
   return (
     <>
-      {/* Fast Learn Explanation */}
-      <div style={{ fontSize: "0.85rem", color: "#aaa", marginBottom: "12px" }}>
-        <b>Fast Learn Mode (Version 2.0)</b>
+      {/* Mode Description - Cleaned */}
+      <div
+        style={{
+          fontSize: "0.9rem",
+          color: "#bbb",
+          marginBottom: "16px",
+          lineHeight: "1.6"
+        }}
+      >
+        <b>Fast Learn Mode</b> is for quick clarity under time pressure.
         <br />
-        <br />
-        This mode is designed for <b>quick clarity</b> when you do not have
-        enough time for detailed explanations.
-        <br />
-        <br />
-        Ask a question and receive <b>key takeaways only</b>.
-        This mode focuses on remembering the core idea, not deep learning.
-        Use Learn Mode for <strong>comprehensive understanding and coding-related questions</strong>.
+        Ask your question and get focused key takeaways.
       </div>
 
       {/* Input */}
@@ -68,7 +68,7 @@ function FastLearnMode() {
         rows="3"
         value={question}
         onChange={(e) => setQuestion(e.target.value)}
-        placeholder="Ask a question for quick understanding"
+        placeholder="Ask for quick understanding"
         style={{ width: "100%", padding: "12px", resize: "none" }}
       />
 
@@ -88,6 +88,9 @@ function FastLearnMode() {
           </ReactMarkdown>
         </div>
       )}
+
+      {/* Switch Section */}
+      <ModeSwitchCTA currentMode="fast-learn" />
     </>
   );
 }
