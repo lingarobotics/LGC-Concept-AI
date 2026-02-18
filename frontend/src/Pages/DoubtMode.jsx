@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import ModeSwitchCTA from "../components/ModeSwitchCTA";
 
 function DoubtMode() {
   const [input, setInput] = useState("");
@@ -14,14 +15,13 @@ function DoubtMode() {
   const askAI = async () => {
     if (!input.trim()) return;
 
-    /* -------- AUTH REQUIRED (STRICT) -------- */
+    /* Strict Auth Required */
     if (!isAuthenticated) {
       navigate("/auth", {
         state: { from: location.pathname }
       });
       return;
     }
-    /* --------------------------------------- */
 
     const userMsg = { role: "user", text: input };
     setMessages((prev) => [...prev, userMsg]);
@@ -68,26 +68,28 @@ function DoubtMode() {
 
   return (
     <>
-      {/* V2 Detailed Explanation */}
-      <div style={{ fontSize: "0.85rem", color: "#aaa", marginBottom: "12px" }}>
-        <b>Doubt Mode (Version 2.0)</b>
+      {/* Mode Description - Cleaned */}
+      <div
+        style={{
+          fontSize: "0.9rem",
+          color: "#bbb",
+          marginBottom: "16px",
+          lineHeight: "1.6"
+        }}
+      >
+        <b>Doubt Mode</b> is for clearing one specific confusion at a time.
         <br />
-        <br />
-        This mode is designed to answer <b>one clear and explicit doubt</b> at a time.
-        Each question is processed independently and does not rely on previous
-        messages for context.
-        <br />
-        <br />
-        To get accurate answers, always mention <b>what you are asking about</b>
-        and <b>what exactly you want to know</b> in the same question.
-        <br />
-        <br />
-        Conversation memory and multi-turn context understanding are
-        actively being designed and will be introduced in a future version.
+        Ask clearly and mention the exact concept you’re referring to.
       </div>
 
       {/* Messages */}
-      <div style={{ maxHeight: "60vh", overflowY: "auto", marginBottom: "10px" }}>
+      <div
+        style={{
+          maxHeight: "60vh",
+          overflowY: "auto",
+          marginBottom: "10px"
+        }}
+      >
         {messages.map((m, i) => (
           <div key={i} style={{ marginBottom: "8px" }}>
             <b>{m.role === "user" ? "You:" : "AI:"}</b> {m.text}
@@ -113,6 +115,9 @@ function DoubtMode() {
       <button onClick={askAI} disabled={loading || !input.trim()}>
         {loading ? "Clearing…" : "Clear Doubt"}
       </button>
+
+      {/* Switch Section */}
+      <ModeSwitchCTA currentMode="doubt" />
     </>
   );
 }
