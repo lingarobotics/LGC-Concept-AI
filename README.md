@@ -25,26 +25,24 @@ The goal is **not just answer generation**, but learning that **survives exam pr
 
 ---
 
-## ✨ What’s New in Version 2.0
+# Major Version 2 — Mode-Based Learning Architecture
 
-Version **2.0** introduces a **mode-driven learning system**, separating learning behaviors clearly and intentionally.
+Version 2 established learning as **situational and intentional**, not generic.
 
-### 🔹 Fast Learn Mode (New)
-
-- Designed for **quick clarity and last-minute revision**
-- Provides **key takeaways only**
-- No long explanations or exam structuring
-- Ideal when time is limited
-
-> ⚠️ Not suitable for deep learning or coding questions  
-> 👉 Users are guided to **Learn Mode** when depth is required
+Learning is separated by intent:
+- Depth
+- Speed
+- Precision
+- Articulation
 
 ---
 
-### 🔹 Learn Mode (Enhanced)
+## ✨ Learning Modes
+
+### 🔹 Learn Mode (Primary)
 
 - Fully **exam-oriented**
-- Strict **Anna University question scope enforcement**
+- Strict **Anna University scope enforcement**
 - Structured answers suitable for **13-mark questions**
 - Aspect-aware answering:
   - Definition
@@ -54,13 +52,25 @@ Version **2.0** introduces a **mode-driven learning system**, separating learnin
   - Applications
   - Advantages / Limitations
 
-**New in v2.0:**  
-➡️ **Core Points / Mental Model Extraction**  
+#### Core Points / Mental Model Extraction
 After a full explanation, students can extract **5–7 memory-friendly core points** to reinforce understanding and revision.
 
 ---
 
-### 🔹 Clear Doubt Mode (Standardized)
+### 🔹 Fast Learn Mode
+
+- Designed for **quick clarity and last-minute revision**
+- Provides **key takeaways only**
+- No long explanations
+- No exam structuring
+- No analogies
+
+> ⚠️ Not suitable for coding or deep derivations  
+> 👉 Users are guided to Learn Mode when depth is required
+
+---
+
+### 🔹 Clear Doubt Mode
 
 - Designed for **micro-clarifications**
 - Answers **only the specific doubt**
@@ -82,10 +92,10 @@ In Teach-Back Mode:
 
 1. The student explains a concept in their own words  
 2. The AI:
-   - Encourages first
-   - Checks conceptual correctness
-   - Identifies missing logic
-   - Points out mistakes briefly
+   - Encourages first  
+   - Checks conceptual correctness  
+   - Identifies missing logic  
+   - Points out mistakes briefly  
    - Motivates the student to retry  
 
 > “If you can explain it clearly, you understand it.”
@@ -105,7 +115,8 @@ In Learn Mode, responses follow a **marks-aware structure**:
 - Advantages & Limitations
 - One clearly marked **analogy (not for exam writing)**
 
-Answers strictly match what is asked — **nothing extra, nothing missing**.
+Answers strictly match what is asked —  
+**nothing extra, nothing missing.**
 
 ---
 
@@ -115,6 +126,56 @@ Answers strictly match what is asked — **nothing extra, nothing missing**.
 - Previous responses remain visible
 - Continuous learning flow (not form-based)
 - Reduced cognitive load and exam anxiety
+- Structured transition into learning modes
+
+---
+
+# ⚙️ Infrastructure & Reliability (v2.2+)
+
+Version 2.2 introduced a major backend stability upgrade.
+
+LGC Concept AI no longer depends on a single AI provider.
+
+### 🔁 Unified Multi-Model Fallback Stack
+
+Primary → Secondary → Tertiary → Stable fallback:
+
+- Llama 3.3 70B  
+- Nemotron 30B  
+- Gemma 27B  
+- Gemini 2.5 Flash  
+
+If one provider is rate-limited or overloaded, the system automatically:
+
+- Retries on 429
+- Applies exponential backoff
+- Falls back to the next model
+- Returns a graceful 503 only if all fail
+
+This ensures **controlled degradation instead of system collapse**.
+
+---
+
+### ⏱ Timeout & Failure Handling
+
+- Per-request timeout using AbortController
+- Structured logging with request-level tracing
+- Provider abstraction (OpenRouter + Gemini)
+- Clear failure reporting
+
+The goal is reliability, not dependency fragility.
+
+---
+
+### 🚀 Global Launch Transition
+
+Entering Learn Mode triggers a controlled launch transition:
+
+- App-level overlay
+- Animated loading feedback
+- Structured navigation flow
+
+This prevents abrupt context switching and improves UX coherence.
 
 ---
 
@@ -124,58 +185,44 @@ Answers strictly match what is asked — **nothing extra, nothing missing**.
 - React + Vite
 - Clean, distraction-free UI
 - Mobile-friendly layout
+- Mode-isolated rendering logic
 
 ### Backend
 - Node.js + Express
 - Mode-based routing
 - Prompt isolation per learning mode
+- Multi-provider AI abstraction layer
+- Structured logging & retry control
 
 ---
 
-## 🤖 AI Strategy (Mode-Wise)
+## 🤖 AI Strategy (Mode-Isolated Behavior)
 
-LGC Concept AI uses **mode-isolated prompts and behaviors** to prevent
-learning intent from being mixed.
+LGC Concept AI prevents **mode bleeding** by isolating prompts and intent.
 
-Each mode is deliberately constrained.
+Each mode is constrained deliberately.
 
 ### Learn Mode
-- Model: NVIDIA Nemotron
-- Behavior:
-  - Full exam-oriented explanations
-  - Aspect-aware (definition, working, applications, etc.)
-  - Strict Anna University scope control
-  - Supports Core Points / Mental Model extraction
+- Full exam-oriented explanations
+- Aspect-aware answering
+- Strict Anna University scope control
+- Core point extraction
 
 ### Fast Learn Mode
-- Model: NVIDIA Nemotron
-- Behavior:
-  - Key takeaways only
-  - No long explanations
-  - No exam structuring
-  - No analogies
-- Purpose:
-  - Quick clarity
-  - Last-minute revision
-  - Time-constrained learning
-
-> Fast Learn is intentionally **not designed for coding or deep theory**.
-> Users are guided to Learn Mode when depth is required.
+- Key takeaways only
+- No deep structuring
+- No analogies
+- No long expansions
 
 ### Clear Doubt Mode
-- Model: NVIDIA Nemotron
-- Behavior:
-  - Answers only the specific doubt
-  - Short, direct, and focused
-  - No re-teaching
+- Micro clarification only
+- No re-teaching
 
-### Verify Understanding (Teach-Back Mode)
-- Reasoning-focused evaluation
-- Encourages first, then evaluates
-- Identifies mistakes and missing logic
-- Does not re-teach the concept
-
-This separation prevents **mode-bleeding** and preserves learning intent.
+### Teach-Back Mode
+- Encourages first
+- Evaluates logic
+- Identifies missing reasoning
+- Motivates retry
 
 ---
 
@@ -185,6 +232,7 @@ This separation prevents **mode-bleeding** and preserves learning intent.
 - No hidden monetization
 - Minimal data storage
 - Lightweight and sustainable architecture
+- Free-model prioritized with intelligent fallback
 
 > Learning needs investment in **time and consistency**, not money.
 
@@ -201,6 +249,8 @@ This separation prevents **mode-bleeding** and preserves learning intent.
 
 ## 📖 Future Enhancements (Planned)
 
+- Mathematical rendering engine (v2.3)
+- Structured markdown + equation formatting
 - Reflection prompts (“What did I correct?”)
 - Non-gamified learning streaks
 - Subject-wise structuring
@@ -213,5 +263,14 @@ This separation prevents **mode-bleeding** and preserves learning intent.
 
 - Anna University exam pattern & evaluation style  
 - Open learning communities  
-- OpenRouter API (NVIDIA and open models)  
+- OpenRouter API  
+- Google Gemini API (fallback inference provider)
+- Open models ecosystem  
 - Brevo API (transactional email delivery)
+
+---
+
+LGC Concept AI is not a shortcut tool.
+
+It is a structured learning companion designed to build  
+clarity, discipline, and confidence.

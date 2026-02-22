@@ -14,6 +14,43 @@ This system follows **Semantic Versioning (MAJOR.MINOR.PATCH)**.
 
 ---
 
+## v2.2.0 — Unified AI Fallback & Infrastructure Stability Upgrade
+Date: 2026-02-22
+
+### Added
+- Unified multi-model fallback stack:
+  - Llama 3.3 70B (primary)
+  - Nemotron 30B (secondary)
+  - Gemma 27B (tertiary)
+  - Gemini 2.5 Flash (stable fallback)
+- Provider abstraction layer (OpenRouter + Gemini)
+- 429 retry handling with exponential backoff
+- Per-request timeout using AbortController
+- Structured request-level logging with unique requestId tracing
+- Global launch transition system for controlled navigation
+- Animated loading overlay with dot + progress feedback
+
+### Improved
+- Rate-limit resilience across all learning modes
+- Graceful degradation when providers are overloaded
+- Observability of model selection and failure paths
+- Frontend transition smoothness when entering Learn mode
+- System-level UX coherence
+
+### Changed
+- Replaced single-model dependency with unified fallback architecture
+- Standardized model stack across all learning modes
+- Improved API error handling (503 on total failure instead of generic 500)
+
+### Architecture
+- No breaking API contract changes
+- No learning logic or prompt modifications
+- Backend stability layer significantly strengthened
+- Frontend transition logic elevated to App-level state management
+
+---
+
+
 ## v2.1.0 — Refined Learning Flow Architecture
 Date: 2026-02-18
 
