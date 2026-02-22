@@ -11,38 +11,41 @@ const router = express.Router();
    RATE LIMITERS
    ========================= */
 
-// Strict limiter for login (brute-force protection)
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 mins
+  windowMs: 15 * 60 * 1000,
   max: 5,
   message: { error: "Too many login attempts. Try again later." },
   standardHeaders: true,
   legacyHeaders: false
 });
 
-// Moderate limiter for registration
 const registerLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
+  windowMs: 60 * 60 * 1000,
   max: 5,
   message: { error: "Too many registrations. Try again later." }
 });
 
-// Resend verification limiter
 const resendLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 3,
   message: { error: "Too many requests. Try again later." }
 });
 
+const forgotPasswordLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  message: { error: "Too many password reset requests. Try again later." }
+});
+
 /* =========================
-   BASIC VALIDATORS (v1.3)
+   BASIC VALIDATORS
    ========================= */
 
 const NAME_REGEX = /^[A-Za-z.\-\s]{2,50}$/;
 
 const PROFANITY_WORDS = [
   "fuck","fucker","shit","bitch","asshole","pussy","ass","cock",
-  "thevidiyapaiyan","thevdiya","otha","oththa","punda","lusukoodhi","koodhi" //Tamil profanity
+  "thevidiyapaiyan","thevdiya","otha","oththa","punda","lusukoodhi","koodhi"
 ];
 
 const ALLOWED_DEPARTMENTS = [
@@ -68,17 +71,10 @@ router.post("/register", registerLimiter, async (req, res) => {
     return res.status(400).json({ error: "All fields are required" });
   }
 
-  if (typeof email !== "string") {
-    return res.status(400).json({ error: "Invalid email format" });
-  }
-
   const normalizedEmail = email.trim().toLowerCase();
 
   if (!isNameValid(name)) {
-    return res.status(400).json({
-      error:
-        "Invalid name. Use only letters, spaces, dot or hyphen (2–50 characters)."
-    });
+    return res.status(400).json({ error: "Invalid name" });
   }
 
   if (!ALLOWED_DEPARTMENTS.includes(department)) {
@@ -92,9 +88,7 @@ router.post("/register", registerLimiter, async (req, res) => {
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
-
     const verificationToken = crypto.randomBytes(32).toString("hex");
-    const tokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     const user = new User({
       userId: normalizedEmail,
@@ -103,7 +97,7 @@ router.post("/register", registerLimiter, async (req, res) => {
       department,
       passOutYear,
       emailVerificationToken: verificationToken,
-      emailVerificationTokenExpiresAt: tokenExpiry,
+      emailVerificationTokenExpiresAt: new Date(Date.now() + 86400000),
       isEmailVerified: false
     });
 
@@ -112,124 +106,15 @@ router.post("/register", registerLimiter, async (req, res) => {
     const verificationLink =
       `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
 
-    try {
-      await sendEmail({
-        to: normalizedEmail,
-        subject: "Verify your email - LGC Concept AI",
-        html: `
-          <p>Welcome to LGC Concept AI,</p>
-          <p>Please verify your email by clicking the link below:</p>
-          <p><a href="${verificationLink}">${verificationLink}</a></p>
-          <p>This link will expire in 24 hours.</p>
-        `
-      });
-    } catch (mailError) {
-      console.error("EMAIL SEND FAILED:", mailError);
-      await User.deleteOne({ userId: normalizedEmail });
-
-      return res.status(500).json({
-        error: "Could not send verification email. Please try again."
-      });
-    }
-
-    return res.status(201).json({
-      message: "User registered successfully"
-    });
-
-  } catch (err) {
-    console.error("REGISTER ERROR:", err);
-    return res.status(500).json({ error: "Registration failed" });
-  }
-});
-
-/* =========================
-   RESEND VERIFICATION
-   ========================= */
-
-router.post("/resend-verification", resendLimiter, async (req, res) => {
-  let { email } = req.body;
-
-  if (!email || typeof email !== "string") {
-    return res.status(400).json({ error: "Valid email is required" });
-  }
-
-  const normalizedEmail = email.trim().toLowerCase();
-
-  try {
-    const user = await User.findOne({ userId: normalizedEmail });
-
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    if (user.isEmailVerified) {
-      return res.status(400).json({ error: "Email already verified" });
-    }
-
-    const verificationToken = crypto.randomBytes(32).toString("hex");
-    const tokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
-
-    user.emailVerificationToken = verificationToken;
-    user.emailVerificationTokenExpiresAt = tokenExpiry;
-    await user.save();
-
-    const verificationLink =
-      `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
-
     await sendEmail({
       to: normalizedEmail,
       subject: "Verify your email - LGC Concept AI",
-      html: `
-        <p>Please verify your email by clicking the link below:</p>
-        <p><a href="${verificationLink}">${verificationLink}</a></p>
-        <p>This link will expire in 24 hours.</p>
-      `
+      html: `<a href="${verificationLink}">${verificationLink}</a>`
     });
 
-    return res.json({ message: "Verification email resent" });
-
-  } catch (err) {
-    console.error("RESEND VERIFY ERROR:", err);
-    return res
-      .status(500)
-      .json({ error: "Could not resend verification email" });
-  }
-});
-
-/* =========================
-   VERIFY EMAIL
-   ========================= */
-
-router.get("/verify-email", async (req, res) => {
-  const { token } = req.query;
-
-  if (!token || typeof token !== "string") {
-    return res.status(400).json({ error: "Invalid verification request" });
-  }
-
-  try {
-    const user = await User.findOne({
-      emailVerificationToken: token,
-      emailVerificationTokenExpiresAt: { $gt: new Date() }
-    });
-
-    if (!user) {
-      return res
-        .status(400)
-        .json({ error: "Verification link expired or invalid" });
-    }
-
-    user.isEmailVerified = true;
-    user.emailVerificationToken = undefined;
-    user.emailVerificationTokenExpiresAt = undefined;
-
-    await user.save();
-
-    return res.json({ message: "Email verified successfully" });
-
-  } catch (err) {
-    console.error("EMAIL VERIFY ERROR:", err);
-    return res.status(500).json({ error: "Email verification failed" });
+    return res.status(201).json({ message: "User registered successfully" });
+  } catch {
+    return res.status(500).json({ error: "Registration failed" });
   }
 });
 
@@ -238,36 +123,89 @@ router.get("/verify-email", async (req, res) => {
    ========================= */
 
 router.post("/login", loginLimiter, async (req, res) => {
-  let { email, password } = req.body;
-
-  if (!email || !password || typeof email !== "string") {
-    return res.status(400).json({ error: "Email and password are required" });
-  }
-
+  const { email, password } = req.body;
   const normalizedEmail = email.trim().toLowerCase();
 
   try {
     const user = await User.findOne({ userId: normalizedEmail });
-
-    if (!user) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
-
-    if (!user.isEmailVerified) {
+    if (!user) return res.status(401).json({ error: "Invalid credentials" });
+    if (!user.isEmailVerified)
       return res.status(403).json({ error: "Email not verified" });
-    }
 
-    const isMatch = await bcrypt.compare(password, user.passwordHash);
-
-    if (!isMatch) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
+    const match = await bcrypt.compare(password, user.passwordHash);
+    if (!match) return res.status(401).json({ error: "Invalid credentials" });
 
     return res.json({ message: "Login successful" });
-
-  } catch (err) {
-    console.error("LOGIN ERROR:", err);
+  } catch {
     return res.status(500).json({ error: "Login failed" });
+  }
+});
+
+/* =========================
+   FORGOT PASSWORD
+   ========================= */
+
+router.post("/forgot-password", forgotPasswordLimiter, async (req, res) => {
+  const normalizedEmail = req.body.email?.trim().toLowerCase();
+  if (!normalizedEmail)
+    return res.status(400).json({ error: "Valid email is required" });
+
+  try {
+    const user = await User.findOne({ userId: normalizedEmail });
+    if (!user)
+      return res.status(404).json({ error: "No account found with this email" });
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    user.passwordResetToken = resetToken;
+    user.passwordResetTokenExpiresAt = new Date(Date.now() + 1800000);
+    await user.save();
+
+    const resetLink =
+      `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+
+    await sendEmail({
+      to: normalizedEmail,
+      subject: "Reset your password - LGC Concept AI",
+      html: `<a href="${resetLink}">${resetLink}</a>`
+    });
+
+    return res.json({ message: "Password reset link sent" });
+  } catch {
+    return res.status(500).json({ error: "Could not process request" });
+  }
+});
+
+/* =========================
+   RESET PASSWORD  ✅ FINAL PIECE
+   ========================= */
+
+router.post("/reset-password", async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  if (!token || !newPassword) {
+    return res.status(400).json({ error: "Invalid request" });
+  }
+
+  try {
+    const user = await User.findOne({
+      passwordResetToken: token,
+      passwordResetTokenExpiresAt: { $gt: new Date() }
+    });
+
+    if (!user) {
+      return res.status(400).json({ error: "Reset link expired or invalid" });
+    }
+
+    user.passwordHash = await bcrypt.hash(newPassword, 10);
+    user.passwordResetToken = undefined;
+    user.passwordResetTokenExpiresAt = undefined;
+
+    await user.save();
+
+    return res.json({ message: "Password reset successful" });
+  } catch {
+    return res.status(500).json({ error: "Password reset failed" });
   }
 });
 

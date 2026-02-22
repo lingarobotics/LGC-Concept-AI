@@ -1,5 +1,3 @@
-// backend/models/User.js
-
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
@@ -18,7 +16,7 @@ const userSchema = new mongoose.Schema(
       required: true
     },
 
-    // Email verification (v1.2)
+    // Email verification
     isEmailVerified: {
       type: Boolean,
       default: false
@@ -29,6 +27,15 @@ const userSchema = new mongoose.Schema(
     },
 
     emailVerificationTokenExpiresAt: {
+      type: Date
+    },
+
+    // 🔐 Password reset (v2.2.1)
+    passwordResetToken: {
+      type: String
+    },
+
+    passwordResetTokenExpiresAt: {
       type: Date
     },
 
@@ -50,7 +57,7 @@ const userSchema = new mongoose.Schema(
       required: true
     },
 
-    // Stats (v1.1 scope)
+    // Stats
     questionsAskedCount: {
       type: Number,
       default: 0
