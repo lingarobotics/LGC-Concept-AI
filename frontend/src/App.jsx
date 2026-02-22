@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  useNavigate,
+  useLocation
+} from "react-router-dom";
 
 import Home from "./Pages/Home";
 import ExploreModes from "./Pages/ExploreModes";
@@ -10,17 +15,31 @@ import TeachBackMode from "./Pages/TeachBackMode";
 import VerifyEmail from "./Pages/VerifyEmail";
 import AuthPage from "./Pages/AuthPage";
 import Why from "./Pages/Why";
+import ForgotPassword from "./Pages/ForgotPassword";
+import ResetPassword from "./Pages/ResetPassword";
 
 import lgcLogo from "./assets/icon.png";
-import ProfileIcon from "./assets/profile.svg";
+import ProfileIcon from "./assets/profile.png";
 
 import { AuthProvider } from "./context/AuthContext";
 import { useAuth } from "./context/AuthContext";
 
+/* =========================
+   APP SHELL
+   ========================= */
+
 function AppShell({ children, isLaunching }) {
   const [showSplash, setShowSplash] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, logout } = useAuth();
+
+  const hideAuthHeader = [
+    "/auth",
+    "/forgot-password",
+    "/reset-password",
+    "/verify-email"
+  ].includes(location.pathname);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowSplash(false), 2000);
@@ -67,21 +86,14 @@ function AppShell({ children, isLaunching }) {
           }}
         >
           {/* Brand */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "12px"
-            }}
-          >
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <img
               src={lgcLogo}
               alt="LGC Concept AI logo"
               style={{
-                height: "3.2rem",
-                width: "3.2rem",
+                height: "3.6rem",
+                width: "3.6rem",
                 borderRadius: "8px",
-                display: "block",
                 flexShrink: 0
               }}
             />
@@ -94,53 +106,51 @@ function AppShell({ children, isLaunching }) {
             </div>
           </div>
 
-          {/* Auth Controls */}
-          {!isAuthenticated ? (
-            <>
-              {/* Desktop */}
-              <button
-                className="auth-btn desktop-only"
-                onClick={() => navigate("/auth")}
-              >
-                Login / Register
-              </button>
+          {/* Auth Controls (HIDDEN on auth/reset pages) */}
+          {!hideAuthHeader && (
+            !isAuthenticated ? (
+              <>
+                <button
+                  className="auth-btn desktop-only"
+                  onClick={() => navigate("/auth")}
+                >
+                  Login / Register
+                </button>
 
-              {/* Mobile */}
-              <button
-                className="auth-icon mobile-only"
-                onClick={() => navigate("/auth")}
-                aria-label="Login or Register"
-              >
-                <img
-                  src={ProfileIcon}
-                  alt=""
-                  style={{ width: "20px", height: "20px" }}
-                />
-              </button>
-            </>
-          ) : (
-            <>
-              {/* Desktop */}
-              <button
-                className="auth-btn desktop-only"
-                onClick={logout}
-              >
-                Logout
-              </button>
+                <button
+                  className="auth-icon mobile-only"
+                  onClick={() => navigate("/auth")}
+                  aria-label="Login or Register"
+                >
+                  <img
+                    src={ProfileIcon}
+                    alt=""
+                    style={{ width: "22px", height: "22px" }}
+                  />
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  className="auth-btn desktop-only"
+                  onClick={logout}
+                >
+                  Logout
+                </button>
 
-              {/* Mobile */}
-              <button
-                className="auth-icon mobile-only"
-                onClick={logout}
-                aria-label="Logout"
-              >
-                <img
-                  src={ProfileIcon}
-                  alt=""
-                  style={{ width: "20px", height: "20px" }}
-                />
-              </button>
-            </>
+                <button
+                  className="auth-icon mobile-only"
+                  onClick={logout}
+                  aria-label="Logout"
+                >
+                  <img
+                    src={ProfileIcon}
+                    alt=""
+                    style={{ width: "22px", height: "22px" }}
+                  />
+                </button>
+              </>
+            )
           )}
         </div>
 
@@ -151,6 +161,10 @@ function AppShell({ children, isLaunching }) {
     </>
   );
 }
+
+/* =========================
+   ROUTES
+   ========================= */
 
 function AppRoutes({ startLaunch, isLaunching }) {
   const navigate = useNavigate();
@@ -226,16 +240,29 @@ function AppRoutes({ startLaunch, isLaunching }) {
 
       <Route path="/auth" element={<AuthPage />} />
       <Route path="/verify-email" element={<VerifyEmail />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+
+      <Route
+        path="/reset-password"
+        element={
+          <AppShell isLaunching={isLaunching}>
+            <ResetPassword />
+          </AppShell>
+        }
+      />
     </Routes>
   );
 }
+
+/* =========================
+   ROOT
+   ========================= */
 
 export default function App() {
   const [isLaunching, setIsLaunching] = useState(false);
 
   const startLaunch = (navigateFn) => {
     setIsLaunching(true);
-
     setTimeout(() => {
       navigateFn();
       setIsLaunching(false);

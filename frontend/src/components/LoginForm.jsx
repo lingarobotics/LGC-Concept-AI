@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function LoginForm({ onSuccess }) {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -87,7 +90,7 @@ function LoginForm({ onSuccess }) {
         style={{ width: "100%", marginBottom: "8px" }}
       />
 
-      <div style={{ display: "flex", gap: "6px", marginBottom: "8px" }}>
+      <div style={{ display: "flex", gap: "6px", marginBottom: "6px" }}>
         <input
           type={showPassword ? "text" : "password"}
           placeholder="Password *"
@@ -97,6 +100,29 @@ function LoginForm({ onSuccess }) {
         />
         <button type="button" onClick={() => setShowPassword(!showPassword)}>
           👁️
+        </button>
+      </div>
+
+      {/* Forgot password link */}
+      <div
+        style={{
+          textAlign: "right",
+          marginBottom: "10px"
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => navigate("/forgot-password")}
+          style={{
+            background: "none",
+            border: "none",
+            color: "#4f8cff",
+            cursor: "pointer",
+            fontSize: "0.8rem",
+            padding: 0
+          }}
+        >
+          Forgot password?
         </button>
       </div>
 
