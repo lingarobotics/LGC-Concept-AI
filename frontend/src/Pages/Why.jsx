@@ -4,10 +4,30 @@ const Why = () => {
   const navigate = useNavigate();
 
   return (
-    <main style={{ maxWidth: "820px", margin: "0 auto" }}>
-      <h1 style={{ marginBottom: "1.5rem" }}>
+    <main
+      style={{
+        maxWidth: "820px",
+        margin: "0 auto",
+        paddingTop: "1rem"
+      }}
+    >
+      {/* Primary heading */}
+      <h1 style={{ marginBottom: "0.8rem" }}>
         Why LGC Concept AI Exists
       </h1>
+
+      {/* SEO clarification line (short & honest) */}
+      <p
+        style={{
+          lineHeight: "1.7",
+          marginBottom: "1.5rem",
+          color: "#cfcfcf"
+        }}
+      >
+        LGC Concept AI is an exam-oriented AI learning assistant designed to
+        improve how engineering students understand, recall, and articulate
+        concepts under exam pressure.
+      </p>
 
       <p style={{ lineHeight: "1.7", marginBottom: "1.2rem", color: "#cfcfcf" }}>
         Most AI tools provide answers.
@@ -27,7 +47,7 @@ const Why = () => {
         <br />
         Sometimes precision.
         <br />
-        Sometimes verification &mdash; which strengthens understanding because articulation exposes gaps.
+        Sometimes verification — which strengthens understanding because articulation exposes gaps.
       </p>
 
       <p style={{ lineHeight: "1.7", color: "#cfcfcf" }}>

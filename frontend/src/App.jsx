@@ -1,10 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  useNavigate
-} from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 
 import Home from "./Pages/Home";
 import ExploreModes from "./Pages/ExploreModes";
@@ -58,13 +53,12 @@ function AppShell({ children, isLaunching }) {
             Initializing your Learning Experience
             <span className="dots"></span>
           </h2>
-
-          {/* 🔥 Loading Bar Restored */}
           <div className="launch-bar"></div>
         </div>
       )}
 
       <div className="app-shell">
+        {/* Header */}
         <div
           style={{
             display: "flex",
@@ -72,11 +66,33 @@ function AppShell({ children, isLaunching }) {
             alignItems: "center"
           }}
         >
-          <div>
-            <h2 style={{ marginBottom: "4px" }}>LGC Concept AI</h2>
-            <p className="helper-text">
-              Exam-focused learning • Doubt clearing • Teach-back verification
-            </p>
+          {/* Brand */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px"
+            }}
+          >
+            {/* 🔥 FINAL LOGO SIZE (matches full text block) */}
+            <img
+              src={lgcLogo}
+              alt="LGC Concept AI logo"
+              style={{
+                height: "3.2rem",
+                width: "3.2rem",
+                borderRadius: "8px",
+                display: "block",
+                flexShrink: 0
+              }}
+            />
+
+            <div>
+              <h2 style={{ marginBottom: "4px" }}>LGC Concept AI</h2>
+              <p className="helper-text">
+                Exam-focused learning • Doubt clearing • Teach-back verification
+              </p>
+            </div>
           </div>
 
           {!isAuthenticated ? (
@@ -212,9 +228,7 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <AppRoutes startLaunch={startLaunch} isLaunching={isLaunching} />
-      </BrowserRouter>
+      <AppRoutes startLaunch={startLaunch} isLaunching={isLaunching} />
     </AuthProvider>
   );
 }
