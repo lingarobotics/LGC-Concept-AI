@@ -14,6 +14,34 @@ This system follows **Semantic Versioning (MAJOR.MINOR.PATCH)**.
 
 ---
 
+## v2.2.1 – Authentication UX & Password Reset Improvements
+
+### ✨ Added
+- Complete **Forgot Password / Reset Password** flow with secure token handling
+- Password reset screen with:
+  - Confirm password
+  - Show / hide password toggle
+  - Strength validation feedback
+- Password strength validation during **user registration**
+
+### 🔐 Improved
+- Password handling consistency across registration and reset flows
+- Visual feedback for weak, medium, and strong passwords
+- Safer UX by blocking weak passwords at input level
+
+### 🎯 UX Refinements
+- Authentication-related pages remain focused without unnecessary distractions
+- Reset password and register screens now feel consistent and intentional
+
+### 🛡️ Security & Stability
+- No auto-login introduced to preserve email verification model
+- No breaking changes to existing users
+- No new dependencies added
+
+This release focuses on improving **account recovery, password safety, and authentication user experience** while keeping the system secure and predictable.
+
+---
+
 ## v2.2.0 — Unified AI Fallback & Infrastructure Stability Upgrade
 Date: 2026-02-22
 
