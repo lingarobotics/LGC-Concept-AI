@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-const Home = () => {
+const Home = ({ onStartLearning }) => {
   const navigate = useNavigate();
 
   return (
@@ -38,24 +38,40 @@ const Home = () => {
           and verification through teach-back.
         </p>
 
-        {/* Primary CTA */}
         <button
-          onClick={() => navigate("/explore")}
+          onClick={onStartLearning}
           style={{
-            padding: "0.9rem 1.6rem",
-            fontSize: "1rem",
+            padding: "1rem 1.8rem",
+            fontSize: "1.05rem",
             cursor: "pointer",
             backgroundColor: "#4f8cff",
             border: "none",
             color: "white",
-            borderRadius: "6px"
+            borderRadius: "8px",
+            fontWeight: "600"
           }}
         >
-          Explore How Learning Works
+          🚀 Start Learning
         </button>
 
-        {/* Secondary Link */}
-        <div style={{ marginTop: "1.2rem" }}>
+        <div style={{ marginTop: "1.4rem" }}>
+          <button
+            onClick={() => navigate("/explore")}
+            style={{
+              padding: "0.8rem 1.4rem",
+              fontSize: "0.95rem",
+              cursor: "pointer",
+              backgroundColor: "#2d2d2d",
+              border: "1px solid #4f8cff",
+              color: "#4f8cff",
+              borderRadius: "6px"
+            }}
+          >
+            Explore How Learning Works
+          </button>
+        </div>
+
+        <div style={{ marginTop: "1rem" }}>
           <button
             onClick={() => navigate("/why")}
             style={{

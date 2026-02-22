@@ -1,0 +1,46 @@
+.launch-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #1a1a1a 0%, #0f0f0f 70%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  color: white;
+  animation: fadeIn 0.4s ease forwards;
+}
+
+.launch-text {
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.launch-bar {
+  margin-top: 1.5rem;
+  width: 120px;
+  height: 4px;
+  background-color: #4f8cff;
+  border-radius: 2px;
+  animation: slide 1s ease-in-out infinite;
+}
+
+/* Animations */
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+@keyframes slide {
+  0% { transform: scaleX(0.3); opacity: 0.5; }
+  50% { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(0.3); opacity: 0.5; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
