@@ -5,7 +5,7 @@ import LoginForm from "../components/LoginForm";
 import { useAuth } from "../context/AuthContext";
 
 function AuthPage() {
-  const [mode, setMode] = useState("register"); // register | login
+  const [mode, setMode] = useState("register"); // "register" | "login"
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
@@ -27,7 +27,7 @@ function AuthPage() {
           margin: "0 auto"
         }}
       >
-        {/* Back / Close */}
+        {/* Back */}
         <button
           onClick={() => navigate(redirectTo)}
           style={{
@@ -43,6 +43,7 @@ function AuthPage() {
           ← Back to learning
         </button>
 
+        {/* Heading */}
         <h2 style={{ marginBottom: "6px" }}>LGC Concept AI</h2>
         <p
           style={{
@@ -51,36 +52,16 @@ function AuthPage() {
             marginBottom: "24px"
           }}
         >
-          Create an account or log in to save your learning progress.
+          {mode === "register"
+            ? "Create an account to save your learning progress."
+            : "Log in to continue your learning journey."}
         </p>
 
-        {/* Mode Switch */}
-        <div style={{ marginBottom: "20px" }}>
-          <button
-            onClick={() => setMode("register")}
-            style={{
-              marginRight: "8px",
-              opacity: mode === "register" ? 1 : 0.6
-            }}
-          >
-            Register
-          </button>
-
-          <button
-            onClick={() => setMode("login")}
-            style={{
-              opacity: mode === "login" ? 1 : 0.6
-            }}
-          >
-            Login
-          </button>
-        </div>
-
-        {/* Forms */}
+        {/* Form */}
         {mode === "register" ? (
           <RegisterForm
             onSuccess={() => {
-              // Registration success handled inside form
+              // handled inside form
             }}
           />
         ) : (
@@ -93,6 +74,52 @@ function AuthPage() {
             }}
           />
         )}
+
+        {/* Bottom Switch (THIS is the key UX fix) */}
+        <div
+          style={{
+            marginTop: "20px",
+            fontSize: "0.85rem",
+            color: "#a0a0a0",
+            textAlign: "center"
+          }}
+        >
+          {mode === "register" ? (
+            <>
+              Already have an account?{" "}
+              <button
+                onClick={() => setMode("login")}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "#4f8cff",
+                  cursor: "pointer",
+                  padding: 0,
+                  fontSize: "0.85rem"
+                }}
+              >
+                Log in
+              </button>
+            </>
+          ) : (
+            <>
+              New user?{" "}
+              <button
+                onClick={() => setMode("register")}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "#4f8cff",
+                  cursor: "pointer",
+                  padding: 0,
+                  fontSize: "0.85rem"
+                }}
+              >
+                Sign up
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

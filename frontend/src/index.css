@@ -53,68 +53,47 @@ body {
   }
 }
 
-/* ---------- Auth Corner ---------- */
-.auth-corner {
-  position: absolute;
-  bottom: -28px;
-  right: 0;
+/* ---------- Helper Text ---------- */
+.helper-text {
+  font-size: 0.75rem;
+  color: #8a8a8a;
 }
 
-.auth-corner button {
+/* =========================
+   AUTH CONTROLS (FINAL)
+   ========================= */
+
+/* Desktop button */
+.auth-btn {
   background: transparent;
-  color: #8a8a8a;
-  border: none;
-  padding: 0;
-  font-size: 0.75rem;
+  border: 1px solid #4f8cff;
+  color: #4f8cff;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+/* Mobile icon button */
+.auth-icon {
+  background: transparent;
+  border: 1px solid #4f8cff;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
 }
 
-.auth-corner button:hover {
-  color: #ffffff;
-  text-decoration: underline;
+/* Visibility control */
+.desktop-only {
+  display: inline-flex;
 }
 
-/* ---------- Auth Panel ---------- */
-.auth-panel {
-  margin-top: 16px;
-  border: 1px solid #2a2f45;
-  border-radius: 6px;
-  padding: 14px;
-  background: #12141c;
-}
-
-/* ---------- Mode Switch ---------- */
-.mode-switch {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
-
-/* ---------- Mode Explanation ---------- */
-.mode-explanation {
-  font-size: 0.85rem;
-  color: #a0a0a0;
-}
-
-.mode-explanation b {
-  color: #ffffff;
-}
-
-/* ---------- Textareas ---------- */
-textarea {
-  width: 100%;
-  background: #151822;
-  color: #ffffff;
-  border: 1px solid #2a2f45;
-  border-radius: 6px;
-  padding: 12px;
-  font-size: 0.95rem;
-  resize: none;
-}
-
-textarea::placeholder {
-  color: #7a7a7a;
+.mobile-only {
+  display: none;
 }
 
 /* ---------- Buttons ---------- */
@@ -142,38 +121,6 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* ---------- Output / Answer Area ---------- */
-.output-box {
-  background: #12141c;
-  border: 1px solid #2a2f45;
-  border-radius: 6px;
-  padding: 14px;
-  max-height: 60vh;
-  overflow-y: auto;
-  font-size: 0.95rem;
-}
-
-/* ---------- Chat Messages ---------- */
-.chat-message {
-  margin-bottom: 10px;
-}
-
-.chat-message.user {
-  text-align: right;
-  color: #d1e4ff;
-}
-
-.chat-message.ai {
-  text-align: left;
-  color: #e6e6e6;
-}
-
-/* ---------- Helper Text ---------- */
-.helper-text {
-  font-size: 0.75rem;
-  color: #8a8a8a;
-}
-
 /* ---------- Splash Overlay ---------- */
 .splash-overlay {
   position: fixed;
@@ -194,140 +141,7 @@ button:disabled {
   margin-bottom: 24px;
 }
 
-.splash-title {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 600;
-}
-
-.splash-subtitle {
-  margin-top: 12px;
-  margin-bottom: 16px;
-  font-size: 20px;
-  font-weight: 500;
-}
-
-.splash-tagline {
-  margin: 0;
-  font-size: 16px;
-  opacity: 0.8;
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.splash-version {
-  display: block;
-  margin-top: 12px;
-  font-size: 14px;
-  opacity: 0.5;
-}
-
-/* ---------- Launch Overlay (Start Learning Boot) ---------- */
-.launch-overlay {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  background: radial-gradient(circle at center, #0f1115 0%, #090b10 100%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 99999;
-  animation: fadeIn 0.25s ease forwards;
-}
-
-.launch-text {
-  font-weight: 500;
-  letter-spacing: 0.5px;
-}
-
-/* Animated dots */
-.launch-text .dots::after {
-  content: "";
-  animation: dotCycle 1.2s steps(3, end) infinite;
-}
-
-@keyframes dotCycle {
-  0% { content: ""; }
-  33% { content: "."; }
-  66% { content: ".."; }
-  100% { content: "..."; }
-}
-
-/* Subtle loading bar */
-.launch-bar {
-  margin-top: 1.5rem;
-  width: 120px;
-  height: 4px;
-  background-color: #4f8cff;
-  border-radius: 2px;
-  animation: slide 1s ease-in-out infinite;
-}
-
-@keyframes slide {
-  0% { transform: scaleX(0.3); opacity: 0.5; }
-  50% { transform: scaleX(1); opacity: 1; }
-  100% { transform: scaleX(0.3); opacity: 0.5; }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* ---------- Mobile Optimisation ---------- */
-@media (max-width: 600px) {
-  #root {
-    padding: 1rem;
-  }
-
-  textarea {
-    font-size: 0.9rem;
-  }
-
-  button {
-    width: 100%;
-  }
-
-  .auth-corner {
-    position: static;
-    margin-top: 8px;
-    text-align: right;
-  }
-}
-
-/* ---------- Markdown Tables ---------- */
-.output-box table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 14px 0;
-  font-size: 0.9rem;
-}
-
-.output-box th,
-.output-box td {
-  border: 1px solid #2a2f45;
-  padding: 10px 12px;
-  text-align: left;
-  vertical-align: top;
-}
-
-.output-box th {
-  background-color: #1a1d2b;
-  color: #ffffff;
-  font-weight: 600;
-}
-
-.output-box tr:nth-child(even) {
-  background-color: #141826;
-}
-
-.output-box tr:hover {
-  background-color: #1f2335;
-}
-
 /* ---------- Launch Overlay ---------- */
-
 .launch-overlay {
   position: fixed;
   inset: 0;
@@ -339,50 +153,20 @@ button:disabled {
   z-index: 10000;
 }
 
-.launch-text {
-  font-size: 1.2rem;
-  margin-bottom: 24px;
-  font-weight: 500;
-}
-
-/* Animated dots */
-.dots::after {
-  content: ".";
-  animation: dotPulse 1s steps(3, end) infinite;
-}
-
-@keyframes dotPulse {
-  0% { content: "."; }
-  33% { content: ".."; }
-  66% { content: "..."; }
-  100% { content: "."; }
-}
-
-/* Loading Bar Container */
-.launch-bar {
-  width: 240px;
-  height: 4px;
-  background: #1a1d2b;
-  border-radius: 4px;
-  overflow: hidden;
-  position: relative;
-}
-
-/* Moving Blue Bar */
-.launch-bar::before {
-  content: "";
-  position: absolute;
-  height: 100%;
-  width: 40%;
-  background: #4f8cff;
-  animation: loadingSlide 1s ease-in-out infinite;
-}
-
-@keyframes loadingSlide {
-  0% {
-    left: -40%;
+/* =========================
+   MOBILE OVERRIDES
+   ========================= */
+@media (max-width: 600px) {
+  #root {
+    padding: 1rem;
   }
-  100% {
-    left: 100%;
+
+  /* Swap auth UI */
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: flex;
   }
 }

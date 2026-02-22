@@ -12,6 +12,8 @@ import AuthPage from "./Pages/AuthPage";
 import Why from "./Pages/Why";
 
 import lgcLogo from "./assets/icon.png";
+import ProfileIcon from "./assets/profile.svg";
+
 import { AuthProvider } from "./context/AuthContext";
 import { useAuth } from "./context/AuthContext";
 
@@ -21,9 +23,7 @@ function AppShell({ children, isLaunching }) {
   const { isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 2000);
+    const timer = setTimeout(() => setShowSplash(false), 2000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -74,7 +74,6 @@ function AppShell({ children, isLaunching }) {
               gap: "12px"
             }}
           >
-            {/* 🔥 FINAL LOGO SIZE (matches full text block) */}
             <img
               src={lgcLogo}
               alt="LGC Concept AI logo"
@@ -95,36 +94,53 @@ function AppShell({ children, isLaunching }) {
             </div>
           </div>
 
+          {/* Auth Controls */}
           {!isAuthenticated ? (
-            <button
-              style={{
-                background: "transparent",
-                border: "1px solid #4f8cff",
-                color: "#4f8cff",
-                borderRadius: "6px",
-                padding: "6px 12px",
-                cursor: "pointer",
-                fontSize: "0.85rem"
-              }}
-              onClick={() => navigate("/auth")}
-            >
-              Login / Register
-            </button>
+            <>
+              {/* Desktop */}
+              <button
+                className="auth-btn desktop-only"
+                onClick={() => navigate("/auth")}
+              >
+                Login / Register
+              </button>
+
+              {/* Mobile */}
+              <button
+                className="auth-icon mobile-only"
+                onClick={() => navigate("/auth")}
+                aria-label="Login or Register"
+              >
+                <img
+                  src={ProfileIcon}
+                  alt=""
+                  style={{ width: "20px", height: "20px" }}
+                />
+              </button>
+            </>
           ) : (
-            <button
-              style={{
-                background: "transparent",
-                border: "1px solid #8a8a8a",
-                color: "#8a8a8a",
-                borderRadius: "6px",
-                padding: "6px 12px",
-                cursor: "pointer",
-                fontSize: "0.85rem"
-              }}
-              onClick={logout}
-            >
-              Logout
-            </button>
+            <>
+              {/* Desktop */}
+              <button
+                className="auth-btn desktop-only"
+                onClick={logout}
+              >
+                Logout
+              </button>
+
+              {/* Mobile */}
+              <button
+                className="auth-icon mobile-only"
+                onClick={logout}
+                aria-label="Logout"
+              >
+                <img
+                  src={ProfileIcon}
+                  alt=""
+                  style={{ width: "20px", height: "20px" }}
+                />
+              </button>
+            </>
           )}
         </div>
 
