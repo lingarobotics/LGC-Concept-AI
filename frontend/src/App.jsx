@@ -20,7 +20,7 @@ import lgcLogo from "./assets/icon.png";
 import { AuthProvider } from "./context/AuthContext";
 import { useAuth } from "./context/AuthContext";
 
-function AppShell({ children }) {
+function AppShell({ children, isLaunching }) {
   const [showSplash, setShowSplash] = useState(true);
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
@@ -47,13 +47,24 @@ function AppShell({ children }) {
             <h2 className="splash-title">LGC Concept AI</h2>
             <h3 className="splash-subtitle">Learn. Govern. Construct</h3>
             <p className="splash-tagline">Learning at No Cost</p>
-            <span className="splash-version">Version 2.0</span>
+            <span className="splash-version">Version 2.2</span>
           </div>
         </div>
       )}
 
+      {isLaunching && (
+        <div className="launch-overlay">
+          <h2 className="launch-text">
+            Initializing your Learning Experience
+            <span className="dots"></span>
+          </h2>
+
+          {/* 🔥 Loading Bar Restored */}
+          <div className="launch-bar"></div>
+        </div>
+      )}
+
       <div className="app-shell">
-        {/* Header */}
         <div
           style={{
             display: "flex",
@@ -101,7 +112,6 @@ function AppShell({ children }) {
           )}
         </div>
 
-        {/* Page Content */}
         <div className="mode-container" style={{ marginTop: "24px" }}>
           {children}
         </div>
@@ -110,77 +120,100 @@ function AppShell({ children }) {
   );
 }
 
+function AppRoutes({ startLaunch, isLaunching }) {
+  const navigate = useNavigate();
+
+  const triggerLaunch = (target) => {
+    startLaunch(() => navigate(target));
+  };
+
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <AppShell isLaunching={isLaunching}>
+            <Home onStartLearning={() => triggerLaunch("/learn?mode=learn")} />
+          </AppShell>
+        }
+      />
+
+      <Route
+        path="/explore"
+        element={
+          <AppShell isLaunching={isLaunching}>
+            <ExploreModes />
+          </AppShell>
+        }
+      />
+
+      <Route
+        path="/why"
+        element={
+          <AppShell isLaunching={isLaunching}>
+            <Why />
+          </AppShell>
+        }
+      />
+
+      <Route
+        path="/learn"
+        element={
+          <AppShell isLaunching={isLaunching}>
+            <LearnMode />
+          </AppShell>
+        }
+      />
+
+      <Route
+        path="/fast-learn"
+        element={
+          <AppShell isLaunching={isLaunching}>
+            <FastLearnMode />
+          </AppShell>
+        }
+      />
+
+      <Route
+        path="/doubt"
+        element={
+          <AppShell isLaunching={isLaunching}>
+            <DoubtMode />
+          </AppShell>
+        }
+      />
+
+      <Route
+        path="/teach-back"
+        element={
+          <AppShell isLaunching={isLaunching}>
+            <TeachBackMode />
+          </AppShell>
+        }
+      />
+
+      <Route path="/auth" element={<AuthPage />} />
+      <Route path="/verify-email" element={<VerifyEmail />} />
+    </Routes>
+  );
+}
+
 export default function App() {
+  const [isLaunching, setIsLaunching] = useState(false);
+
+  const startLaunch = (navigateFn) => {
+    setIsLaunching(true);
+
+    setTimeout(() => {
+      navigateFn();
+      setIsLaunching(false);
+    }, 900);
+  };
+
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <AppShell>
-                <Home />
-              </AppShell>
-            }
-          />
-
-          <Route
-            path="/explore"
-            element={
-              <AppShell>
-                <ExploreModes />
-              </AppShell>
-            }
-          />
-
-          <Route
-            path="/why"
-            element={
-              <AppShell>
-                <Why />
-              </AppShell>
-            }
-          />
-
-          <Route
-            path="/learn"
-            element={
-              <AppShell>
-                <LearnMode />
-              </AppShell>
-            }
-          />
-
-          <Route
-            path="/fast-learn"
-            element={
-              <AppShell>
-                <FastLearnMode />
-              </AppShell>
-            }
-          />
-
-          <Route
-            path="/doubt"
-            element={
-              <AppShell>
-                <DoubtMode />
-              </AppShell>
-            }
-          />
-
-          <Route
-            path="/teach-back"
-            element={
-              <AppShell>
-                <TeachBackMode />
-              </AppShell>
-            }
-          />
-
-          <Route path="/auth" element={<AuthPage />} />
-          <Route path="/verify-email" element={<VerifyEmail />} />
-        </Routes>
+        <AppRoutes startLaunch={startLaunch} isLaunching={isLaunching} />
       </BrowserRouter>
     </AuthProvider>
   );
