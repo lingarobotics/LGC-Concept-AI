@@ -25,12 +25,6 @@ const registerLimiter = rateLimit({
   message: { error: "Too many registrations. Try again later." }
 });
 
-const resendLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000,
-  max: 3,
-  message: { error: "Too many requests. Try again later." }
-});
-
 const forgotPasswordLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 5,
@@ -38,16 +32,8 @@ const forgotPasswordLimiter = rateLimit({
 });
 
 /* =========================
-   VALIDATORS
+   CONSTANTS
    ========================= */
-
-const NAME_REGEX = /^[A-Za-z.\-\s]{2,50}$/;
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-const PROFANITY_WORDS = [
-  "fuck","fucker","shit","bitch","asshole","pussy","ass","cock",
-  "thevidiyapaiyan","thevdiya","otha","oththa","punda","lusukoodhi","koodhi"
-];
 
 const ALLOWED_DEPARTMENTS = [
   "Robotics Engineering","CSE","ECE","EEE","Mechanical Engineering",
@@ -55,18 +41,55 @@ const ALLOWED_DEPARTMENTS = [
   "BME","AI & DS","Other"
 ];
 
-function isNameValid(name) {
-  if (typeof name !== "string") return false;
-  if (!NAME_REGEX.test(name)) return false;
-  const lower = name.toLowerCase();
-  return !PROFANITY_WORDS.some((word) => lower.includes(word));
+const PROFANITY_WORDS = [
+  "fuck","fucker","shit","bitch","asshole","pussy","ass","cock",
+  "thevidiyapaiyan","thevdiya","otha","oththa","punda","lusukoodhi","koodhi"
+];
+
+/* =========================
+   HELPER FUNCTIONS
+   ========================= */
+
+function safeString(input) {
+  return typeof input === "string" ? input : null;
+}
+
+function isEmailValid(email) {
+  if (typeof email !== "string") return false;
+  const trimmed = email.trim();
+  if (trimmed.length < 5 || trimmed.length > 254) return false;
+  if (!trimmed.includes("@") || !trimmed.includes(".")) return false;
+  return true;
 }
 
 function isStrongPassword(password) {
-  return (
-    typeof password === "string" &&
-    password.length >= 8
-  );
+  if (typeof password !== "string") return false;
+  if (password.length < 8 || password.length > 128) return false;
+  return true;
+}
+
+function isNameValid(name) {
+  if (typeof name !== "string") return false;
+
+  const trimmed = name.trim();
+  if (trimmed.length < 2 || trimmed.length > 50) return false;
+
+  for (let i = 0; i < trimmed.length; i++) {
+    const ch = trimmed[i];
+
+    const isLetter =
+      (ch >= "A" && ch <= "Z") ||
+      (ch >= "a" && ch <= "z");
+
+    const isAllowedSymbol = ch === "." || ch === "-" || ch === " ";
+
+    if (!isLetter && !isAllowedSymbol) {
+      return false;
+    }
+  }
+
+  const lower = trimmed.toLowerCase();
+  return !PROFANITY_WORDS.some((word) => lower.includes(word));
 }
 
 function hashToken(token) {
@@ -78,47 +101,45 @@ function hashToken(token) {
    ========================= */
 
 router.post("/register", registerLimiter, async (req, res) => {
-  const { email, password, name, department, passOutYear } = req.body;
+  const emailRaw = safeString(req.body.email);
+  const passwordRaw = safeString(req.body.password);
+  const nameRaw = safeString(req.body.name);
+  const departmentRaw = safeString(req.body.department);
+  const passOutYearRaw = safeString(req.body.passOutYear);
 
-  if (
-    typeof email !== "string" ||
-    typeof password !== "string" ||
-    typeof department !== "string" ||
-    typeof passOutYear !== "string"
-  ) {
+  if (!emailRaw || !passwordRaw || !nameRaw || !departmentRaw || !passOutYearRaw)
     return res.status(400).json({ error: "Invalid input types" });
-  }
 
-  const normalizedEmail = email.trim().toLowerCase();
+  const email = emailRaw.trim().toLowerCase();
 
-  if (!EMAIL_REGEX.test(normalizedEmail))
+  if (!isEmailValid(email))
     return res.status(400).json({ error: "Invalid email format" });
 
-  if (!isNameValid(name))
+  if (!isNameValid(nameRaw))
     return res.status(400).json({ error: "Invalid name" });
 
-  if (!ALLOWED_DEPARTMENTS.includes(department))
+  if (!ALLOWED_DEPARTMENTS.includes(departmentRaw))
     return res.status(400).json({ error: "Invalid department selection" });
 
-  if (!isStrongPassword(password))
+  if (!isStrongPassword(passwordRaw))
     return res.status(400).json({ error: "Password must be at least 8 characters" });
 
   try {
-    const existingUser = await User.findOne({ userId: normalizedEmail });
+    const existingUser = await User.findOne({ userId: email });
     if (existingUser)
       return res.status(409).json({ error: "User already exists" });
 
-    const passwordHash = await bcrypt.hash(password, 12);
+    const passwordHash = await bcrypt.hash(passwordRaw, 12);
 
     const verificationTokenRaw = crypto.randomBytes(32).toString("hex");
     const verificationTokenHashed = hashToken(verificationTokenRaw);
 
     const user = new User({
-      userId: normalizedEmail,
+      userId: email,
       passwordHash,
-      name: name.trim(),
-      department,
-      passOutYear,
+      name: nameRaw.trim(),
+      department: departmentRaw,
+      passOutYear: passOutYearRaw,
       emailVerificationToken: verificationTokenHashed,
       emailVerificationTokenExpiresAt: new Date(Date.now() + 86400000),
       isEmailVerified: false
@@ -130,7 +151,7 @@ router.post("/register", registerLimiter, async (req, res) => {
       `${process.env.FRONTEND_URL}/verify-email?token=${verificationTokenRaw}`;
 
     await sendEmail({
-      to: normalizedEmail,
+      to: email,
       subject: "Verify your email - LGC Concept AI",
       html: `<a href="${verificationLink}">${verificationLink}</a>`
     });
@@ -146,15 +167,16 @@ router.post("/register", registerLimiter, async (req, res) => {
    ========================= */
 
 router.post("/login", loginLimiter, async (req, res) => {
-  const { email, password } = req.body;
+  const emailRaw = safeString(req.body.email);
+  const passwordRaw = safeString(req.body.password);
 
-  if (typeof email !== "string" || typeof password !== "string")
+  if (!emailRaw || !passwordRaw)
     return res.status(400).json({ error: "Invalid input" });
 
-  const normalizedEmail = email.trim().toLowerCase();
+  const email = emailRaw.trim().toLowerCase();
 
   try {
-    const user = await User.findOne({ userId: normalizedEmail });
+    const user = await User.findOne({ userId: email });
 
     if (!user)
       return res.status(401).json({ error: "Invalid credentials" });
@@ -162,7 +184,7 @@ router.post("/login", loginLimiter, async (req, res) => {
     if (!user.isEmailVerified)
       return res.status(403).json({ error: "Email not verified" });
 
-    const match = await bcrypt.compare(password, user.passwordHash);
+    const match = await bcrypt.compare(passwordRaw, user.passwordHash);
 
     if (!match)
       return res.status(401).json({ error: "Invalid credentials" });
@@ -178,15 +200,14 @@ router.post("/login", loginLimiter, async (req, res) => {
    ========================= */
 
 router.post("/forgot-password", forgotPasswordLimiter, async (req, res) => {
-  const { email } = req.body;
-
-  if (typeof email !== "string")
+  const emailRaw = safeString(req.body.email);
+  if (!emailRaw)
     return res.status(400).json({ error: "Valid email is required" });
 
-  const normalizedEmail = email.trim().toLowerCase();
+  const email = emailRaw.trim().toLowerCase();
 
   try {
-    const user = await User.findOne({ userId: normalizedEmail });
+    const user = await User.findOne({ userId: email });
 
     if (!user)
       return res.status(404).json({ error: "No account found with this email" });
@@ -203,7 +224,7 @@ router.post("/forgot-password", forgotPasswordLimiter, async (req, res) => {
       `${process.env.FRONTEND_URL}/reset-password?token=${resetTokenRaw}`;
 
     await sendEmail({
-      to: normalizedEmail,
+      to: email,
       subject: "Reset your password - LGC Concept AI",
       html: `<a href="${resetLink}">${resetLink}</a>`
     });
@@ -219,19 +240,20 @@ router.post("/forgot-password", forgotPasswordLimiter, async (req, res) => {
    ========================= */
 
 router.post("/reset-password", async (req, res) => {
-  const { token, newPassword } = req.body;
+  const tokenRaw = safeString(req.body.token);
+  const newPasswordRaw = safeString(req.body.newPassword);
 
   if (
-    typeof token !== "string" ||
-    typeof newPassword !== "string" ||
-    token.length !== 64 ||
-    !isStrongPassword(newPassword)
+    !tokenRaw ||
+    !newPasswordRaw ||
+    tokenRaw.length !== 64 ||
+    !isStrongPassword(newPasswordRaw)
   ) {
     return res.status(400).json({ error: "Invalid request" });
   }
 
   try {
-    const hashedToken = hashToken(token);
+    const hashedToken = hashToken(tokenRaw);
 
     const user = await User.findOne({
       passwordResetToken: hashedToken,
@@ -241,7 +263,7 @@ router.post("/reset-password", async (req, res) => {
     if (!user)
       return res.status(400).json({ error: "Reset link expired or invalid" });
 
-    user.passwordHash = await bcrypt.hash(newPassword, 12);
+    user.passwordHash = await bcrypt.hash(newPasswordRaw, 12);
     user.passwordResetToken = undefined;
     user.passwordResetTokenExpiresAt = undefined;
 
