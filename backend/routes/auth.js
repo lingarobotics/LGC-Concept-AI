@@ -38,10 +38,11 @@ const forgotPasswordLimiter = rateLimit({
 });
 
 /* =========================
-   BASIC VALIDATORS
+   VALIDATORS
    ========================= */
 
 const NAME_REGEX = /^[A-Za-z.\-\s]{2,50}$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const PROFANITY_WORDS = [
   "fuck","fucker","shit","bitch","asshole","pussy","ass","cock",
@@ -55,9 +56,21 @@ const ALLOWED_DEPARTMENTS = [
 ];
 
 function isNameValid(name) {
+  if (typeof name !== "string") return false;
   if (!NAME_REGEX.test(name)) return false;
   const lower = name.toLowerCase();
   return !PROFANITY_WORDS.some((word) => lower.includes(word));
+}
+
+function isStrongPassword(password) {
+  return (
+    typeof password === "string" &&
+    password.length >= 8
+  );
+}
+
+function hashToken(token) {
+  return crypto.createHash("sha256").update(token).digest("hex");
 }
 
 /* =========================
@@ -65,30 +78,40 @@ function isNameValid(name) {
    ========================= */
 
 router.post("/register", registerLimiter, async (req, res) => {
-  let { email, password, name, department, passOutYear } = req.body;
+  const { email, password, name, department, passOutYear } = req.body;
 
-  if (!email || !password || !name || !department || !passOutYear) {
-    return res.status(400).json({ error: "All fields are required" });
+  if (
+    typeof email !== "string" ||
+    typeof password !== "string" ||
+    typeof department !== "string" ||
+    typeof passOutYear !== "string"
+  ) {
+    return res.status(400).json({ error: "Invalid input types" });
   }
 
   const normalizedEmail = email.trim().toLowerCase();
 
-  if (!isNameValid(name)) {
-    return res.status(400).json({ error: "Invalid name" });
-  }
+  if (!EMAIL_REGEX.test(normalizedEmail))
+    return res.status(400).json({ error: "Invalid email format" });
 
-  if (!ALLOWED_DEPARTMENTS.includes(department)) {
+  if (!isNameValid(name))
+    return res.status(400).json({ error: "Invalid name" });
+
+  if (!ALLOWED_DEPARTMENTS.includes(department))
     return res.status(400).json({ error: "Invalid department selection" });
-  }
+
+  if (!isStrongPassword(password))
+    return res.status(400).json({ error: "Password must be at least 8 characters" });
 
   try {
     const existingUser = await User.findOne({ userId: normalizedEmail });
-    if (existingUser) {
+    if (existingUser)
       return res.status(409).json({ error: "User already exists" });
-    }
 
-    const passwordHash = await bcrypt.hash(password, 10);
-    const verificationToken = crypto.randomBytes(32).toString("hex");
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    const verificationTokenRaw = crypto.randomBytes(32).toString("hex");
+    const verificationTokenHashed = hashToken(verificationTokenRaw);
 
     const user = new User({
       userId: normalizedEmail,
@@ -96,7 +119,7 @@ router.post("/register", registerLimiter, async (req, res) => {
       name: name.trim(),
       department,
       passOutYear,
-      emailVerificationToken: verificationToken,
+      emailVerificationToken: verificationTokenHashed,
       emailVerificationTokenExpiresAt: new Date(Date.now() + 86400000),
       isEmailVerified: false
     });
@@ -104,7 +127,7 @@ router.post("/register", registerLimiter, async (req, res) => {
     await user.save();
 
     const verificationLink =
-      `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
+      `${process.env.FRONTEND_URL}/verify-email?token=${verificationTokenRaw}`;
 
     await sendEmail({
       to: normalizedEmail,
@@ -124,16 +147,25 @@ router.post("/register", registerLimiter, async (req, res) => {
 
 router.post("/login", loginLimiter, async (req, res) => {
   const { email, password } = req.body;
+
+  if (typeof email !== "string" || typeof password !== "string")
+    return res.status(400).json({ error: "Invalid input" });
+
   const normalizedEmail = email.trim().toLowerCase();
 
   try {
     const user = await User.findOne({ userId: normalizedEmail });
-    if (!user) return res.status(401).json({ error: "Invalid credentials" });
+
+    if (!user)
+      return res.status(401).json({ error: "Invalid credentials" });
+
     if (!user.isEmailVerified)
       return res.status(403).json({ error: "Email not verified" });
 
     const match = await bcrypt.compare(password, user.passwordHash);
-    if (!match) return res.status(401).json({ error: "Invalid credentials" });
+
+    if (!match)
+      return res.status(401).json({ error: "Invalid credentials" });
 
     return res.json({ message: "Login successful" });
   } catch {
@@ -146,23 +178,29 @@ router.post("/login", loginLimiter, async (req, res) => {
    ========================= */
 
 router.post("/forgot-password", forgotPasswordLimiter, async (req, res) => {
-  const normalizedEmail = req.body.email?.trim().toLowerCase();
-  if (!normalizedEmail)
+  const { email } = req.body;
+
+  if (typeof email !== "string")
     return res.status(400).json({ error: "Valid email is required" });
+
+  const normalizedEmail = email.trim().toLowerCase();
 
   try {
     const user = await User.findOne({ userId: normalizedEmail });
+
     if (!user)
       return res.status(404).json({ error: "No account found with this email" });
 
-    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetTokenRaw = crypto.randomBytes(32).toString("hex");
+    const resetTokenHashed = hashToken(resetTokenRaw);
 
-    user.passwordResetToken = resetToken;
+    user.passwordResetToken = resetTokenHashed;
     user.passwordResetTokenExpiresAt = new Date(Date.now() + 1800000);
+
     await user.save();
 
     const resetLink =
-      `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+      `${process.env.FRONTEND_URL}/reset-password?token=${resetTokenRaw}`;
 
     await sendEmail({
       to: normalizedEmail,
@@ -177,27 +215,33 @@ router.post("/forgot-password", forgotPasswordLimiter, async (req, res) => {
 });
 
 /* =========================
-   RESET PASSWORD  ✅ FINAL PIECE
+   RESET PASSWORD
    ========================= */
 
 router.post("/reset-password", async (req, res) => {
   const { token, newPassword } = req.body;
 
-  if (!token || !newPassword) {
+  if (
+    typeof token !== "string" ||
+    typeof newPassword !== "string" ||
+    token.length !== 64 ||
+    !isStrongPassword(newPassword)
+  ) {
     return res.status(400).json({ error: "Invalid request" });
   }
 
   try {
+    const hashedToken = hashToken(token);
+
     const user = await User.findOne({
-      passwordResetToken: token,
+      passwordResetToken: hashedToken,
       passwordResetTokenExpiresAt: { $gt: new Date() }
     });
 
-    if (!user) {
+    if (!user)
       return res.status(400).json({ error: "Reset link expired or invalid" });
-    }
 
-    user.passwordHash = await bcrypt.hash(newPassword, 10);
+    user.passwordHash = await bcrypt.hash(newPassword, 12);
     user.passwordResetToken = undefined;
     user.passwordResetTokenExpiresAt = undefined;
 
