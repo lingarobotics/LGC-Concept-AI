@@ -277,15 +277,15 @@ clarity, discipline, and confidence.
 
 ---
 
-## Author
-
-Ramalingam Jayavelu  
-Founder – LGC Systems  
-
 ## Ownership
 
-This software system is an original product developed by Ramalingam Jayavelu under LGC Systems.
+This software system is an original product developed under **LGC Systems**.
 
-All intellectual property rights, including system design, architecture, and source code contained in this repository, are owned by LGC Systems.
+The ideation, system architecture, design, and overall product vision originate from  
+**Ramalingam Jayavelu**, Founder of LGC Systems.
 
-No external organization, company, or third party holds ownership, control, or claim over this project.
+All intellectual property, including system architecture, design, implementation, and source code contained in this repository, belongs exclusively to **Ramalingam Jayavelu under LGC Systems**.
+
+This repository does not transfer ownership or rights to any external organization, institution, company, or third party.
+
+The software is maintained and governed solely under the LGC Systems initiative.
