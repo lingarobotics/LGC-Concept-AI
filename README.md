@@ -274,3 +274,18 @@ LGC Concept AI is not a shortcut tool.
 
 It is a structured learning companion designed to build  
 clarity, discipline, and confidence.
+
+---
+
+## Author
+
+Ramalingam Jayavelu  
+Founder – LGC Systems  
+
+## Ownership
+
+This software system is an original product developed by Ramalingam Jayavelu under LGC Systems.
+
+All intellectual property rights, including system design, architecture, and source code contained in this repository, are owned by LGC Systems.
+
+No external organization, company, or third party holds ownership, control, or claim over this project.
