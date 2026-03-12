@@ -23,6 +23,7 @@ import ProfileIcon from "./assets/profile.png";
 
 import { AuthProvider } from "./context/AuthContext";
 import { useAuth } from "./context/AuthContext";
+import InstallPrompt from "./components/InstallPrompt";
 
 /* =========================
    APP SHELL
@@ -272,6 +273,7 @@ export default function App() {
   return (
     <AuthProvider>
       <AppRoutes startLaunch={startLaunch} isLaunching={isLaunching} />
+      <InstallPrompt />
     </AuthProvider>
   );
 }
