@@ -62,7 +62,7 @@ function AppShell({ children, isLaunching }) {
             <h2 className="splash-title">LGC Concept AI</h2>
             <h3 className="splash-subtitle">Learn. Govern. Construct</h3>
             <p className="splash-tagline">Learning at No Cost</p>
-            <span className="splash-version">Version 2.2</span>
+            <span className="splash-version">Version 2.3</span>
           </div>
         </div>
       )}
