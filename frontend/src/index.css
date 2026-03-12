@@ -170,3 +170,78 @@ button:disabled {
     display: flex;
   }
 }
+
+/* =========================
+   PWA INSTALL PROMPT
+   ========================= */
+.install-prompt {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9998;
+  padding: 12px 16px;
+  background: #1a1c23;
+  border-top: 1px solid #2a2d36;
+  animation: slideUp 0.3s ease forwards;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.install-prompt-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.install-prompt-text {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #c8c8c8;
+  flex: 1;
+  min-width: 200px;
+}
+
+.install-prompt-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.install-btn-primary {
+  background: #4f8cff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 16px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.install-btn-dismiss {
+  background: transparent;
+  color: #8a8a8a;
+  border: 1px solid #3a3d46;
+  border-radius: 6px;
+  padding: 7px 16px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.install-btn-dismiss:hover {
+  color: #c8c8c8;
+  border-color: #5a5d66;
+}

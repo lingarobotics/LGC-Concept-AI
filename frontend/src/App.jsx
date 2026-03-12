@@ -23,6 +23,7 @@ import ProfileIcon from "./assets/profile.png";
 
 import { AuthProvider } from "./context/AuthContext";
 import { useAuth } from "./context/AuthContext";
+import InstallPrompt from "./components/InstallPrompt";
 
 /* =========================
    APP SHELL
@@ -61,7 +62,7 @@ function AppShell({ children, isLaunching }) {
             <h2 className="splash-title">LGC Concept AI</h2>
             <h3 className="splash-subtitle">Learn. Govern. Construct</h3>
             <p className="splash-tagline">Learning at No Cost</p>
-            <span className="splash-version">Version 2.2</span>
+            <span className="splash-version">Version 2.3</span>
           </div>
         </div>
       )}
@@ -272,6 +273,7 @@ export default function App() {
   return (
     <AuthProvider>
       <AppRoutes startLaunch={startLaunch} isLaunching={isLaunching} />
+      <InstallPrompt />
     </AuthProvider>
   );
 }
