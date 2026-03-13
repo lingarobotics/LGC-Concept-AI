@@ -249,6 +249,7 @@ button:disabled {
 /* =========================
    Mobile Profile Icon
    ========================= */
+
 .auth-icon {
   width: 36px;
   height: 36px;
@@ -258,14 +259,41 @@ button:disabled {
   justify-content: center;
 
   padding: 0;
+  margin: 0;
+
   border: none;
   background: transparent;
 
   cursor: pointer;
+
+  /* prevents layout shift */
+  flex-shrink: 0;
 }
 
 .auth-icon img {
   width: 100%;
   height: 100%;
+
   object-fit: contain;
+  display: block;
+}
+
+/* Desktop vs Mobile visibility */
+
+.desktop-only {
+  display: inline-flex;
+}
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: flex;
+  }
 }
