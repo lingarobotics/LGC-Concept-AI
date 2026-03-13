@@ -251,38 +251,42 @@ button:disabled {
    ========================= */
 
 .auth-icon {
-  width: 36px;
-  height: 36px;
+  width: 48px;
+  height: 48px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  padding: 0;
-  margin: 0;
+  border-radius: 14px;
 
-  border: none;
-  border-radius: 10px;
-
-  /* same blue tone style as Start Learning button */
+  /* same blue style as Start Learning */
   background: linear-gradient(135deg, #5b8cff, #4f7df0);
 
+  border: none;
+  padding: 0;
   cursor: pointer;
 
   flex-shrink: 0;
+
+  /* make it touch the right edge */
+  margin-right: -12px;
+
+  /* subtle elevation */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 
   transition: transform 0.15s ease, filter 0.15s ease;
 }
 
 .auth-icon img {
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
 
   object-fit: contain;
   display: block;
 }
 
-/* subtle hover interaction */
+/* subtle hover feedback */
 .auth-icon:hover {
   transform: translateY(-1px);
   filter: brightness(1.08);
