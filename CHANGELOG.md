@@ -14,6 +14,33 @@ This system follows **Semantic Versioning (MAJOR.MINOR.PATCH)**.
 
 ---
 
+## v2.3.0 — Progressive Web App (PWA) Enablement
+Date: 2026-03-13
+
+### Added
+- Progressive Web App (PWA) capability for LGC Concept AI
+- Install prompt component enabling users to install the application
+- Web App Manifest configuration for mobile and desktop installation
+- Application icons and metadata for installable experience
+- Offline-ready service worker integration
+
+### Improved
+- App accessibility across devices including mobile and desktop
+- Faster load performance through service worker caching
+- Native-like user experience when installed as a standalone app
+- Consistent launch experience via installable application shell
+
+### UX Enhancements
+- Users can now install LGC Concept AI directly from the browser
+- Application launches in standalone mode when installed
+- Improved mobile usability for learning sessions
+
+### Architecture
+- No breaking API contract changes
+- No backend logic changes
+- Frontend infrastructure extended with PWA support
+
+---
 ## v2.2.1 – Authentication UX & Password Reset Improvements
 
 ### ✨ Added
