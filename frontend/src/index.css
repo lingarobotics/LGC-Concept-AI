@@ -262,23 +262,36 @@ button:disabled {
   margin: 0;
 
   border: none;
-  background: transparent;
+  border-radius: 10px;
+
+  /* same blue tone style as Start Learning button */
+  background: linear-gradient(135deg, #5b8cff, #4f7df0);
 
   cursor: pointer;
 
-  /* prevents layout shift */
   flex-shrink: 0;
+
+  transition: transform 0.15s ease, filter 0.15s ease;
 }
 
 .auth-icon img {
-  width: 100%;
-  height: 100%;
+  width: 20px;
+  height: 20px;
 
   object-fit: contain;
   display: block;
 }
 
-/* Desktop vs Mobile visibility */
+/* subtle hover interaction */
+.auth-icon:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+
+/* =========================
+   Desktop vs Mobile visibility
+   ========================= */
 
 .desktop-only {
   display: inline-flex;
@@ -289,6 +302,7 @@ button:disabled {
 }
 
 @media (max-width: 768px) {
+
   .desktop-only {
     display: none;
   }
@@ -296,4 +310,5 @@ button:disabled {
   .mobile-only {
     display: flex;
   }
+
 }
