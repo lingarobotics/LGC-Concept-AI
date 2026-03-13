@@ -7,7 +7,40 @@ The system prioritizes **concept clarity, exam relevance, and mental confidence*
 
 ---
 
-## 🚀 Project Vision
+# 📱 Progressive Web App (PWA)
+
+LGC Concept AI is delivered as a **Progressive Web App**, allowing students to install the platform like a native application on mobile and desktop devices.
+
+## PWA Capabilities
+
+- Installable on **Android, iOS, Windows, and Desktop**
+- Runs in **standalone app mode**
+- **Service worker caching** for faster loading
+- Works smoothly on **mobile browsers**
+- **Home screen installation** support
+- Reduced repeated network load for static assets
+
+Once installed, the application behaves like a **native learning app**, allowing faster access during study sessions.
+
+## Installing the App
+
+### On Mobile (Chrome / Edge)
+
+1. Open the LGC Concept AI website  
+2. Tap the **Install** prompt  
+3. Select **Add to Home Screen**
+
+### On Desktop (Chrome / Edge)
+
+1. Open the website  
+2. Click the **Install icon** in the address bar  
+3. Confirm installation
+
+The application will now launch like a **native desktop app**.
+
+---
+
+# 🚀 Project Vision
 
 Many engineering students struggle not because concepts are impossible, but because explanations are:
 
@@ -30,247 +63,304 @@ The goal is **not just answer generation**, but learning that **survives exam pr
 Version 2 established learning as **situational and intentional**, not generic.
 
 Learning is separated by intent:
-- Depth
-- Speed
-- Precision
-- Articulation
+
+- Depth  
+- Speed  
+- Precision  
+- Articulation  
 
 ---
 
-## ✨ Learning Modes
+# ✨ Learning Modes
 
-### 🔹 Learn Mode (Primary)
+## 🔹 Learn Mode (Primary)
 
 - Fully **exam-oriented**
 - Strict **Anna University scope enforcement**
 - Structured answers suitable for **13-mark questions**
-- Aspect-aware answering:
-  - Definition
-  - Construction
-  - Working
-  - Comparison
-  - Applications
-  - Advantages / Limitations
 
-#### Core Points / Mental Model Extraction
-After a full explanation, students can extract **5–7 memory-friendly core points** to reinforce understanding and revision.
+Aspect-aware answering:
 
----
+- Definition  
+- Construction  
+- Working  
+- Comparison  
+- Applications  
+- Advantages  
+- Limitations  
 
-### 🔹 Fast Learn Mode
+### Core Points / Mental Model Extraction
 
-- Designed for **quick clarity and last-minute revision**
-- Provides **key takeaways only**
-- No long explanations
-- No exam structuring
-- No analogies
-
-> ⚠️ Not suitable for coding or deep derivations  
-> 👉 Users are guided to Learn Mode when depth is required
+After a full explanation, students can extract **5–7 memory-friendly core points** for revision and long-term retention.
 
 ---
 
-### 🔹 Clear Doubt Mode
+## 🔹 Fast Learn Mode
 
-- Designed for **micro-clarifications**
-- Answers **only the specific doubt**
-- Short, direct, and focused
-- Avoids re-teaching the entire topic
+Designed for **quick clarity and last-minute revision**.
 
-Perfect when:
-- You mostly understand the concept
-- You’re stuck at one small point
-- You need clarity without overload
+Characteristics:
 
----
+- Key takeaways only  
+- No long explanations  
+- No exam structuring  
+- No analogies  
 
-### 🔹 Verify Understanding (Teach-Back Mode — Core Philosophy)
-
-One of the strongest pillars of LGC Concept AI is **learning by explaining**.
-
-In Teach-Back Mode:
-
-1. The student explains a concept in their own words  
-2. The AI:
-   - Encourages first  
-   - Checks conceptual correctness  
-   - Identifies missing logic  
-   - Points out mistakes briefly  
-   - Motivates the student to retry  
-
-> “If you can explain it clearly, you understand it.”
-
-This mode verifies **real understanding**, not memorization.
+⚠️ Not suitable for coding or derivation-heavy subjects.  
+Users are automatically guided to **Learn Mode** when deeper explanations are required.
 
 ---
 
-## 🧠 Answer Structure (Anna University Preferred)
+## 🔹 Clear Doubt Mode
 
-In Learn Mode, responses follow a **marks-aware structure**:
+Used for **micro-clarifications**.
 
-- Definition (≈2 marks)
-- Construction / Components (≈3 marks)
-- Working Principle (≈4–5 marks)
-- Applications
-- Advantages & Limitations
-- One clearly marked **analogy (not for exam writing)**
+Characteristics:
 
-Answers strictly match what is asked —  
-**nothing extra, nothing missing.**
+- Answers only the **specific doubt**  
+- Short and focused responses  
+- Avoids re-teaching the entire topic  
+
+Useful when:
+
+- You mostly understand the concept  
+- One step is confusing  
+- You need quick clarification  
 
 ---
 
-## 🔁 Learning Experience Design
+## 🔹 Verify Understanding (Teach-Back Mode)
 
-- Scroll-based long answers
-- Previous responses remain visible
-- Continuous learning flow (not form-based)
-- Reduced cognitive load and exam anxiety
-- Structured transition into learning modes
+One of the **core philosophies** of LGC Concept AI.
+
+Students explain the concept in their **own words**.
+
+The AI then:
+
+- Encourages first  
+- Checks conceptual correctness  
+- Identifies missing reasoning  
+- Points out mistakes briefly  
+- Motivates retry  
+
+> **“If you can explain it clearly, you understand it.”**
+
+This verifies **real understanding**, not memorization.
+
+---
+
+# 🧠 Answer Structure (Anna University Pattern)
+
+In Learn Mode, answers follow a **marks-aware exam structure**:
+
+- Definition (~2 marks)  
+- Construction / Components (~3 marks)  
+- Working Principle (~4-5 marks)  
+- Applications  
+- Advantages  
+- Limitations  
+- One clearly marked **analogy (not for exam writing)**  
+
+Answers strictly match **what the question asks**.
+
+---
+
+# 🔁 Learning Experience Design
+
+- Scroll-based explanations  
+- Previous responses remain visible  
+- Continuous learning flow  
+- Reduced cognitive overload  
+- Mode-based learning transitions  
+- Exam-friendly structured outputs  
 
 ---
 
 # ⚙️ Infrastructure & Reliability (v2.2+)
 
-Version 2.2 introduced a major backend stability upgrade.
+Version 2.2 introduced a major **backend reliability upgrade**.
 
-LGC Concept AI no longer depends on a single AI provider.
+LGC Concept AI does not rely on a **single AI provider**.
 
-### 🔁 Unified Multi-Model Fallback Stack
+---
 
-Primary → Secondary → Tertiary → Stable fallback:
+## 🔁 Multi-Model AI Fallback System
 
-- Llama 3.3 70B  
-- Nemotron 30B  
-- Gemma 27B  
-- Gemini 2.5 Flash  
+Provider order:
 
-If one provider is rate-limited or overloaded, the system automatically:
+1. Llama 3.3 70B  
+2. Nemotron 30B  
+3. Gemma 27B  
+4. Gemini 2.5 Flash  
 
-- Retries on 429
-- Applies exponential backoff
-- Falls back to the next model
-- Returns a graceful 503 only if all fail
+If a provider fails:
+
+- Retries occur automatically  
+- Exponential backoff applied  
+- Next provider selected  
+- Graceful failure only if all providers fail  
 
 This ensures **controlled degradation instead of system collapse**.
 
 ---
 
-### ⏱ Timeout & Failure Handling
+# 🏗️ Tech Stack
 
-- Per-request timeout using AbortController
-- Structured logging with request-level tracing
-- Provider abstraction (OpenRouter + Gemini)
-- Clear failure reporting
+## Frontend
 
-The goal is reliability, not dependency fragility.
+- React  
+- Vite  
+- PWA support (`vite-plugin-pwa`)  
+- Custom install prompt  
+- Mobile-friendly UI  
+- Mode-based rendering logic  
 
----
+## Backend
 
-### 🚀 Global Launch Transition
-
-Entering Learn Mode triggers a controlled launch transition:
-
-- App-level overlay
-- Animated loading feedback
-- Structured navigation flow
-
-This prevents abrupt context switching and improves UX coherence.
-
----
-
-## 🏗️ Tech Stack
-
-### Frontend
-- React + Vite
-- Clean, distraction-free UI
-- Mobile-friendly layout
-- Mode-isolated rendering logic
-
-### Backend
-- Node.js + Express
-- Mode-based routing
-- Prompt isolation per learning mode
-- Multi-provider AI abstraction layer
-- Structured logging & retry control
+- Node.js  
+- Express  
+- Mode-based routing  
+- Prompt isolation per learning mode  
+- Multi-provider AI abstraction  
+- Structured logging system  
 
 ---
 
-## 🤖 AI Strategy (Mode-Isolated Behavior)
+# 📱 PWA Architecture
 
-LGC Concept AI prevents **mode bleeding** by isolating prompts and intent.
+LGC Concept AI uses:
 
-Each mode is constrained deliberately.
+- **Web App Manifest**
+- **Service Worker**
+- **vite-plugin-pwa**
+- **Custom Install Prompt**
 
-### Learn Mode
-- Full exam-oriented explanations
-- Aspect-aware answering
-- Strict Anna University scope control
-- Core point extraction
+Key files include:
 
-### Fast Learn Mode
-- Key takeaways only
-- No deep structuring
-- No analogies
-- No long expansions
-
-### Clear Doubt Mode
-- Micro clarification only
-- No re-teaching
-
-### Teach-Back Mode
-- Encourages first
-- Evaluates logic
-- Identifies missing reasoning
-- Motivates retry
+- `vite.config.js`
+- `InstallPrompt.jsx`
+- Service worker generated using **Workbox**
 
 ---
 
-## 🔐 Privacy & Cost Philosophy
+# 📂 Project Structure
 
-- No forced subscriptions
-- No hidden monetization
-- Minimal data storage
-- Lightweight and sustainable architecture
-- Free-model prioritized with intelligent fallback
-
-> Learning needs investment in **time and consistency**, not money.
-
----
-
-## 🎯 Target Audience
-
-- Anna University engineering students
-- Slow learners struggling with theory
-- Students who understand concepts but panic in exams
-- Learners who want **clarity over shortcuts**
-
----
-
-## 📖 Future Enhancements (Planned)
-
-- Mathematical rendering engine (v2.3)
-- Structured markdown + equation formatting
-- Reflection prompts (“What did I correct?”)
-- Non-gamified learning streaks
-- Subject-wise structuring
-- Offline revision mode
-- Conversational chat-like UI
+```
+LGC-Concept-AI
+│
+├── frontend
+│   ├── src
+│   │   ├── components
+│   │   ├── modes
+│   │   ├── services
+│   │   └── App.jsx
+│   │
+│   ├── public
+│   │   └── icons
+│   │
+│   └── vite.config.js
+│
+├── backend
+│   ├── routes
+│   ├── services
+│   ├── aiProviders
+│   └── server.js
+│
+└── README.md
+```
 
 ---
 
-## 🙏 Acknowledgements
+# 🛠 Local Development Setup
 
-- Anna University exam pattern & evaluation style  
+Clone the repository:
+
+```bash
+git clone https://github.com/<username>/LGC-Concept-AI.git
+cd LGC-Concept-AI
+```
+
+Install dependencies.
+
+Frontend:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Backend:
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+Application will run at:
+
+```
+http://localhost:5173
+```
+
+---
+
+# 🔐 Privacy & Cost Philosophy
+
+- No forced subscriptions  
+- No hidden monetization  
+- Minimal user data storage  
+- Lightweight architecture  
+- Free-model prioritization  
+
+> **Learning needs investment in time and consistency, not money.**
+
+---
+
+# 🎯 Target Audience
+
+- Anna University engineering students  
+- Slow learners struggling with theory  
+- Students who panic in exams  
+- Learners seeking **concept clarity instead of shortcuts**
+
+---
+
+# 📖 Future Enhancements
+
+- Mathematical rendering engine (v2.3)  
+- Structured markdown + equation formatting  
+- Reflection prompts  
+- Subject-wise learning organization  
+- Offline revision mode  
+- Conversational AI interface  
+
+---
+
+# 🙏 Acknowledgements
+
+- Anna University exam structure  
 - Open learning communities  
 - OpenRouter API  
-- Google Gemini API (fallback inference provider)
-- Open models ecosystem  
-- Brevo API (transactional email delivery)
+- Google Gemini API  
+- Open-source model ecosystem  
+- Brevo API  
 
 ---
 
-LGC Concept AI is not a shortcut tool.
+# 📜 License
 
-It is a structured learning companion designed to build  
-clarity, discipline, and confidence.
+This project is licensed under the **MIT License**.
+
+---
+
+# Final Philosophy
+
+LGC Concept AI is **not a shortcut tool**.
+
+It is a structured learning companion designed to build:
+
+- Concept clarity  
+- Discipline  
+- Exam confidence  
