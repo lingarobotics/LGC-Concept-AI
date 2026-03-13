@@ -126,7 +126,6 @@ function AppShell({ children, isLaunching }) {
                   <img
                     src={ProfileIcon}
                     alt=""
-                    style={{ width: "22px", height: "22px" }}
                   />
                 </button>
               </>
