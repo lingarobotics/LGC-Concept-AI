@@ -1,5 +1,9 @@
-# LGC Concept AI 🎓🤖  
+# LGC Concept AI 🎓🤖 
 **Learning Concepts. Writing Exams. Building Confidence.**
+
+![LGC Concept AI Home](./docs/images/development-and-ui-screenshots/concept-ai-home-for-readme-file.png)
+
+> Home interface showing mode-based learning architecture and navigation.
 
 LGC Concept AI is an **Anna University–oriented AI learning assistant** built to help engineering students **understand theory deeply**, **structure answers correctly**, and **write confident 13-mark responses** in the expected university exam format.
 
@@ -276,6 +280,23 @@ It is a structured learning companion designed to build
 clarity, discipline, and confidence.
 
 ---
+
+## 📊 Development Activity
+
+This project has been built through consistent iteration, debugging, and system-level refinement over multiple months.
+
+### Commit Activity Timeline
+
+![Commit Activity](./docs/images/development-and-ui-screenshots/github-commit-activity-timeline.png)
+
+Shows consistent weekly contributions and active development phases.
+
+### Code Frequency Analysis
+
+![Code Frequency](./docs/images/development-and-ui-screenshots/github-code-frequency-analysis.png)
+
+Highlights real engineering work — additions, refactoring, and system restructuring over time.
+
 ---
 
 ## 📘 Development Documentation
