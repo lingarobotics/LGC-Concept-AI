@@ -253,6 +253,8 @@ Each screenshot represents a:
 
 ---
 
+
+
 #### After — LGC Systems Navigation Introduced
 
 ![Home After](images/development-and-ui-screenshots/conceptai-home-v2.3-after-lgc-systems-navigation.png)
@@ -357,6 +359,92 @@ Each screenshot represents a:
 - Not every feature belongs everywhere  
 
 ---
+
+## 🧮 Phase 8 — Mathematical Rendering (KaTeX Integration)
+
+### 🔹 Problem: Mathematical Expressions Not Rendered
+
+- LaTeX syntax appeared as plain text  
+- Equations unreadable  
+- No structured math output  
+
+This issue appeared after introducing more technical content requiring equations.
+
+---
+
+### 🔹 Issue: KaTeX Fonts 403 Error
+
+![KaTeX 403 Error](images/development-and-ui-screenshots/katex-vite-403-error.png)
+
+**Problem:**
+- KaTeX fonts blocked by Vite  
+- Rendering incomplete  
+
+**Root Cause:**
+- KaTeX was resolved from outside frontend scope  
+
+**Fix:**
+- Installed KaTeX inside frontend  
+- Ensured dependency is available during build  
+
+---
+
+### 🔹 Issue: Unicode Rendering Warning
+
+![Unicode Warning](images/development-and-ui-screenshots/katex-unicode-warning.png)
+
+**Observation:**
+- KaTeX strict mode warnings for Unicode  
+
+**Decision:**
+- Ignored (non-breaking)  
+- Rendering remained correct  
+
+---
+
+### 🔹 Issue: Vercel Deployment Failure (Dependencies)
+
+![Deployment Failure](images/development-and-ui-screenshots/vercel-deployment-failure-due-to-absense-of-dependencies.png)
+
+**Problem:**
+- Build failed on Vercel  
+- Modules like `katex`, `remark-math` not found  
+
+**Root Cause:**
+- Dependencies installed locally but not committed  
+
+---
+
+### 🔹 Fix: Dependency Synchronization
+
+![Deployment Success](images/development-and-ui-screenshots/vercel-deployment-success-after-installing-appropriate-dependencies.png)
+
+**Fix:**
+- Committed `package.json` and `package-lock.json`  
+- Ensured frontend dependencies are properly installed in production  
+
+---
+
+### 🔹 Final Result: Working Math Rendering
+
+![KaTeX Render Success](images/development-and-ui-screenshots/katex-render-success.png)
+
+**Outcome:**
+- Equations rendered correctly  
+- Structured mathematical output enabled  
+
+---
+
+### 🧠 Key Learnings
+
+- Rendering is a pipeline problem, not UI  
+- Dependency scope matters in Vite  
+- Production ≠ local environment  
+- Missing commits can break deployment  
+
+🔥 **Critical Insight:**
+- Systems fail more due to configuration than code  
+
 
 ## 🧭 How to Use This Documentation
 

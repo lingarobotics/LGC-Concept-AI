@@ -1,5 +1,8 @@
 {
   "dependencies": {
-    "express-rate-limit": "^8.2.1"
+    "express-rate-limit": "^8.2.1",
+    "katex": "^0.16.40",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0"
   }
 }
