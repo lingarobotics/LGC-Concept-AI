@@ -42,6 +42,9 @@ function AppShell({ children, isLaunching }) {
     "/verify-email"
   ].includes(location.pathname);
 
+  // ✅ NEW: control footer visibility
+  const showFooter = location.pathname === "/";
+
   useEffect(() => {
     const timer = setTimeout(() => setShowSplash(false), 2000);
     return () => clearTimeout(timer);
@@ -107,7 +110,7 @@ function AppShell({ children, isLaunching }) {
             </div>
           </div>
 
-          {/* Auth Controls (HIDDEN on auth/reset pages) */}
+          {/* Auth Controls */}
           {!hideAuthHeader && (
             !isAuthenticated ? (
               <>
@@ -123,10 +126,7 @@ function AppShell({ children, isLaunching }) {
                   onClick={() => navigate("/auth")}
                   aria-label="Login or Register"
                 >
-                  <img
-                    src={ProfileIcon}
-                    alt=""
-                  />
+                  <img src={ProfileIcon} alt="" />
                 </button>
               </>
             ) : (
@@ -158,47 +158,48 @@ function AppShell({ children, isLaunching }) {
           {children}
         </div>
 
-        {/* Footer */}
-        <div
-          style={{
-            marginTop: "40px",
-            paddingTop: "16px",
-            borderTop: "1px solid rgba(255,255,255,0.1)",
-            textAlign: "center"
-            }}
-        >
-          <a
-            href="https://lgcsystems.xyz"
-            target="_blank"
-            rel="noopener noreferrer"
+        {/* ✅ Footer (ONLY HOME PAGE) */}
+        {showFooter && (
+          <div
             style={{
-              display: "inline-block",
-              padding: "10px 18px",
-              borderRadius: "8px",
-              background: "rgba(255,255,255,0.08)",
-              border: "1px solid rgba(255,255,255,0.2)",
-              color: "white",
-              textDecoration: "none",
-              fontSize: "14px",
-              transition: "all 0.2s ease"
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.background = "rgba(255,255,255,0.15)";
-              e.target.style.transform = "translateY(-1px)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = "rgba(255,255,255,0.08)";
-              e.target.style.transform = "translateY(0)";
+              marginTop: "40px",
+              paddingTop: "16px",
+              borderTop: "1px solid rgba(255,255,255,0.1)",
+              textAlign: "center"
             }}
           >
-            Explore LGC Systems
-          </a>
-        </div>
+            <a
+              href="https://lgcsystems.xyz"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "inline-block",
+                padding: "10px 18px",
+                borderRadius: "8px",
+                background: "rgba(255,255,255,0.08)",
+                border: "1px solid rgba(255,255,255,0.2)",
+                color: "white",
+                textDecoration: "none",
+                fontSize: "14px",
+                transition: "all 0.2s ease"
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = "rgba(255,255,255,0.15)";
+                e.target.style.transform = "translateY(-1px)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = "rgba(255,255,255,0.08)";
+                e.target.style.transform = "translateY(0)";
+              }}
+            >
+              Explore LGC Systems
+            </a>
+          </div>
+        )}
       </div>
     </>
   );
 }
-
 /* =========================
    ROUTES
    ========================= */

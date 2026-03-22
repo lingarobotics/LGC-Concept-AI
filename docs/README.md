@@ -1,10 +1,10 @@
 # 🧠 LGC Concept AI — Development Documentation
 
 This documentation captures the **actual engineering journey** of LGC Concept AI —  
-from initial idea to a structured, evolving learning system.
+from an early idea to a structured, evolving learning system.
 
 It focuses on:
-> **how the system was built, where it failed, and how it improved**
+> **how the system was built, where it failed, how it was debugged, and how it evolved**
 
 ---
 
@@ -15,10 +15,12 @@ This is not a feature showcase.
 It captures:
 - real development mistakes  
 - debugging processes  
-- UI and system evolution  
+- UI evolution  
 - architectural decisions  
+- system-level thinking  
 
-Each screenshot represents a **real engineering moment**, not just UI.
+Each screenshot represents a:
+> **real engineering moment, not just UI**
 
 ---
 
@@ -27,7 +29,7 @@ Each screenshot represents a **real engineering moment**, not just UI.
 - Track development progress  
 - Capture failures and debugging insights  
 - Document system evolution  
-- Preserve key decisions  
+- Preserve architectural decisions  
 - Provide visual proof of iteration  
 
 ---
@@ -38,9 +40,9 @@ Each screenshot represents a **real engineering moment**, not just UI.
 
 ![Early Structure](images/development-and-ui-screenshots/concept-ai-early-structure.png)
 
-- Initial system idea and layout  
-- Early separation of logic and UI  
-- No strong system boundaries yet  
+- Initial system idea  
+- Basic UI + logic separation  
+- No strong architecture yet  
 
 ---
 
@@ -49,7 +51,7 @@ Each screenshot represents a **real engineering moment**, not just UI.
 ![Initial UI](images/development-and-ui-screenshots/initial-concept-ai-UI-no-othermode-rather-than-learn-mode.png)
 
 - Only one learning mode  
-- No scalability or modular thinking  
+- No scalability  
 - Experimental UI  
 
 ---
@@ -58,7 +60,7 @@ Each screenshot represents a **real engineering moment**, not just UI.
 
 ![Input Box](images/development-and-ui-screenshots/initial-design-of-input-box-of-learn-mode.png)
 
-- Early focus on how users interact with the system  
+- Early exploration of user interaction  
 - Beginning of structured input thinking  
 
 ---
@@ -78,8 +80,8 @@ Each screenshot represents a **real engineering moment**, not just UI.
 ![Formatted Markdown](images/development-and-ui-screenshots/content-output-formatted-markdown.png)
 
 **Result:**
-- Proper formatting introduced  
-- Significant improvement in clarity  
+- Clean formatted output  
+- Improved clarity  
 
 ---
 
@@ -88,10 +90,10 @@ Each screenshot represents a **real engineering moment**, not just UI.
 ![Contrast Issue](images/development-and-ui-screenshots/background-and-text-output-no-contrast.png)
 
 **Problem:**
-- Text visibility was poor  
+- Text not readable  
 
 **Learning:**
-- Readability is critical in learning systems  
+- Readability is critical for learning systems  
 
 ---
 
@@ -100,11 +102,11 @@ Each screenshot represents a **real engineering moment**, not just UI.
 ![Table Issue](images/development-and-ui-screenshots/v1-development-table-not-correctly-rendering.png)
 
 **Problem:**
-- Tables not rendering correctly  
+- Tables not rendering properly  
 
 **Action:**
 - Debugged rendering logic  
-- Verified formatting pipeline  
+- Fixed formatting pipeline  
 
 ---
 
@@ -112,8 +114,8 @@ Each screenshot represents a **real engineering moment**, not just UI.
 
 ![DevTools](images/development-and-ui-screenshots/v1-devtools-checking-if-any-issue.png)
 
-- Used DevTools to inspect runtime behavior  
-- Validated frontend issues  
+- Inspected runtime behavior  
+- Verified frontend issues  
 
 ---
 
@@ -123,8 +125,8 @@ Each screenshot represents a **real engineering moment**, not just UI.
 
 ![Modes UI](images/development-and-ui-screenshots/v1-UI-every-mode-showing.png)
 
-- Shift from single-mode → multi-mode architecture  
-- Foundation for system scalability  
+- Shift from single-mode → multi-mode  
+- Foundation for scalability  
 
 ---
 
@@ -132,8 +134,8 @@ Each screenshot represents a **real engineering moment**, not just UI.
 
 ![Overlay Auth](images/development-and-ui-screenshots/early-v2-overlay-login-register-page-on-modes.png)
 
-- Login/Register overlaid on system  
-- Later identified as UX issue  
+- Login/Register overlay  
+- Later identified as poor UX  
 
 ---
 
@@ -141,8 +143,8 @@ Each screenshot represents a **real engineering moment**, not just UI.
 
 ![Learn Mode v2](images/development-and-ui-screenshots/initial-v2-learn-mode-ui.png)
 
-- Improved structure and clarity  
-- Better output flow  
+- Improved layout  
+- Better output structure  
 
 ---
 
@@ -150,8 +152,8 @@ Each screenshot represents a **real engineering moment**, not just UI.
 
 ![Home Redesign](images/development-and-ui-screenshots/home-page-UI-redesign.png)
 
-- Cleaner entry point  
-- Improved navigation  
+- Cleaner entry  
+- Better navigation  
 
 ---
 
@@ -161,7 +163,7 @@ Each screenshot represents a **real engineering moment**, not just UI.
 
 ![Why Section](images/development-and-ui-screenshots/UI-for-Why-section-initially.png)
 
-- Introduced reasoning behind the system  
+- Introduced system reasoning  
 - Shift from tool → thinking system  
 
 ---
@@ -171,7 +173,7 @@ Each screenshot represents a **real engineering moment**, not just UI.
 ![Back Button](images/development-and-ui-screenshots/back-to-home-button-added-for-mode-isolation.png)
 
 - Added navigation control  
-- Reduced confusion between modes  
+- Reduced confusion  
 
 ---
 
@@ -179,7 +181,7 @@ Each screenshot represents a **real engineering moment**, not just UI.
 
 ![How System Works](images/development-and-ui-screenshots/how-system-works-explanation-UI-including-philosophy.png)
 
-- Explicit explanation of system behavior  
+- Explained system behavior  
 - Improved transparency  
 
 ---
@@ -188,7 +190,7 @@ Each screenshot represents a **real engineering moment**, not just UI.
 
 ![CTA](images/development-and-ui-screenshots/go-to-mode-CTA-from-how-system-works-UI.png)
 
-- Clear transition from understanding → usage  
+- Clear transition from learning → execution  
 
 ---
 
@@ -198,7 +200,7 @@ Each screenshot represents a **real engineering moment**, not just UI.
 
 ![Backend PR](images/development-and-ui-screenshots/PR-for-Backend-restructure.png)
 
-- Improved backend organization  
+- Improved backend structure  
 - Better scalability  
 
 ---
@@ -208,13 +210,13 @@ Each screenshot represents a **real engineering moment**, not just UI.
 ![Fallback PR](images/development-and-ui-screenshots/PR-for-multi-model-fallback-architecture-after-provider-ratelimiting-failure.png)
 
 **Problem:**
-- AI provider rate limiting  
+- API rate limiting  
 
 **Solution:**
-- Introduced fallback model system  
+- Introduced fallback models  
 
 **Impact:**
-- Improved system reliability  
+- Improved reliability  
 
 ---
 
@@ -222,7 +224,7 @@ Each screenshot represents a **real engineering moment**, not just UI.
 
 ![Commit](images/development-and-ui-screenshots/commit-msg-edited-by-git-command-and-its-dev-UI-in-VSCODE.png)
 
-- Improved commit clarity  
+- Cleaner commits  
 - Better version tracking  
 
 ---
@@ -240,9 +242,29 @@ Each screenshot represents a **real engineering moment**, not just UI.
 
 ## 🚀 Phase 7 — Current System (v2.3)
 
-### 🔹 Home Page
+### 🔹 Home Page Evolution (Ecosystem Integration)
 
-![Home](images/development-and-ui-screenshots/current-v2.3-home-page.png)
+#### Before — Standalone Learning Entry
+
+![Home Before](images/development-and-ui-screenshots/conceptai-home-v2.3-before-lgc-systems-navigation.png)
+
+- Pure learning-focused entry  
+- No external system links  
+
+---
+
+#### After — LGC Systems Navigation Introduced
+
+![Home After](images/development-and-ui-screenshots/conceptai-home-v2.3-after-lgc-systems-navigation.png)
+
+- Added LGC Systems entry point  
+- Maintained clean UX  
+- No disruption to learning flow  
+
+🧠 **Decision Insight:**
+- Navigation limited to Home page  
+- Avoided placing inside learning modes  
+- Preserved deep-focus experience  
 
 ---
 
@@ -252,11 +274,17 @@ Each screenshot represents a **real engineering moment**, not just UI.
 
 ![Register](images/development-and-ui-screenshots/current-v2.3-register-user-UI-single-page-not-overlay.png)
 
+- Shifted from overlay → dedicated pages  
+- Improved clarity  
+
 ---
 
 ### 🔹 Learn Mode
 
 ![Learn Mode](images/development-and-ui-screenshots/current-v2.3-learn-mode-UI.png)
+
+- Core learning interface  
+- Structured execution-based flow  
 
 ---
 
@@ -264,42 +292,78 @@ Each screenshot represents a **real engineering moment**, not just UI.
 
 ![Modes](images/development-and-ui-screenshots/current-v2.3-mode-switch-options.png)
 
+- Clean transitions between modes  
+- Improved usability  
+
 ---
 
 ### 🔹 Password Reset Flow
 
 ![Reset](images/development-and-ui-screenshots/current-v2.3-email-asking-for-password-reset.png)
 
+- Complete authentication lifecycle  
+
 ---
 
-### 🔹 System Structure
+## 🧱 System Structure (v2.3)
 
-![Frontend Structure](images/development-and-ui-screenshots/current-v2.3-frontend-structure-with-Pages-and-other-files-like.envfiles-etc.png)
+### 🔹 Frontend Structure — Page-Based Architecture
 
-![Component Structure](images/development-and-ui-screenshots/current-v2.3-frontend-structure-with-PWA-requiredfiles+src-assets--components-context-subfolders.png)
+![Frontend](images/development-and-ui-screenshots/current-v2.3-frontend-structure-with-Pages-and-other-files-like.envfiles-etc.png)
 
-![Backend Structure](images/development-and-ui-screenshots/current-v2.3-github-and-backend-folder-structure.png)
+- Introduced `Pages/` for routing  
+- Clear separation of navigation and UI  
+- Improved scalability  
 
-![Root Files](images/development-and-ui-screenshots/current-v2.3-rootfiles-of-project.png)
+---
+
+### 🔹 Component & Context Structure
+
+![Components](images/development-and-ui-screenshots/current-v2.3-frontend-structure-with-PWA-requiredfiles+src-assets--components-context-subfolders.png)
+
+- Reusable UI in `components/`  
+- State management via `context/`  
+- Cleaner architecture  
+
+---
+
+### 🔹 Backend Structure
+
+![Backend](images/development-and-ui-screenshots/current-v2.3-github-and-backend-folder-structure.png)
+
+- Organized into routes, controllers, services  
+- Scalable backend design  
+
+---
+
+### 🔹 Root-Level Configuration
+
+![Root](images/development-and-ui-screenshots/current-v2.3-rootfiles-of-project.png)
+
+- Clean environment setup  
+- Deployment-ready structure  
 
 ---
 
 ## 🔍 Key Learnings
 
-- UI clarity is essential for learning systems  
-- Small rendering issues break user trust  
-- Backend reliability requires fallback mechanisms  
-- Mode isolation improves usability  
-- Systems evolve through **failure → debugging → iteration**
+- Debugging defines system strength  
+- UI clarity is essential  
+- Backend must handle failure cases  
+- Structure determines scalability  
+
+🔥 **Critical Insight:**
+- Navigation must respect user focus  
+- Not every feature belongs everywhere  
 
 ---
 
 ## 🧭 How to Use This Documentation
 
-- Follow phases to understand system evolution  
-- Refer debugging sections before fixing issues  
-- Use this as a reference before modifying architecture  
-- Treat this as engineering history, not notes  
+- Follow phases sequentially  
+- Refer debugging sections before solving issues  
+- Study structure before scaling  
+- Treat this as **engineering history, not notes**  
 
 ---
 
