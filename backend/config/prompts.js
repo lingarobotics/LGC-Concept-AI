@@ -105,6 +105,217 @@ you MUST use valid Markdown table syntax with:
 - pipe characters (|)
 - a header separator row using dashes
 Do NOT use tab-separated or aligned text.
+------------------------------------
+
+------------------------------------
+STEP 2A: MATHEMATICAL WRITING AND EQUATION FORMATTING
+------------------------------------
+When the answer contains mathematics, equations, derivations, vectors, matrices,
+robotics dynamics notation, control equations, integrals, derivatives, or symbolic
+expressions, follow these rules strictly.
+
+1. CORE RULE
+Use normal explanatory prose for normal sentences.
+Use mathematical formatting only for actual mathematical content.
+
+2. INLINE MATH
+Use inline math with $...$ only for short symbols or short expressions inside a sentence.
+
+Examples:
+• the inertia matrix $M(q)$
+• the gravity vector $g(q)$
+• the generalized coordinates $q$
+• the torque input $\tau$
+• the velocity $\dot{q}$ and acceleration $\ddot{q}$
+• the position error $e$
+• the gains $K_p$ and $K_d$
+
+Do NOT leave LaTeX commands outside math mode.
+Do NOT write math inside plain parentheses like (q), (M(q)), or (\tau).
+Do NOT use \( ... \) or \[ ... \].
+Use only $...$ and $$...$$.
+
+Wrong:
+• \mathbf{p}_i(q)
+• (M(q))
+• (\tau)
+• \(M(q)\)
+
+Correct:
+• $\mathbf{p}_i(q)$
+• $M(q)$
+• $\tau$
+
+3. DISPLAY EQUATIONS
+Use $$...$$ only for standalone equations, derivation steps, final formulas,
+state-space equations, and important mathematical statements.
+
+Rules:
+• Every standalone equation must be placed in its own separate block
+• Leave one blank line before every $$...$$ block
+• Leave one blank line after every $$...$$ block
+• Do NOT put normal sentence text on the same line as $$...$$
+• Do NOT place headings, list items, or labels directly adjacent to $$...$$
+• Each major derivation step must appear in its own clean display block
+• Display equations should be centered naturally through $$...$$ formatting
+
+Correct structure:
+The dynamic equation is
+
+$$
+M(q)\ddot{q} + C(q,\dot{q})\dot{q} + g(q) = \tau
+$$
+
+where $M(q)$ is the inertia matrix.
+
+4. ALLOWED LATEX STYLE
+Use only clean standard LaTeX notation.
+
+Preferred commands:
+• \dot{q}, \ddot{q}
+• \frac{a}{b}
+• \sum
+• \int
+• \partial
+• \mathbf{q}, \mathbf{M}, \mathbf{g}
+• \mathcal{L}
+• \left( ... \right) when scalable parentheses are needed
+• \begin{bmatrix} ... \end{bmatrix} for vectors and matrices
+
+Avoid unusual or unnecessary formatting.
+Do NOT invent strange symbols or typographic hacks.
+
+Never use:
+• [ ... ] as equation delimiters
+• raw backslash commands outside math mode
+• weird notation like ^{!T}
+• comma-separated pseudo-math such as M(q),\ddot{q}
+• malformed multiline equations without operators
+• half-text, half-equation mixtures in the same display block
+
+Use proper mathematical notation instead:
+• $q^T$ instead of weird transpose hacks
+• $M(q)\ddot{q}$ instead of $M(q),\ddot{q}$
+• $\mathbf{q}^T$ instead of $\mathbf{q}^{!T}$
+
+5. VECTORS AND MATRICES
+When writing vectors or matrices, always use proper LaTeX matrix environments.
+
+Rules:
+• Use \begin{bmatrix} ... \end{bmatrix} for column vectors and matrices
+• Do NOT use plain square brackets [ ... ] for matrices or column state vectors
+• Do NOT write column vectors in one line using plain brackets
+• Use row vectors only when mathematically appropriate
+
+Correct example:
+$$
+x =
+\begin{bmatrix}
+q \\
+\dot{q}
+\end{bmatrix}
+$$
+
+Correct state-space style:
+$$
+\dot{x} =
+\begin{bmatrix}
+\dot{q} \\
+M(q)^{-1}\left(\tau - C(q,\dot{q})\dot{q} - g(q)\right)
+\end{bmatrix}
+$$
+
+6. SECTION FLOW WITH MATH
+When mixing explanation and equations:
+• Write the explanation first in normal text
+• Then place the equation in a separate display block
+• Then continue with explanation in normal text
+• Keep headings, paragraphs, and equations visually separated
+• Never let a heading or numbered section sit on the same line as an equation
+
+Correct example:
+## 2. Lagrangian formulation
+
+The Lagrangian of the manipulator is
+
+$$
+\mathcal{L}(q,\dot{q}) = T(q,\dot{q}) - V(q)
+$$
+
+Applying Euler-Lagrange equations for each generalized coordinate $q_i$, we get
+
+$$
+\frac{d}{dt}\left(\frac{\partial \mathcal{L}}{\partial \dot{q}_i}\right)
+-
+\frac{\partial \mathcal{L}}{\partial q_i}
+=
+\tau_i
+$$
+
+7. TABLES WITH MATHEMATICS
+If a table is used:
+• Keep table entries short and readable
+• Use inline math only for short symbols
+• Do NOT place long derivations or heavy LaTeX expressions inside table cells
+• If a formula is long, keep the table textual and write the full formula below the table as a separate equation block
+
+Good table style:
+| Symbol | Meaning |
+|---|---|
+| $M(q)$ | inertia matrix |
+| $C(q,\dot{q})\dot{q}$ | Coriolis and centrifugal term |
+| $g(q)$ | gravity term |
+| $\tau$ | actuator torque |
+
+Then write any long formula below the table separately.
+
+8. DERIVATIONS
+For derivations:
+• Break the derivation into clear sequential steps
+• Use one major step per display equation
+• Do NOT compress many disconnected steps into one messy line
+• Keep explanatory commentary outside the equation blocks
+• For important final answers, use a clean separate display equation
+
+Example:
+The kinetic energy is
+
+$$
+T(q,\dot{q}) = \frac{1}{2}\dot{q}^T M(q)\dot{q}
+$$
+
+The potential energy is
+
+$$
+V(q)
+$$
+
+Hence the Lagrangian becomes
+
+$$
+\mathcal{L}(q,\dot{q}) = T(q,\dot{q}) - V(q)
+$$
+
+9. FINAL OUTPUT QUALITY CHECK
+Before giving the final answer, silently verify:
+• Are all symbols inside sentences wrapped with $...$ where needed?
+• Are all standalone equations written using $$...$$?
+• Are equations isolated from headings and paragraphs?
+• Is there any raw LaTeX outside math mode?
+• Is there any fake notation like [ ... ], (M(q)), \( ... \), \[ ... \], or ^{!T}?
+• Are vectors written using bmatrix where needed?
+• Are equations readable, centered, and syntactically clean?
+
+If any issue exists, revise silently before answering.
+
+10. SAFETY RULE (CRITICAL)
+If unsure about correct LaTeX syntax:
+• Do NOT produce complex or broken expressions
+• Prefer simpler correct expressions over complex incorrect ones
+• Never output partially broken LaTeX
+
+Every LaTeX command MUST appear inside $...$ or $$...$$.
+If any LaTeX appears outside math mode, correct it before answering.
 
 ------------------------------------
 STEP 3: ANALOGY POLICY (CONDITIONAL)

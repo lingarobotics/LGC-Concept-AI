@@ -2,8 +2,65 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 import { useAuth } from "../context/AuthContext";
 import ModeSwitchCTA from "../components/ModeSwitchCTA";
+
+function normalizeMath(text) {
+  if (!text) return "";
+
+  return text
+    // Convert \( ... \) to $ ... $
+    .replace(/\\\((.*?)\\\)/gs, (_, expr) => `$${expr.trim()}$`)
+
+    // Convert \[ ... \] to $$ ... $$
+    .replace(/\\\[(.*?)\\\]/gs, (_, expr) => `\n$$\n${expr.trim()}\n$$\n`)
+
+    // Fix common broken comma-style math like M(q),\ddot{q}
+    .replace(
+      /([A-Za-z0-9\)\}])\s*,\s*(\\dot\{?[A-Za-z]+\}?|\\ddot\{?[A-Za-z]+\}?)/g,
+      "$1$2"
+    )
+
+    // Fix common broken comma before latex commands
+    .replace(
+      /([A-Za-z0-9\)\}])\s*,\s*(\\(mathbf|tau|mathcal|partial|frac|sum|int|left|right))/g,
+      "$1 $2"
+    )
+
+    // Clean excessive blank lines
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+const cleanLatex = (text) => {
+  if (!text) return "";
+
+  return text
+    // Normalize all dash types
+    .replace(/[\u2010-\u2015]/g, "-")
+
+    // Remove ellipsis
+    .replace(/…/g, "...")
+
+    // Fix quotes
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+
+    // Remove emojis and unsafe unicode
+    .replace(/[^\x00-\x7F]/g, "")
+
+    // EXTRA: remove unicode inside math blocks
+    .replace(/\$([^$]*)\$/g, (_, expr) =>
+      `$${expr.replace(/[^\x00-\x7F]/g, "")}$`
+    )
+
+    .replace(/\$\$([^$]*)\$\$/g, (_, expr) =>
+      `$$${expr.replace(/[^\x00-\x7F]/g, "")}$$`
+    );
+};
+
 
 function LearnMode() {
   const [question, setQuestion] = useState("");
@@ -18,7 +75,6 @@ function LearnMode() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  /* Typing Placeholder */
   const placeholderTexts = [
     "Explain the construction and working of a transformer",
     "Compare alternator with AC generator",
@@ -56,7 +112,6 @@ function LearnMode() {
   const askAI = async () => {
     if (!question.trim()) return;
 
-    /* Soft Auth Gate */
     if (!isAuthenticated && questionCount >= 3) {
       navigate("/auth", {
         state: { from: location.pathname }
@@ -83,7 +138,7 @@ function LearnMode() {
       });
 
       const data = await res.json();
-      setAnswer(data.answer);
+      setCoreAnswer(normalizeMath(data.answer));
       setQuestionCount((prev) => prev + 1);
 
       if (isAuthenticated && userEmail) {
@@ -122,7 +177,7 @@ function LearnMode() {
       });
 
       const data = await res.json();
-      setCoreAnswer(data.answer);
+      setCoreAnswer(normalizeMath(data.answer));
 
       if (isAuthenticated && userEmail) {
         try {
@@ -145,7 +200,6 @@ function LearnMode() {
 
   return (
     <>
-      {/* Mode Description - Cleaned */}
       <div
         style={{
           fontSize: "0.9rem",
@@ -159,7 +213,6 @@ function LearnMode() {
         Ask for full explanations when you want clarity with proper depth.
       </div>
 
-      {/* Input */}
       <textarea
         rows="4"
         value={question}
@@ -172,16 +225,17 @@ function LearnMode() {
         {loading ? loadingText : "Ask"}
       </button>
 
-      {/* Answer */}
       {answer && (
         <div className="output-box" style={{ marginTop: "16px" }}>
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm, remarkMath]}
+            rehypePlugins={[rehypeKatex]}
+          >
             {answer}
           </ReactMarkdown>
         </div>
       )}
 
-      {/* Core Points */}
       {answer && (
         <div style={{ marginTop: "12px" }}>
           <button
@@ -205,13 +259,15 @@ function LearnMode() {
             paddingLeft: "12px"
           }}
         >
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm, remarkMath]}
+            rehypePlugins={[rehypeKatex]}
+          >
             {coreAnswer}
           </ReactMarkdown>
         </div>
       )}
 
-      {/* Switch Mode Section */}
       <ModeSwitchCTA currentMode="learn" />
     </>
   );

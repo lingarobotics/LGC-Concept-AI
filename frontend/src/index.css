@@ -316,3 +316,111 @@ button:disabled {
   }
 
 }
+
+/* =========================
+   AI OUTPUT BOX
+   ========================= */
+
+.output-box {
+  margin-top: 16px;
+  padding: 18px;
+  background: #151922;
+  border: 1px solid #2a3140;
+  border-radius: 12px;
+  color: #e8ecf3;
+  line-height: 1.8;
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 420px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+.output-box h1,
+.output-box h2,
+.output-box h3,
+.output-box h4,
+.output-box h5,
+.output-box h6 {
+  color: #ffffff;
+  margin-top: 0;
+  margin-bottom: 0.9rem;
+  line-height: 1.4;
+}
+
+.output-box p {
+  margin: 0 0 1rem 0;
+  color: #d9e1ee;
+}
+
+.output-box ul,
+.output-box ol {
+  margin: 0 0 1rem 1.25rem;
+  padding: 0;
+  color: #d9e1ee;
+}
+
+.output-box li {
+  margin-bottom: 0.55rem;
+}
+
+.output-box strong {
+  color: #ffffff;
+}
+
+.output-box code {
+  background: #0f1115;
+  padding: 2px 6px;
+  border-radius: 6px;
+  color: #9ec5ff;
+  font-size: 0.92em;
+}
+
+.output-box pre {
+  background: #0f1115;
+  border: 1px solid #2a3140;
+  border-radius: 10px;
+  padding: 12px;
+  overflow-x: auto;
+}
+
+.output-box blockquote {
+  margin: 0 0 1rem 0;
+  padding-left: 12px;
+  border-left: 3px solid #4f8cff;
+  color: #c9d7ee;
+}
+
+/* =========================
+   MARKDOWN TABLE SUPPORT
+   ========================= */
+
+.output-box table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.2rem;
+}
+
+.output-box th,
+.output-box td {
+  border: 1px solid #2a3140;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.output-box th {
+  background: #1a2233;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.output-box td {
+  background: #151922;
+  color: #d9e1ee;
+}
+
+.output-box tr:nth-child(even) td {
+  background: #121722;
+}
+
+
+
