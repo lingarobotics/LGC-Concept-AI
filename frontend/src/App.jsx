@@ -157,6 +157,43 @@ function AppShell({ children, isLaunching }) {
         <div className="mode-container" style={{ marginTop: "24px" }}>
           {children}
         </div>
+
+        {/* Footer */}
+        <div
+          style={{
+            marginTop: "40px",
+            paddingTop: "16px",
+            borderTop: "1px solid rgba(255,255,255,0.1)",
+            textAlign: "center"
+            }}
+        >
+          <a
+            href="https://lgcsystems.xyz"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "inline-block",
+              padding: "10px 18px",
+              borderRadius: "8px",
+              background: "rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.2)",
+              color: "white",
+              textDecoration: "none",
+              fontSize: "14px",
+              transition: "all 0.2s ease"
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = "rgba(255,255,255,0.15)";
+              e.target.style.transform = "translateY(-1px)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = "rgba(255,255,255,0.08)";
+              e.target.style.transform = "translateY(0)";
+            }}
+          >
+            Explore LGC Systems
+          </a>
+        </div>
       </div>
     </>
   );
