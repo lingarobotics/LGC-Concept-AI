@@ -276,6 +276,22 @@ It is a structured learning companion designed to build
 clarity, discipline, and confidence.
 
 ---
+---
+
+## 📘 Development Documentation
+
+Detailed development history, including:
+
+- system evolution (v1 → v2.3)  
+- UI redesign and mode isolation  
+- debugging and rendering issues  
+- backend restructuring and fallback architecture  
+
+is available in:
+
+👉 [`/docs`](./docs/README.md)
+
+---
 
 ## Ownership
 
