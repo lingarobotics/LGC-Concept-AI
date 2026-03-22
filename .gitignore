@@ -81,6 +81,9 @@ web_modules/
 .cache
 .parcel-cache
 
+# PWA build artifacts
+frontend/dev-dist/
+
 # Next.js build output
 .next
 out
