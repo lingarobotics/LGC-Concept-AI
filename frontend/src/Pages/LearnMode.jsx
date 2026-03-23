@@ -7,29 +7,30 @@ import rehypeKatex from "rehype-katex";
 import { useAuth } from "../context/AuthContext";
 import ModeSwitchCTA from "../components/ModeSwitchCTA";
 
+/* ---------------- CLEANING PIPELINE ---------------- */
+
 function normalizeMath(text) {
   if (!text) return "";
 
   return text
-    // Convert \( ... \) to $ ... $
+    // Convert \( ... \) → $ ... $
     .replace(/\\\((.*?)\\\)/gs, (_, expr) => `$${expr.trim()}$`)
 
-    // Convert \[ ... \] to $$ ... $$
+    // Convert \[ ... \] → $$ ... $$
     .replace(/\\\[(.*?)\\\]/gs, (_, expr) => `\n$$\n${expr.trim()}\n$$\n`)
 
-    // Fix common broken comma-style math like M(q),\ddot{q}
+    // Fix broken comma math
     .replace(
       /([A-Za-z0-9\)\}])\s*,\s*(\\dot\{?[A-Za-z]+\}?|\\ddot\{?[A-Za-z]+\}?)/g,
       "$1$2"
     )
 
-    // Fix common broken comma before latex commands
     .replace(
       /([A-Za-z0-9\)\}])\s*,\s*(\\(mathbf|tau|mathcal|partial|frac|sum|int|left|right))/g,
       "$1 $2"
     )
 
-    // Clean excessive blank lines
+    // Clean spacing
     .replace(/\n{3,}/g, "\n\n")
     .trim();
 }
@@ -38,29 +39,24 @@ const cleanLatex = (text) => {
   if (!text) return "";
 
   return text
-    // Normalize all dash types
+    // Normalize dash variants (CRITICAL FIX)
     .replace(/[\u2010-\u2015]/g, "-")
 
-    // Remove ellipsis
-    .replace(/…/g, "...")
-
-    // Fix quotes
+    // Normalize quotes
     .replace(/[“”]/g, '"')
     .replace(/[‘’]/g, "'")
 
-    // Remove emojis and unsafe unicode
-    .replace(/[^\x00-\x7F]/g, "")
-
-    // EXTRA: remove unicode inside math blocks
+    // Clean ONLY inside math blocks (safe)
     .replace(/\$([^$]*)\$/g, (_, expr) =>
-      `$${expr.replace(/[^\x00-\x7F]/g, "")}$`
+      `$${expr.replace(/[\u2010-\u2015]/g, "-")}$`
     )
 
     .replace(/\$\$([^$]*)\$\$/g, (_, expr) =>
-      `$$${expr.replace(/[^\x00-\x7F]/g, "")}$$`
+      `$$${expr.replace(/[\u2010-\u2015]/g, "-")}$$`
     );
 };
 
+/* ---------------- COMPONENT ---------------- */
 
 function LearnMode() {
   const [question, setQuestion] = useState("");
@@ -109,6 +105,8 @@ function LearnMode() {
     }
   }, [cIndex, pIndex, question]);
 
+  /* ---------------- ASK AI ---------------- */
+
   const askAI = async () => {
     if (!question.trim()) return;
 
@@ -138,7 +136,11 @@ function LearnMode() {
       });
 
       const data = await res.json();
-      setCoreAnswer(normalizeMath(data.answer));
+
+      // 🔥 FIX: Proper pipeline
+      const processed = normalizeMath(cleanLatex(data.answer));
+
+      setAnswer(processed); // MAIN OUTPUT
       setQuestionCount((prev) => prev + 1);
 
       if (isAuthenticated && userEmail) {
@@ -160,6 +162,8 @@ function LearnMode() {
     }
   };
 
+  /* ---------------- CORE POINTS ---------------- */
+
   const getCorePoints = async () => {
     if (!answer) return;
 
@@ -177,7 +181,11 @@ function LearnMode() {
       });
 
       const data = await res.json();
-      setCoreAnswer(normalizeMath(data.answer));
+
+      // 🔥 FIX: Same pipeline
+      const processed = normalizeMath(cleanLatex(data.answer));
+
+      setCoreAnswer(processed);
 
       if (isAuthenticated && userEmail) {
         try {
@@ -197,6 +205,8 @@ function LearnMode() {
       setCoreLoading(false);
     }
   };
+
+  /* ---------------- UI ---------------- */
 
   return (
     <>
