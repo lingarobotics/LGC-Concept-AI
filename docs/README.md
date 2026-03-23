@@ -445,6 +445,141 @@ This issue appeared after introducing more technical content requiring equations
 🔥 **Critical Insight:**
 - Systems fail more due to configuration than code  
 
+---
+
+## 🧠 Phase 9 — Rendering Pipeline Failure, Caching Conflict & Production Stability Fix
+
+### 🔴 Problem: Production Rendering Breakdown (KaTeX + UI Instability)
+
+![Production Failure](images/development-and-ui-screenshots/katex-rendering-failure-production-raw-latex-visible-march-23.png.png)
+
+**Observed Behavior:**
+- LaTeX expressions appeared as raw text (`$$ ... $$`)
+- Mathematical formatting failed completely
+- Scrollable output container missing
+- UI behavior inconsistent compared to development
+
+---
+
+### 🔴 Problem: Development vs Production Mismatch
+
+![Dev vs Prod](images/development-and-ui-screenshots/katex-rendering-working-in-development-vs-broken-in-production-comparison-march-23.png.png)
+
+**Critical Insight:**
+- Same codebase  
+- Same dependencies  
+- Different behavior  
+
+**Conclusion:**
+- Issue is NOT logic-related  
+- Issue is environment-level (build, caching, runtime pipeline)
+
+---
+
+### 🟠 Problem: Rendering Pipeline Errors (DevTools Analysis)
+
+![DevTools Error](images/development-and-ui-screenshots/katex-unicode-warning-and-manifest-syntax-error-devtools-march-23.png.png)
+
+**Errors Observed:**
+- LaTeX-incompatible input warnings  
+- Unrecognized Unicode characters  
+- Manifest syntax errors  
+
+---
+
+![Pipeline Breakdown](images/development-and-ui-screenshots/katex-prod-render-failure-vs-dev.png)
+
+**Findings:**
+- Unicode characters (–, -) breaking KaTeX parsing  
+- Markdown → Math → Render pipeline inconsistent  
+- Manifest returning HTML instead of JSON  
+
+---
+
+### 🟠 Root Cause: Caching + Manifest Misconfiguration
+
+![Manifest Fix](images/development-and-ui-screenshots/manifest-webmanifest-for-solving-html-json-issue.png)
+
+**Actual Root Problems:**
+- Service Worker caching stale UI/output  
+- Manifest missing or mis-served  
+- Browser receiving HTML instead of JSON  
+- Production serving cached broken state  
+
+---
+
+### 🟡 Problem: PWA DevOptions Causing Cache Persistence
+
+![DevOptions True](images/development-and-ui-screenshots/devoptions-enabled-set-to-true-march23-causes-cache-issue.png)
+
+**Issue:**
+- `devOptions.enabled = true` activates service worker in development  
+- Aggressive caching introduced  
+- Leads to inconsistent UI and stale rendering  
+
+---
+
+### 🟢 Fix: Controlled Caching (Disable PWA in Dev)
+
+![DevOptions False](images/development-and-ui-screenshots/devoptions-enabled-set-to-false-to-avoid-cache-issue.png)
+
+**Fix Applied:**
+- Disabled PWA during development:
+  `devOptions: { enabled: false }`
+
+---
+
+### 🟢 Fix: Proper Manifest Configuration
+
+- Added file: `/frontend/public/manifest.webmanifest`  
+- Ensured valid JSON format  
+- Ensured correct MIME type response  
+- Eliminated HTML fallback issue  
+
+---
+
+### 🟢 Fix: Prompt Strengthening & Unicode Control
+
+- Removed invalid Unicode characters (`–`, `-`)  
+- Enforced strict LaTeX-safe output  
+- Standardized math formatting rules  
+
+---
+
+### 🟢 Fix: LearnMode Rendering Pipeline Cleanup
+
+- Normalized output before rendering  
+- Stabilized markdown → math conversion  
+- Ensured consistent KaTeX execution  
+- Restored scrollable output container behavior  
+
+---
+
+### 🟢 Final Result: Stable Rendering Across Environments
+
+![Final Fix](images/development-and-ui-screenshots/katex-rendering-fixed-after-manifest-and-prompt-cleaning-march-23.png.png)
+
+**Outcome:**
+- KaTeX renders correctly in development and production  
+- Scrollable UI restored  
+- No raw LaTeX leakage  
+- No manifest errors  
+- No caching inconsistencies  
+
+---
+
+### 🧠 Key Learnings
+
+- Rendering failures are often pipeline issues, not UI issues  
+- Production bugs can originate from caching layers  
+- Service workers can silently break debugging  
+- Manifest misconfiguration can trigger runtime failures  
+- Unicode characters can break math rendering engines  
+
+🔥 **Critical Insight:**
+A system can be logically correct and still fail due to environment, caching, and rendering pipeline inconsistencies.
+
+---
 
 ## 🧭 How to Use This Documentation
 
