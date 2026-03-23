@@ -1,0 +1,20 @@
+{
+  "name": "LGC Concept AI",
+  "short_name": "LGC AI",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f1115",
+  "theme_color": "#0f1115",
+  "icons": [
+    {
+      "src": "/lgc-favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/lgc-favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

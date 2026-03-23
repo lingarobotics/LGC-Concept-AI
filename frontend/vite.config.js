@@ -49,11 +49,18 @@ export default defineConfig({
       },
 
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        cleanupOutdatedCaches: true,
+
+        runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.destination === 'document',
+            handler: 'NetworkFirst',
+          },
+        ],
       },
 
       devOptions: {
-        enabled: true,
+        enabled: false, // Disable PWA features during development to avoid caching issues
       },
     }),
   ],
