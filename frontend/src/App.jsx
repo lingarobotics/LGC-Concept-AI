@@ -17,12 +17,14 @@ import AuthPage from "./Pages/AuthPage";
 import Why from "./Pages/Why";
 import ForgotPassword from "./Pages/ForgotPassword";
 import ResetPassword from "./Pages/ResetPassword";
+import Docs from "./Pages/Docs";
 
 import lgcLogo from "./assets/icon.png";
 import ProfileIcon from "./assets/profile.png";
 
 import { AuthProvider } from "./context/AuthContext";
 import { useAuth } from "./context/AuthContext";
+import { ContextProvider } from "./context/ContextProvider";
 import InstallPrompt from "./components/InstallPrompt";
 
 /* =========================
@@ -42,7 +44,6 @@ function AppShell({ children, isLaunching }) {
     "/verify-email"
   ].includes(location.pathname);
 
-  // ✅ NEW: control footer visibility
   const showFooter = location.pathname === "/";
 
   useEffect(() => {
@@ -110,55 +111,76 @@ function AppShell({ children, isLaunching }) {
             </div>
           </div>
 
-          {/* Auth Controls */}
-          {!hideAuthHeader && (
-            !isAuthenticated ? (
-              <>
-                <button
-                  className="auth-btn desktop-only"
-                  onClick={() => navigate("/auth")}
-                >
-                  Login / Register
-                </button>
+          {/* Right Side Controls */}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            
+            {/* ✅ Docs Button */}
+            {location.pathname !== "/docs" && (
+              <button
+                onClick={() => navigate("/docs")}
+                style={{
+                  padding: "8px 14px",
+                  borderRadius: "6px",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  background: "rgba(255,255,255,0.05)",
+                  color: "white",
+                  cursor: "pointer"
+                }}
+              >
+                Docs
+              </button>
+            )}
 
-                <button
-                  className="auth-icon mobile-only"
-                  onClick={() => navigate("/auth")}
-                  aria-label="Login or Register"
-                >
-                  <img src={ProfileIcon} alt="" />
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  className="auth-btn desktop-only"
-                  onClick={logout}
-                >
-                  Logout
-                </button>
+            {/* Auth Controls */}
+            {!hideAuthHeader && (
+              !isAuthenticated ? (
+                <>
+                  <button
+                    className="auth-btn desktop-only"
+                    onClick={() => navigate("/auth")}
+                  >
+                    Login / Register
+                  </button>
 
-                <button
-                  className="auth-icon mobile-only"
-                  onClick={logout}
-                  aria-label="Logout"
-                >
-                  <img
-                    src={ProfileIcon}
-                    alt=""
-                    style={{ width: "22px", height: "22px" }}
-                  />
-                </button>
-              </>
-            )
-          )}
+                  <button
+                    className="auth-icon mobile-only"
+                    onClick={() => navigate("/auth")}
+                    aria-label="Login or Register"
+                  >
+                    <img src={ProfileIcon} alt="" />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    className="auth-btn desktop-only"
+                    onClick={logout}
+                  >
+                    Logout
+                  </button>
+
+                  <button
+                    className="auth-icon mobile-only"
+                    onClick={logout}
+                    aria-label="Logout"
+                  >
+                    <img
+                      src={ProfileIcon}
+                      alt=""
+                      style={{ width: "22px", height: "22px" }}
+                    />
+                  </button>
+                </>
+              )
+            )}
+          </div>
         </div>
 
         <div className="mode-container" style={{ marginTop: "24px" }}>
           {children}
         </div>
 
-        {/* ✅ Footer (ONLY HOME PAGE) */}
+        {/* Footer */}
         {showFooter && (
           <div
             style={{
@@ -180,16 +202,7 @@ function AppShell({ children, isLaunching }) {
                 border: "1px solid rgba(255,255,255,0.2)",
                 color: "white",
                 textDecoration: "none",
-                fontSize: "14px",
-                transition: "all 0.2s ease"
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = "rgba(255,255,255,0.15)";
-                e.target.style.transform = "translateY(-1px)";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = "rgba(255,255,255,0.08)";
-                e.target.style.transform = "translateY(0)";
+                fontSize: "14px"
               }}
             >
               Explore LGC Systems
@@ -200,9 +213,8 @@ function AppShell({ children, isLaunching }) {
     </>
   );
 }
-/* =========================
-   ROUTES
-   ========================= */
+
+/* ROUTES remain unchanged */
 
 function AppRoutes({ startLaunch, isLaunching }) {
   const navigate = useNavigate();
@@ -213,88 +225,21 @@ function AppRoutes({ startLaunch, isLaunching }) {
 
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          <AppShell isLaunching={isLaunching}>
-            <Home onStartLearning={() => triggerLaunch("/learn?mode=learn")} />
-          </AppShell>
-        }
-      />
-
-      <Route
-        path="/explore"
-        element={
-          <AppShell isLaunching={isLaunching}>
-            <ExploreModes />
-          </AppShell>
-        }
-      />
-
-      <Route
-        path="/why"
-        element={
-          <AppShell isLaunching={isLaunching}>
-            <Why />
-          </AppShell>
-        }
-      />
-
-      <Route
-        path="/learn"
-        element={
-          <AppShell isLaunching={isLaunching}>
-            <LearnMode />
-          </AppShell>
-        }
-      />
-
-      <Route
-        path="/fast-learn"
-        element={
-          <AppShell isLaunching={isLaunching}>
-            <FastLearnMode />
-          </AppShell>
-        }
-      />
-
-      <Route
-        path="/doubt"
-        element={
-          <AppShell isLaunching={isLaunching}>
-            <DoubtMode />
-          </AppShell>
-        }
-      />
-
-      <Route
-        path="/teach-back"
-        element={
-          <AppShell isLaunching={isLaunching}>
-            <TeachBackMode />
-          </AppShell>
-        }
-      />
-
+      <Route path="/" element={<AppShell isLaunching={isLaunching}><Home onStartLearning={() => triggerLaunch("/learn?mode=learn")} /></AppShell>} />
+      <Route path="/explore" element={<AppShell isLaunching={isLaunching}><ExploreModes /></AppShell>} />
+      <Route path="/why" element={<AppShell isLaunching={isLaunching}><Why /></AppShell>} />
+      <Route path="/learn" element={<AppShell isLaunching={isLaunching}><LearnMode /></AppShell>} />
+      <Route path="/fast-learn" element={<AppShell isLaunching={isLaunching}><FastLearnMode /></AppShell>} />
+      <Route path="/doubt" element={<AppShell isLaunching={isLaunching}><DoubtMode /></AppShell>} />
+      <Route path="/teach-back" element={<AppShell isLaunching={isLaunching}><TeachBackMode /></AppShell>} />
       <Route path="/auth" element={<AuthPage />} />
       <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
-
-      <Route
-        path="/reset-password"
-        element={
-          <AppShell isLaunching={isLaunching}>
-            <ResetPassword />
-          </AppShell>
-        }
-      />
+      <Route path="/docs" element={<Docs />} />
+      <Route path="/reset-password" element={<AppShell isLaunching={isLaunching}><ResetPassword /></AppShell>} />
     </Routes>
   );
 }
-
-/* =========================
-   ROOT
-   ========================= */
 
 export default function App() {
   const [isLaunching, setIsLaunching] = useState(false);
@@ -309,8 +254,10 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <AppRoutes startLaunch={startLaunch} isLaunching={isLaunching} />
-      <InstallPrompt />
+      <ContextProvider>
+        <AppRoutes startLaunch={startLaunch} isLaunching={isLaunching} />
+        <InstallPrompt />
+      </ContextProvider>
     </AuthProvider>
   );
 }

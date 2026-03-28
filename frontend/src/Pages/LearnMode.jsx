@@ -5,55 +5,47 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import { useAuth } from "../context/AuthContext";
+import { useContextState } from "../context/ContextProvider";
 import ModeSwitchCTA from "../components/ModeSwitchCTA";
+import SubjectInput from "../components/SubjectInput";
 
-/* ---------------- CLEANING PIPELINE ---------------- */
+/* ---------------- CLEANING PIPELINE (FINAL SAFE) ---------------- */
 
 function normalizeMath(text) {
   if (!text) return "";
 
-  return text
-    // Convert \( ... \) → $ ... $
+  // Convert latex wrappers
+  text = text
     .replace(/\\\((.*?)\\\)/gs, (_, expr) => `$${expr.trim()}$`)
+    .replace(/\\\[(.*?)\\\]/gs, (_, expr) => `\n$$\n${expr.trim()}\n$$\n`);
 
-    // Convert \[ ... \] → $$ ... $$
-    .replace(/\\\[(.*?)\\\]/gs, (_, expr) => `\n$$\n${expr.trim()}\n$$\n`)
+  // Clean ONLY inside math blocks
+  text = text
+    .replace(/\$([^$]+)\$/g, (_, expr) => {
+      return `$${expr
+        .replace(/\s*,\s*/g, ",")
+        .replace(/\s{2,}/g, " ")
+        .trim()}$`;
+    })
+    .replace(/\$\$([^$]+)\$\$/g, (_, expr) => {
+      return `$$${expr
+        .replace(/\s*,\s*/g, ",")
+        .replace(/\s{2,}/g, " ")
+        .trim()}$$`;
+    });
 
-    // Fix broken comma math
-    .replace(
-      /([A-Za-z0-9\)\}])\s*,\s*(\\dot\{?[A-Za-z]+\}?|\\ddot\{?[A-Za-z]+\}?)/g,
-      "$1$2"
-    )
-
-    .replace(
-      /([A-Za-z0-9\)\}])\s*,\s*(\\(mathbf|tau|mathcal|partial|frac|sum|int|left|right))/g,
-      "$1 $2"
-    )
-
-    // Clean spacing
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
+  return text;
 }
 
 const cleanLatex = (text) => {
   if (!text) return "";
 
   return text
-    // Normalize dash variants (CRITICAL FIX)
     .replace(/[\u2010-\u2015]/g, "-")
-
-    // Normalize quotes
     .replace(/[“”]/g, '"')
     .replace(/[‘’]/g, "'")
-
-    // Clean ONLY inside math blocks (safe)
-    .replace(/\$([^$]*)\$/g, (_, expr) =>
-      `$${expr.replace(/[\u2010-\u2015]/g, "-")}$`
-    )
-
-    .replace(/\$\$([^$]*)\$\$/g, (_, expr) =>
-      `$$${expr.replace(/[\u2010-\u2015]/g, "-")}$$`
-    );
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 };
 
 /* ---------------- COMPONENT ---------------- */
@@ -68,6 +60,8 @@ function LearnMode() {
   const [questionCount, setQuestionCount] = useState(0);
 
   const { isAuthenticated, userEmail } = useAuth();
+  const { context } = useContextState();
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -108,7 +102,8 @@ function LearnMode() {
   /* ---------------- ASK AI ---------------- */
 
   const askAI = async () => {
-    if (!question.trim()) return;
+    const trimmedQuestion = question.trim();
+    if (!trimmedQuestion) return;
 
     if (!isAuthenticated && questionCount >= 3) {
       navigate("/auth", {
@@ -130,17 +125,19 @@ function LearnMode() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          question,
-          mode: "learn"
+          question: trimmedQuestion,
+          mode: "learn",
+          context // Learn mode uses context
         })
       });
 
       const data = await res.json();
 
-      // 🔥 FIX: Proper pipeline
+      console.log("RAW:", data.answer); // optional debug
+
       const processed = normalizeMath(cleanLatex(data.answer));
 
-      setAnswer(processed); // MAIN OUTPUT
+      setAnswer(processed);
       setQuestionCount((prev) => prev + 1);
 
       if (isAuthenticated && userEmail) {
@@ -150,7 +147,7 @@ function LearnMode() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               email: userEmail,
-              question,
+              question: trimmedQuestion,
               mode: "learn"
             })
           });
@@ -176,13 +173,13 @@ function LearnMode() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           explanation: answer,
-          mode: "learn-core"
+          mode: "learn-core",
+          context
         })
       });
 
       const data = await res.json();
 
-      // 🔥 FIX: Same pipeline
       const processed = normalizeMath(cleanLatex(data.answer));
 
       setCoreAnswer(processed);
@@ -210,18 +207,13 @@ function LearnMode() {
 
   return (
     <>
-      <div
-        style={{
-          fontSize: "0.9rem",
-          color: "#bbb",
-          marginBottom: "16px",
-          lineHeight: "1.6"
-        }}
-      >
+      <div style={{ fontSize: "0.9rem", color: "#bbb", marginBottom: "16px", lineHeight: "1.6" }}>
         <b>Learn Mode</b> is for structured, exam-relevant understanding.
         <br />
         Ask for full explanations when you want clarity with proper depth.
       </div>
+
+      <SubjectInput questionCount={questionCount} />
 
       <textarea
         rows="4"
@@ -231,7 +223,7 @@ function LearnMode() {
         style={{ width: "100%", padding: "12px", resize: "none" }}
       />
 
-      <button onClick={askAI} disabled={loading} style={{ marginTop: "12px" }}>
+      <button onClick={askAI} disabled={loading || !question.trim()} style={{ marginTop: "12px" }}>
         {loading ? loadingText : "Ask"}
       </button>
 
@@ -248,27 +240,14 @@ function LearnMode() {
 
       {answer && (
         <div style={{ marginTop: "12px" }}>
-          <button
-            onClick={getCorePoints}
-            disabled={coreLoading}
-            style={{ fontSize: "0.85rem", opacity: 0.9 }}
-          >
-            {coreLoading
-              ? "Extracting core points…"
-              : "Extract core points / mental model"}
+          <button onClick={getCorePoints} disabled={coreLoading}>
+            {coreLoading ? "Extracting…" : "Extract core points"}
           </button>
         </div>
       )}
 
       {coreAnswer && (
-        <div
-          className="output-box"
-          style={{
-            marginTop: "16px",
-            borderLeft: "4px solid #4f8cff",
-            paddingLeft: "12px"
-          }}
-        >
+        <div className="output-box" style={{ marginTop: "16px" }}>
           <ReactMarkdown
             remarkPlugins={[remarkGfm, remarkMath]}
             rehypePlugins={[rehypeKatex]}

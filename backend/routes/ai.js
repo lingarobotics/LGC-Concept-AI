@@ -5,7 +5,7 @@ import { askAI } from "../services/aiService.js";
 const router = express.Router();
 
 router.post("/", aiLimiter, async (req, res) => {
-  const { question, explanation, mode = "learn" } = req.body;
+  const { question, explanation, mode = "learn", context } = req.body;
 
   // Input validation
   if (!question && mode !== "learn-core") {
@@ -15,7 +15,7 @@ router.post("/", aiLimiter, async (req, res) => {
   }
 
   try {
-    const result = await askAI({ question, explanation, mode });
+    const result = await askAI({ question, explanation, mode, context });
 
     // result = { answer, modelUsed }
     return res.status(200).json(result);

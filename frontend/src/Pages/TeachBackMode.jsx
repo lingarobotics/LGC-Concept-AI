@@ -3,7 +3,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useAuth } from "../context/AuthContext";
+import { useContextState } from "../context/ContextProvider"; // ✅ ADDED
 import ModeSwitchCTA from "../components/ModeSwitchCTA";
+import SubjectInput from "../components/SubjectInput";
 
 function TeachBackMode() {
   const [explanation, setExplanation] = useState("");
@@ -11,11 +13,14 @@ function TeachBackMode() {
   const [loading, setLoading] = useState(false);
 
   const { isAuthenticated, userEmail } = useAuth();
+  const { context } = useContextState(); // ✅ ADDED
+
   const navigate = useNavigate();
   const location = useLocation();
 
   const submit = async () => {
-    if (!explanation.trim()) return;
+    const trimmedExplanation = explanation.trim();
+    if (!trimmedExplanation) return;
 
     /* Strict Auth Required */
     if (!isAuthenticated) {
@@ -26,15 +31,15 @@ function TeachBackMode() {
     }
 
     setLoading(true);
-    const currentExplanation = explanation;
 
     try {
       const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/ask`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          question: currentExplanation,
-          mode: "teachback"
+          question: trimmedExplanation,
+          mode: "teachback",
+          context //  ADDED context for teach-back evaluation
         })
       });
 
@@ -45,7 +50,7 @@ function TeachBackMode() {
       } else {
         setFeedback((prev) => [
           ...prev,
-          "✅ Your explanation appears conceptually correct. You may refine it further with clearer logic or examples."
+          "⚠️ Feedback unavailable at the moment. Try refining your explanation or retry"
         ]);
       }
 
@@ -57,7 +62,7 @@ function TeachBackMode() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             email: userEmail,
-            question: currentExplanation,
+            question: trimmedExplanation,
             mode: "teachback"
           })
         });
@@ -69,7 +74,7 @@ function TeachBackMode() {
 
   return (
     <>
-      {/* Mode Description - Cleaned */}
+      {/* Mode Description */}
       <div
         style={{
           fontSize: "0.9rem",
@@ -83,6 +88,7 @@ function TeachBackMode() {
         Explain the concept in your own words and receive structured feedback.
       </div>
 
+      <SubjectInput />
       {/* Input */}
       <textarea
         rows="4"
@@ -94,7 +100,7 @@ function TeachBackMode() {
 
       <button
         onClick={submit}
-        disabled={loading}
+        disabled={loading || !explanation.trim()}
         style={{ marginTop: "12px" }}
       >
         {loading ? "Evaluating…" : "Evaluate my explanation"}
@@ -111,7 +117,7 @@ function TeachBackMode() {
         ))}
       </div>
 
-      {/* Switch Section */}
+      {/* Switch */}
       <ModeSwitchCTA currentMode="teach-back" />
     </>
   );
