@@ -51,7 +51,7 @@ const Home = ({ onStartLearning }) => {
             fontWeight: "600"
           }}
         >
-          🚀 Start Learning
+          🚀 Enter Learning now
         </button>
 
         <div style={{ marginTop: "1.4rem" }}>
@@ -67,7 +67,7 @@ const Home = ({ onStartLearning }) => {
               borderRadius: "6px"
             }}
           >
-            Explore How Learning Works
+            A new user? Explore how Concept AI Works →
           </button>
         </div>
 
