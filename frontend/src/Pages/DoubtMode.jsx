@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useContextState } from "../context/ContextProvider";
 import ModeSwitchCTA from "../components/ModeSwitchCTA";
+import SubjectInput from "../components/SubjectInput";
 
 function DoubtMode() {
   const [input, setInput] = useState("");
@@ -9,11 +11,14 @@ function DoubtMode() {
   const [loading, setLoading] = useState(false);
 
   const { isAuthenticated, userEmail } = useAuth();
+  const { context } = useContextState();
+
   const navigate = useNavigate();
   const location = useLocation();
 
   const askAI = async () => {
-    if (!input.trim()) return;
+    const trimmedInput = input.trim();
+    if (!trimmedInput) return;
 
     /* Strict Auth Required */
     if (!isAuthenticated) {
@@ -23,9 +28,9 @@ function DoubtMode() {
       return;
     }
 
-    const userMsg = { role: "user", text: input };
+    const userMsg = { role: "user", text: trimmedInput };
     setMessages((prev) => [...prev, userMsg]);
-    const currentQuestion = input;
+
     setInput("");
     setLoading(true);
 
@@ -34,13 +39,18 @@ function DoubtMode() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          question: currentQuestion,
-          mode: "doubt"
+          question: trimmedInput,
+          mode: "doubt",
+          context // ✅ NOW CORRECTLY SENT
         })
       });
 
       const data = await res.json();
-      setMessages((prev) => [...prev, { role: "ai", text: data.answer }]);
+
+      setMessages((prev) => [
+        ...prev,
+        { role: "ai", text: data.answer }
+      ]);
 
       try {
         await fetch(`${import.meta.env.VITE_BACKEND_URL}/question/log`, {
@@ -48,7 +58,7 @@ function DoubtMode() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             email: userEmail,
-            question: currentQuestion,
+            question: trimmedInput,
             mode: "doubt"
           })
         });
@@ -68,7 +78,7 @@ function DoubtMode() {
 
   return (
     <>
-      {/* Mode Description - Cleaned */}
+      {/* Mode Description */}
       <div
         style={{
           fontSize: "0.9rem",
@@ -81,6 +91,9 @@ function DoubtMode() {
         <br />
         Ask clearly and mention the exact concept you’re referring to.
       </div>
+
+      {/* ✅ SUBJECT INPUT (CORRECT POSITION) */}
+      <SubjectInput />
 
       {/* Messages */}
       <div
@@ -116,7 +129,7 @@ function DoubtMode() {
         {loading ? "Clearing…" : "Clear Doubt"}
       </button>
 
-      {/* Switch Section */}
+      {/* Switch */}
       <ModeSwitchCTA currentMode="doubt" />
     </>
   );
