@@ -426,3 +426,24 @@ button:disabled {
 
 
 
+.card {
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.doc-link {
+  background: none;
+  border: none;
+  color: #bbb;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 8px 10px;   /* 👈 ADD THIS */
+  white-space: nowrap; /* 👈 IMPORTANT for mobile scroll */
+}
+
+.doc-link:hover {
+  color: white;
+}
